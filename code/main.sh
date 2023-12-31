@@ -3,5 +3,5 @@
 #SBATCH -A def-dkrass
 #SBATCH --mem 20000
 source /home/eliransc/projects/def-dkrass/eliransc/queues/bin/activate
-python /home/eliransc/projects/def-dkrass/eliransc/non_renewal_queueing_system/code/sample_PH_single.py
+python /home/eliransc/projects/def-dkrass/eliransc/non_renewal_queueing_system/code/main.py
 

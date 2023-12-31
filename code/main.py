@@ -281,7 +281,6 @@ pkl.dump((inp_depart_0, out_depart_0), open(full_path_depart_0, 'wb'))
 inp_depart_1 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0), np.array(moms_ser)))
 
 ###############################
-
 ########### output ############
 
 station = 1
@@ -298,11 +297,10 @@ for corr_leg in range(1,6):
 
 out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-path_depart_1  = '/scratch/eliransc/non_renewal/depart_1'
-file_name = str(rate)[:5]+ 'sim_time_' + str(sim_time) + 'depart_1_' + str(model_num)+ '.pkl'
+path_depart_1 = '/scratch/eliransc/non_renewal/depart_1'
+file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_' + str(model_num)+ '.pkl'
 full_path_depart_1 = os.path.join(path_depart_1, file_name)
 pkl.dump((inp_depart_1, out_depart_1), open(full_path_depart_1, 'wb'))
-
 
 ####### Input ################
 
@@ -310,7 +308,6 @@ inp_steady_0 = np.concatenate((moms_arrive, moms_ser))
 inp_steady_0 = np.log(inp_steady_0)
 
 ###############################
-
 ########### output ############
 
 station = 0
@@ -331,7 +328,6 @@ pkl.dump((inp_steady_0, out_steady_0), open(full_path_steady_0, 'wb'))
 inp_steady_1 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0), np.array(moms_ser)))
 
 ###############################
-
 ########### output ############
 
 station = 1
