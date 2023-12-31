@@ -9,8 +9,8 @@ from scipy.linalg import expm, sinm, cosm
 from numpy.linalg import matrix_power
 from scipy.special import factorial
 
-
 is_print = False
+
 
 def ser_moment_n(s, A, mom):
     '''
@@ -22,13 +22,14 @@ def ser_moment_n(s, A, mom):
     '''
     e = np.ones((A.shape[0], 1))
     try:
-        mom_val = ((-1) ** mom) *factorial(mom)*np.dot(np.dot(s, matrix_power(A, -mom)), e)
+        mom_val = ((-1) ** mom) * factorial(mom) * np.dot(np.dot(s, matrix_power(A, -mom)), e)
         if mom_val > 0:
             return mom_val
         else:
             return False
     except:
         return False
+
 
 def compute_first_n_moments(s, A, n=3):
     '''
@@ -57,10 +58,10 @@ is_print = False
 
 class N_Queue_single_station:
 
-    def __init__(self, lamda, mu, sim_time, num_stations,  services, arrivals_norm):
+    def __init__(self, lamda, mu, sim_time, num_stations, services, arrivals_norm):
 
         self.env = simpy.Environment()  # initializing simpy enviroment
-         # Defining a resource with capacity 1
+        # Defining a resource with capacity 1
         self.end_time = sim_time  # The time simulation terminate
         self.id_current = 1  # keeping track of cusotmers id
         # an event can one of three: (1. arrival, 2. entering service 3. service completion)
@@ -83,18 +84,16 @@ class N_Queue_single_station:
         self.services = services
         self.arrivals = arrivals_norm
 
-
         for station in range(num_stations):
             self.servers.append(simpy.Resource(self.env, capacity=1))
-            self.num_cust_durations.append(np.zeros(500))  ## the time duration of each each state (state= number of cusotmers in the system)
+            self.num_cust_durations.append(
+                np.zeros(500))  ## the time duration of each each state (state= number of cusotmers in the system)
             self.df_waiting_times.append(pd.DataFrame([]))  # is a dataframe the holds all information waiting time
             self.num_cust_sys.append(0)
             self.last_event_time.append(0)
             self.df_events.append(pd.DataFrame([]))
             self.last_depart.append(0)
             self.inter_departures[station] = []
-
-
 
     def run(self):
 
@@ -105,7 +104,8 @@ class N_Queue_single_station:
     def update_new_row(self, customer, event, station):
 
         new_row = {'Event': event, 'Time': self.env.now, 'Customer': customer.id,
-                   'Queue lenght': len(self.servers[station].queue), 'System lenght': self.num_cust_sys[station], 'station' :station}
+                   'Queue lenght': len(self.servers[station].queue), 'System lenght': self.num_cust_sys[station],
+                   'station': station}
 
         self.df_events[station] = pd.concat([self.df_events[station], pd.DataFrame([new_row])], ignore_index=True)
 
@@ -119,7 +119,6 @@ class N_Queue_single_station:
         self.num_cust_durations[station][self.num_cust_sys[station]] += tot_time
         self.num_cust_sys[station] += 1
         self.last_event_time[station] = self.env.now
-
 
         with self.servers[station].request() as req:
             # Updating the a new cusotmer arrived
@@ -140,7 +139,8 @@ class N_Queue_single_station:
             # yield self.env.timeout(np.random.exponential(1 / self.mu))
 
             tot_time = self.env.now - self.last_event_time[station]  # keeping track of the last event
-            self.num_cust_durations[station][self.num_cust_sys[station]] += tot_time  # Since the number of customers in the system changes
+            self.num_cust_durations[station][
+                self.num_cust_sys[station]] += tot_time  # Since the number of customers in the system changes
             # we compute how much time the system had this number of customers
 
             self.num_cust_sys[station] -= 1  # updating number of cusotmers in the system
@@ -157,10 +157,10 @@ class N_Queue_single_station:
             # self.df_waiting_times[station] = pd.concat([self.df_waiting_times[station], pd.DataFrame([new_waiting_row])],
             #                                   ignore_index=True)
 
-            if station < self.num_stations-1:
+            if station < self.num_stations - 1:
                 # print('customer {} arrived at station {} at {}' .format(customer.id, station+1, self.env.now))
                 customer.arrival_time = self.env.now
-                self.env.process(self.service(customer, station+1))
+                self.env.process(self.service(customer, station + 1))
             else:
                 pass
                 # print('customer {} departs the system station {} at {}'.format(customer.id, station, self.env.now))
@@ -194,14 +194,12 @@ class N_Queue_single_station:
         steady_list = []
 
         for station in range(self.num_stations):
-
             steady_list.append(self.num_cust_durations[station] / self.num_cust_durations[station].sum())
 
-        return np.array(steady_list).reshape(self.num_stations,500)
+        return np.array(steady_list).reshape(self.num_stations, 500)
 
 
 def get_ph():
-
     if sys.platform == 'linux':
         path = '/scratch/eliransc/ph_random/medium_ph_1'
     else:
@@ -210,20 +208,14 @@ def get_ph():
     files = os.listdir(path)
 
     ind_file = np.random.randint(len(files))
-    ind_file = 0
-
-
-
 
     data_all = pkl.load(open(os.path.join(path, files[ind_file]), 'rb'))
 
-    # ind_file1 = np.random.randint(len(data_all))
-    ind_file1 = 0
+    ind_file1 = np.random.randint(len(data_all))
+
     data = data_all[ind_file1]
-    print(data[2])
+    print(ind_file, ind_file1)
     return data
-
-
 
 # services = get_ph()
 # moms_ser = np.array(compute_first_n_moments(services[0], services[1], 10)).flatten()
