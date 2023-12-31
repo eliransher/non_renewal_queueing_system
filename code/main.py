@@ -215,7 +215,6 @@ def get_ph():
     ind_file1 = np.random.randint(len(data_all))
 
     data = data_all[ind_file1]
-    print(ind_file, ind_file1)
     return data
 
 # begin = time.time()
