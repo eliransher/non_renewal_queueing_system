@@ -226,7 +226,7 @@ for sample in range(5000):
 
 
     arrivals = get_ph()
-    rate = np.random.uniform(0.5, 1)
+    rate = np.random.uniform(0.5, 0.95)
 
     arrivals_norm = arrivals[3]/rate
 
@@ -274,7 +274,7 @@ for sample in range(5000):
 
     model_num = np.random.randint(1, 1000000)
 
-    path_depart_0  = '/scratch/eliransc/non_renewal/depart_0'
+    path_depart_0 = '/scratch/eliransc/non_renewal/depart_0'
     file_name = str(rate)[:5]+ 'sim_time_' + str(sim_time) + 'depart_0_' + str(model_num)+ '.pkl'
     full_path_depart_0 = os.path.join(path_depart_0,file_name)
     pkl.dump((inp_depart_0, out_depart_0), open(full_path_depart_0, 'wb'))
