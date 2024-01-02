@@ -487,11 +487,7 @@ def main(args):
 
         pkl.dump(data, open(os.path.join(args.data_path, 'ph_size_'+str(a_size)+ '_num_'+ str(sample_num) +'.pkl'), 'wb'))
 
-    # plt.figure()
-    # for y_vals in y_list:
-    #     plt.plot(x_vals, y_vals)
-    # plt.ylim(0, 2.54)
-    # plt.show()
+
 
 
 
