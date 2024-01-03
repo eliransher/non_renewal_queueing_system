@@ -455,7 +455,7 @@ def main(args):
     # y_list = []
 
     if sys.platform == 'linux':
-        args.data_path = '/scratch/eliransc/non_renewal/ph_samples'
+        args.data_path = '/scratch/eliransc/ph_random/ph_for_feed_forward'
 
     for ind in range(args.num_examples):
 
