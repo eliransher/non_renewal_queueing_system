@@ -263,8 +263,7 @@ for sample in range(5000):
 
         ####### Input ################
 
-        inp_steady_0 = np.concatenate((moms_arrive, moms_ser))
-        inp_steady_0 = np.log(inp_steady_0)
+        inp_steady_0 = np.concatenate((np.log(moms_arrive), np.log(moms_ser), np.array([num_servers])))
 
         ###############################
         ########### output ############
@@ -275,6 +274,7 @@ for sample in range(5000):
         file_name = str(rate)[:5] + 'num_servers_' + str(num_servers) + '_sim_time_' + str(sim_time) + 'steady_' + str(
             model_num) + '.pkl'
         full_path_steady_0 = os.path.join(path_steady_0, file_name)
+        pkl.dump((inp_steady_0, out_steady_0), open(full_path_steady_0, 'wb'))
 
     except:
 
