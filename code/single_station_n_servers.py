@@ -5,7 +5,7 @@ import sys
 import pandas as pd
 import os
 import pickle as pkl
-from scipy.linalg import expm, sinm, cosm
+# from scipy.linalg import expm, sinm, cosm
 from numpy.linalg import matrix_power
 from scipy.special import factorial
 import time
