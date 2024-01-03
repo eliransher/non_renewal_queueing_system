@@ -459,7 +459,7 @@ def main(args):
 
     for ind in range(args.num_examples):
 
-        a_size = np.random.randint(1, 500)
+        a_size = np.random.randint(1, 20)
         print(a_size)
 
         elements = [0, 1, 2]
