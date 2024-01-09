@@ -9,6 +9,7 @@ path = '/scratch/eliransc/non_renewal/depart_0'
 
 files = os.listdir(path)
 
+print('start')
 for ind, file in tqdm(enumerate(files)):
 
     file_ = pkl.load(open(os.path.join(path, file), 'rb'))
