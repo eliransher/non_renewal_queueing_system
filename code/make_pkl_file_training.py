@@ -23,4 +23,4 @@ for ind, file in tqdm(enumerate(files)):
     except:
         print('bad input')
 
-pkl.dump((inpt, output), open('/scratch/eliransc/pkl_training/steady_1_training.pkl', 'wb'))
+pkl.dump((inpt, output), open('/scratch/eliransc/non_renewal/pkl_training/steady_1_training.pkl', 'wb'))
