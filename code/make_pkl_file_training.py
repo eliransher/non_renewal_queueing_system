@@ -5,7 +5,7 @@ import pickle as pkl
 import torch
 from tqdm import tqdm
 
-path = '/scratch/eliransc/non_renewal/depart_0'
+path = '/scratch/eliransc/non_renewal/depart_1'
 
 files = os.listdir(path)
 
@@ -24,4 +24,4 @@ for ind, file in tqdm(enumerate(files)):
     except:
         print('bad input')
 
-pkl.dump((inpt, output), open('/scratch/eliransc/non_renewal/pkl_training/depart_0_training.pkl', 'wb'))
+pkl.dump((inpt, output), open('/scratch/eliransc/non_renewal/pkl_training/depart_1_training.pkl', 'wb'))
