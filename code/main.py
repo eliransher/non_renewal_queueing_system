@@ -242,7 +242,7 @@ for sample in range(5000):
 
         lamda = rate
 
-        lamda, mu, sim_time, num_stations, services, arrivals_norm, moms_arrive, moms_ser = pkl.load(open('sim_setting.pkl', 'rb'))
+        # lamda, mu, sim_time, num_stations, services, arrivals_norm, moms_arrive, moms_ser = pkl.load(open('sim_setting.pkl', 'rb'))
 
         n_Queue_single_station = N_Queue_single_station(lamda, mu, sim_time, num_stations, services[3], arrivals_norm)
         n_Queue_single_station.run()
@@ -280,8 +280,6 @@ for sample in range(5000):
 
         path_depart_0 = '/scratch/eliransc/non_renewal/depart_0'
 
-        path_depart_0 = r'C:\Users\user\workspace\data\non_renewal'
-
         file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_' + str(model_num)+ '.pkl'
         full_path_depart_0 = os.path.join(path_depart_0,file_name)
         pkl.dump((inp_depart_0, out_depart_0), open(full_path_depart_0, 'wb'))
@@ -307,7 +305,6 @@ for sample in range(5000):
         out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
         path_depart_1 = '/scratch/eliransc/non_renewal/depart_1'
-        path_depart_1= r'C:\Users\user\workspace\data\non_renewal'
 
         file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_' + str(model_num)+ '.pkl'
         full_path_depart_1 = os.path.join(path_depart_1, file_name)
@@ -329,7 +326,6 @@ for sample in range(5000):
 
 
         path_steady_0 = '/scratch/eliransc/non_renewal/steady_0'
-        path_steady_0 = r'C:\Users\user\workspace\data\non_renewal'
 
         file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_' + str(model_num)+ '.pkl'
         full_path_steady_0 = os.path.join(path_steady_0, file_name)
@@ -348,11 +344,13 @@ for sample in range(5000):
         out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
         path_steady_1 = '/scratch/eliransc/non_renewal/steady_1'
-        path_steady_1 = r'C:\Users\user\workspace\data\non_renewal'
 
         file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_' + str(model_num)+ '.pkl'
         full_path_steady_1 = os.path.join(path_steady_1, file_name)
         pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
+
+
+
 
     except:
         print('Exceeded 500 customers')
