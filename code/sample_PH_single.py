@@ -452,10 +452,17 @@ def send_to_the_right_generator(num_ind, ph_size):
 
 def main(args):
 
-    # y_list = []
+
 
     if sys.platform == 'linux':
-        args.data_path = '/scratch/eliransc/ph_random/ph_for_feed_forward'
+
+        curr_path = os.getcwd()
+
+        if 'management' in curr_path:
+            args.data_path = '/home/elirans/scratch/non_renewal'
+        else:
+            args.data_path = '/scratch/eliransc/ph_random/ph_for_feed_forward'
+
 
     for ind in range(args.num_examples):
 
