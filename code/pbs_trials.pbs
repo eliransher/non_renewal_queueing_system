@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#PBS -q default
+#PBS -q WD
 #PBS -N PBS_trial
 #PBS -l select=1:ncpus=3
 #PBS -l walltime=0:30:00
