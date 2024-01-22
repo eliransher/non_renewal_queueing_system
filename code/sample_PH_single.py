@@ -466,7 +466,7 @@ def main(args):
 
     for ind in range(args.num_examples):
 
-        a_size = np.random.randint(1, 400)
+        a_size = np.random.randint(1, 10)
         print(a_size)
 
         elements = [0, 1, 2]
@@ -501,9 +501,9 @@ def main(args):
 
 def parse_arguments(argv):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--num_examples', type=int, help='number of ph folders', default=10)
+    parser.add_argument('--num_examples', type=int, help='number of ph folders', default=1)
     parser.add_argument('--num_moms', type=int, help='number of ph folders', default=10)
-    parser.add_argument('--num_arrivals', type=int, help='number of ph examples in one file', default=1500000)
+    parser.add_argument('--num_arrivals', type=int, help='number of ph examples in one file', default=15000)
     parser.add_argument('--data_path', type=str, help='where to save the file', default=r'C:\Users\user\workspace\data\ph_random\ph_for_feed_forward')
     args = parser.parse_args(argv)
 

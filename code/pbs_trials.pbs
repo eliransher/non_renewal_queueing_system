@@ -1,0 +1,13 @@
+#!/bin/sh
+
+#PBS -l select=1:ncpus=3
+#PBS -l select=mem=10 GB
+#PBS -l walltime=0:30:00
+#PBS -N PBS_trial
+#PBS -m abe
+#PBS -M eliransH@ariel.ac.il
+
+
+
+source /home/elirans/project/queues/bin/activate
+python /home/elirans/project/non_renewal_queueing_system/code/sample_PH_single.py
