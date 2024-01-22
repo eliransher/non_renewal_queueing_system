@@ -1,10 +1,11 @@
 #!/bin/sh
 
+#PBS -q default
+#PBS -N PBS_trial
 #PBS -l select=1:ncpus=3
 #PBS -l walltime=0:30:00
-#PBS -N PBS_trial
 #PBS -m abe
-#PBS -M eliransH@ariel.ac.il
+#PBS -M eliransh@ariel.ac.il
 
 
 
