@@ -350,6 +350,29 @@ for sample in range(5000):
         pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
 
 
+        ###############################
+        ######### Full system #########
+        ###############################
+
+        ####### Input ################
+
+        inp_full_system = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0), np.array(moms_ser)))
+
+        ###############################
+        ########### output ############
+
+        out_full = (out_steady_0, out_steady_1)
+
+        out_full_inter = (out_depart_0, out_depart_1)
+
+
+
+        path_sys = '/scratch/eliransc/non_renewal/full_system'
+
+        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'full_sys_' + str(model_num) + '.pkl'
+        full_path_sys = os.path.join(path_sys, file_name)
+        pkl.dump((inp_full_system, out_full, out_full_inter), open(full_path_sys, 'wb'))
+
 
 
     except:
