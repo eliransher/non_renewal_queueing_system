@@ -3,7 +3,8 @@ import sys
 sys.path.append(r'C:\Users\user\workspace\butools2\Python')
 sys.path.append('/home/d/dkrass/eliransc/Python')
 sys.path.append('/home/eliransc/projects/def-dkrass/eliransc/butools/Python')
-
+sys.path.append('/home/elirans/project/non_renewal_queueing_system/butools2/Python/butools')
+sys.path.append('/home/elirans/project/non_renewal_queueing_system/butools2/Python')
 import os
 
 import argparse
