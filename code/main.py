@@ -320,7 +320,7 @@ for sample in range(5000):
 
         station = 0
 
-        depart_1_moms = [ (np.array(n_Queue_single_station.inter_departures[station])**mom).mean() for mom in range(1,11)]
+        depart_1_moms = [(np.array(n_Queue_single_station.inter_departures[station])**mom).mean() for mom in range(1,11)]
 
         out_steady_0 = n_Queue_single_station.get_steady_single_station()[0]
 
