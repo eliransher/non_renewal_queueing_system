@@ -88,7 +88,7 @@ class N_Queue_single_station:
         for station in range(num_stations):
             self.servers.append(simpy.Resource(self.env, capacity=1))
             self.num_cust_durations.append(
-                np.zeros(500))  ## the time duration of each each state (state= number of cusotmers in the system)
+                np.zeros(2000))  ## the time duration of each each state (state= number of cusotmers in the system)
             self.df_waiting_times.append(pd.DataFrame([]))  # is a dataframe the holds all information waiting time
             self.num_cust_sys.append(0)
             self.last_event_time.append(0)
@@ -239,7 +239,7 @@ for sample in range(5000):
         moms_ser = {}
         for station in range( num_stations):
             services = get_ph()
-            rate = np.random.uniform(0.5, 0.85)
+            rate = np.random.uniform(0.5, 0.65)
             ser_norm = services[3] * rate
 
             A = services[1] / rate
