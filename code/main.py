@@ -220,7 +220,7 @@ def get_ph():
 
 dump = False
 
-for sample in range(1):
+for sample in range(5000):
 
     try:
 
