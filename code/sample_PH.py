@@ -760,7 +760,7 @@ def main(args):
     print('The current path is:')
     print(os.getcwd())
     if sys.platform == 'linux':
-        data_path = '/scratch/d/dkrass/eliransc/ph_exampels'
+        data_path = '/scratch/d/dkrass/eliransc/ph_examples'
     else:
         data_path = r'C:\Users\user\workspace\data\ph_examples'
 
