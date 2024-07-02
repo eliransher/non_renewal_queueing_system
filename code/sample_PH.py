@@ -800,7 +800,7 @@ def main(args):
             except:
                 print('unable to sample')
 
-        batch_num = np.random.randint(1, 1000000)
+        batch_num = np.random.randint(1, 100000000)
         batch_name = 'batch_size_' + str(batch_size) + '_min_ph_size_' + str(min_ph_size) + '_max_ph_size_' + str(max_ph_size) + \
                      'batch_num_' + str(batch_num)+  '.pkl'
 
