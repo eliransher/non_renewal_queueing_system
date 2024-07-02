@@ -772,7 +772,7 @@ def main(args):
 
 
 
-    batch_size = 4
+    batch_size = 3
     min_ph_size = 100
     max_ph_size = 400
 
@@ -793,7 +793,7 @@ def main(args):
             y_vals = compute_pdf_within_range(x_vals, s_arrival, A_arrival)
 
             try:
-                arrivals = SamplesFromPH(ml.matrix(s_arrival), A_arrival, 50)
+                arrivals = SamplesFromPH(ml.matrix(s_arrival), A_arrival, 555000)
                 moms = np.array(compute_first_n_moments(s_arrival, A_arrival, 10)).flatten()
                 tot_data = (s_arrival, A_arrival, moms, arrivals)
                 ph_list.append(tot_data)
@@ -806,8 +806,6 @@ def main(args):
 
 
         pkl.dump(ph_list, open(os.path.join(data_path,batch_name)  ,'wb'))
-
-
 
 
 
