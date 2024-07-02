@@ -202,7 +202,7 @@ class N_Queue_single_station:
 
 def get_ph():
     if sys.platform == 'linux':
-        path = '/scratch/eliransc/ph_random/medium_ph_1'
+        path = '/scratch/eliransc/ph_random/ph_examples'
     else:
         path = r'C:\Users\user\workspace\data\ph_random\ph_mean_1'
 
@@ -221,8 +221,6 @@ def get_ph():
 dump = True
 
 for sample in range(5000):
-
-
 
     begin = time.time()
     num_stations = 2
