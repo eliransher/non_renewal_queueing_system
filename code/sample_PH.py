@@ -792,17 +792,20 @@ def main(args):
             x_vals = np.linspace(0, 5, 70)
             y_vals = compute_pdf_within_range(x_vals, s_arrival, A_arrival)
 
-            arrivals = SamplesFromPH(ml.matrix(s_arrival), A_arrival, 50)
-            moms = np.array(compute_first_n_moments(s_arrival, A_arrival, 10)).flatten()
-            tot_data = (s_arrival, A_arrival, moms, arrivals)
-            ph_list.append(tot_data)
+            try:
+                arrivals = SamplesFromPH(ml.matrix(s_arrival), A_arrival, 50)
+                moms = np.array(compute_first_n_moments(s_arrival, A_arrival, 10)).flatten()
+                tot_data = (s_arrival, A_arrival, moms, arrivals)
+                ph_list.append(tot_data)
+            except:
+                print('unable to sample')
 
         batch_num = np.random.randint(1, 1000000)
         batch_name = 'batch_size_' + str(batch_size) + '_min_ph_size_' + str(min_ph_size) + '_max_ph_size_' + str(max_ph_size) + \
                      'batch_num_' + str(batch_num)+  '.pkl'
 
 
-        pkl.dump(ph_list, open(r'C:/Users/user/workspace/data/ph_examples/' + batch_name ,'wb'))
+        pkl.dump(ph_list, open(os.path.join(data_path,batch_name)  ,'wb'))
 
 
 
