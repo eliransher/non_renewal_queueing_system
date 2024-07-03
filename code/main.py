@@ -238,7 +238,7 @@ for sample in range(5000):
     moms_ser = {}
     for station in range( num_stations):
         services = get_ph()
-        rate = np.random.uniform(0.5, 0.65)
+        rate = np.random.uniform(0.5, 0.95)
         ser_norm = services[3] * rate
 
         A = services[1] / rate
