@@ -202,7 +202,7 @@ class N_Queue_single_station:
 
 def get_ph():
     if sys.platform == 'linux':
-        path = '/scratch/eliransc/ph_random/ph_examples'
+        path = '/scratch/eliransc/ph_examples'
     else:
         path = r'C:\Users\user\workspace\data\ph_random\ph_mean_1'
 
