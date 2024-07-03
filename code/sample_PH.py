@@ -773,8 +773,8 @@ def main(args):
 
 
     batch_size = 3
-    min_ph_size = 100
-    max_ph_size = 400
+    min_ph_size = 400
+    max_ph_size = 500
 
     for example in range(500):
         ph_list = []
