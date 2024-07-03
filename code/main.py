@@ -84,11 +84,12 @@ class N_Queue_single_station:
 
         self.services = services
         self.arrivals = arrivals_norm
+        self.num_steady_size = 2000
 
         for station in range(num_stations):
             self.servers.append(simpy.Resource(self.env, capacity=1))
             self.num_cust_durations.append(
-                np.zeros(2000))  ## the time duration of each each state (state= number of cusotmers in the system)
+                np.zeros(self.num_steady_size))  ## the time duration of each each state (state= number of cusotmers in the system)
             self.df_waiting_times.append(pd.DataFrame([]))  # is a dataframe the holds all information waiting time
             self.num_cust_sys.append(0)
             self.last_event_time.append(0)
@@ -197,7 +198,7 @@ class N_Queue_single_station:
         for station in range(self.num_stations):
             steady_list.append(self.num_cust_durations[station] / self.num_cust_durations[station].sum())
 
-        return np.array(steady_list).reshape(self.num_stations, 500)
+        return np.array(steady_list).reshape(self.num_stations, self.num_steady_size)
 
 
 def get_ph():
