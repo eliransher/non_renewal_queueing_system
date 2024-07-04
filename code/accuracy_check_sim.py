@@ -264,7 +264,6 @@ for sample in range(25):
         inp_depart_0 = np.log(inp_depart_0)
 
         ###############################
-
         ########### output ############
 
         station = 0
