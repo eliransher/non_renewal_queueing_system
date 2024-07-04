@@ -292,7 +292,7 @@ for sample in range(1):
 
 
 
-        path_depart_0 = '/scratch/eliransc/non_renewal/accuracy_check/depart_0'
+        path_depart_0 = '/scratch/eliransc/accuracy_check/depart_0'
         path_depart_0 = os.path.join(path_depart_0, str(model_num))
         if not os.path.exists(path_depart_0):
             os.mkdir(path_depart_0)
@@ -327,7 +327,7 @@ for sample in range(1):
 
         out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-        path_depart_1 = '/scratch/eliransc/non_renewal/accuracy_check/depart_1'
+        path_depart_1 = '/scratch/eliransc/accuracy_check/depart_1'
         path_depart_1 = os.path.join(path_depart_1, str(model_num))
         if not os.path.exists(path_depart_1):
             os.mkdir(path_depart_1)
@@ -352,7 +352,7 @@ for sample in range(1):
         out_steady_0 = n_Queue_single_station.get_steady_single_station()[0]
 
 
-        path_steady_0 = '/scratch/eliransc/non_renewal/accuracy_check/steady_0'
+        path_steady_0 = '/scratch/eliransc/accuracy_check/steady_0'
         path_steady_0 = os.path.join(path_steady_0, str(model_num))
         if not os.path.exists(path_steady_0):
             os.mkdir(path_steady_0)
@@ -376,7 +376,7 @@ for sample in range(1):
 
         out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
-        path_steady_1 = '/scratch/eliransc/non_renewal/accuracy_check/steady_1'
+        path_steady_1 = '/scratch/eliransc/accuracy_check/steady_1'
         path_steady_1 = os.path.join(path_steady_1, str(model_num))
         if not os.path.exists(path_steady_1):
             os.mkdir(path_steady_1)
@@ -401,7 +401,7 @@ for sample in range(1):
         out_full = (out_steady_0, out_steady_1)
         out_full_inter = (out_depart_0, out_depart_1)
 
-        path_sys = '/scratch/eliransc/non_renewal/accuracy_check/full_system'
+        path_sys = '/scratch/eliransc/accuracy_check/full_system'
         path_sys = os.path.join(path_sys, str(model_num))
 
         if not os.path.exists(path_sys):
