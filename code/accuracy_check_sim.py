@@ -224,10 +224,7 @@ dump = True
 for sample in range(25):
 
     model_num = np.random.randint(1, 1000000)
-
-
     num_stations = 2
-
     arrivals = get_ph()
     rate = 1  # np.random.uniform(0.5, 0.95)
 
@@ -262,10 +259,6 @@ for sample in range(25):
 
         input_ = np.concatenate((moms_arrive, moms_ser[0]), axis=0)
         output = n_Queue_single_station.get_steady_single_station()
-
-
-
-
 
         inp_depart_0 = np.concatenate((moms_arrive, moms_ser[0]))
         inp_depart_0 = np.log(inp_depart_0)
