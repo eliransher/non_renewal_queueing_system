@@ -225,7 +225,7 @@ for sample in range(1):
 
     model_num = np.random.randint(1, 1000000)
 
-    begin = time.time()
+
     num_stations = 2
 
     arrivals = get_ph()
@@ -255,15 +255,17 @@ for sample in range(1):
 
     for iteration in range(10):
 
+        print(model_num)
+
         n_Queue_single_station = N_Queue_single_station(lamda, mu, sim_time, num_stations, services_times, arrivals_norm)
         n_Queue_single_station.run()
 
         input_ = np.concatenate((moms_arrive, moms_ser[0]), axis=0)
         output = n_Queue_single_station.get_steady_single_station()
 
-        end = time.time()
 
-        print(end-begin)
+
+
 
         inp_depart_0 = np.concatenate((moms_arrive, moms_ser[0]))
         inp_depart_0 = np.log(inp_depart_0)
