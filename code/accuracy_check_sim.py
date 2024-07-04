@@ -221,7 +221,7 @@ def get_ph():
 
 dump = True
 
-for sample in range(1):
+for sample in range(25):
 
     model_num = np.random.randint(1, 1000000)
 
@@ -249,7 +249,7 @@ for sample in range(1):
         moms_ser[station] = np.array(compute_first_n_moments(a, A, 10)).flatten()
         services_times[station] = ser_norm
 
-    sim_time = 300
+    sim_time = 30000000
     mu = 1.0
     lamda = rate
 
