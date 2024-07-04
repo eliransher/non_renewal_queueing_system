@@ -290,18 +290,15 @@ for sample in range(1):
 
         out_depart_0 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0)))
 
-
-
-        path_depart_0 = '/scratch/eliransc/accuracy_check/depart_0'
-        path_depart_0 = os.path.join(path_depart_0, str(model_num))
-        if not os.path.exists(path_depart_0):
-            os.mkdir(path_depart_0)
-
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs_' + str(model_num)+ '.pkl'
-
-        full_path_depart_0 = os.path.join(path_depart_0, file_name)
-
         if dump:
+
+            path_depart_0 = '/scratch/eliransc/accuracy_check/depart_0'
+            path_depart_0 = os.path.join(path_depart_0, str(model_num))
+            file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs_' + str(model_num)+'_iteration_'+ str(iteration)+ '.pkl'
+            full_path_depart_0 = os.path.join(path_depart_0, file_name)
+
+            if not os.path.exists(path_depart_0):
+                os.mkdir(path_depart_0)
 
             pkl.dump((inp_depart_0, out_depart_0), open(full_path_depart_0, 'wb'))
 
@@ -332,7 +329,7 @@ for sample in range(1):
         if not os.path.exists(path_depart_1):
             os.mkdir(path_depart_1)
 
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs_' + str(model_num)+ '.pkl'
+        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs_' + str(model_num) +'_iteration_'+ str(iteration)+ '.pkl'
         full_path_depart_1 = os.path.join(path_depart_1, file_name)
         if dump:
             pkl.dump((inp_depart_1, out_depart_1), open(full_path_depart_1, 'wb'))
@@ -358,7 +355,7 @@ for sample in range(1):
             os.mkdir(path_steady_0)
 
 
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs_' + str(model_num)+ '.pkl'
+        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs_' + str(model_num)+'_iteration_'+ str(iteration)+ '.pkl'
         full_path_steady_0 = os.path.join(path_steady_0, file_name)
         if dump:
             pkl.dump((inp_steady_0, out_steady_0), open(full_path_steady_0, 'wb'))
@@ -381,7 +378,7 @@ for sample in range(1):
         if not os.path.exists(path_steady_1):
             os.mkdir(path_steady_1)
 
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs_' + str(model_num)+ '.pkl'
+        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs_' + str(model_num)+'_iteration_'+ str(iteration)+ '.pkl'
         full_path_steady_1 = os.path.join(path_steady_1, file_name)
         if dump:
             pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
@@ -407,7 +404,7 @@ for sample in range(1):
         if not os.path.exists(path_sys):
             os.mkdir(path_sys)
 
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'full_sys_multi_corrs_' + str(model_num) + '.pkl'
+        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'full_sys_multi_corrs_' + str(model_num) +'_iteration_'+ str(iteration)+ '.pkl'
         full_path_sys = os.path.join(path_sys, file_name)
         pkl.dump((inp_full_system, out_full, out_full_inter), open(full_path_sys, 'wb'))
 
