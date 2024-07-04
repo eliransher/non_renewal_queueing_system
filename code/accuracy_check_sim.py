@@ -225,36 +225,35 @@ for sample in range(1):
 
     model_num = np.random.randint(1, 1000000)
 
+    begin = time.time()
+    num_stations = 2
+
+    arrivals = get_ph()
+    rate = 1  # np.random.uniform(0.5, 0.95)
+
+    arrivals_norm = arrivals[3] / rate
+    A = arrivals[1] * rate
+    a = arrivals[0]
+    moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
+
+    services_times = {}
+    moms_ser = {}
+    for station in range(num_stations):
+        services = get_ph()
+        rate = np.random.uniform(0.5, 0.95)
+        ser_norm = services[3] * rate
+
+        A = services[1] / rate
+        a = services[0]
+
+        moms_ser[station] = np.array(compute_first_n_moments(a, A, 10)).flatten()
+        services_times[station] = ser_norm
+
+    sim_time = 300
+    mu = 1.0
+    lamda = rate
+
     for iteration in range(10):
-
-        begin = time.time()
-        num_stations = 2
-
-        arrivals = get_ph()
-        rate = 1 # np.random.uniform(0.5, 0.95)
-
-        arrivals_norm = arrivals[3]/rate
-        A = arrivals[1]*rate
-        a = arrivals[0]
-        moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
-
-        services_times = {}
-        moms_ser = {}
-        for station in range( num_stations):
-            services = get_ph()
-            rate = np.random.uniform(0.5, 0.95)
-            ser_norm = services[3] * rate
-
-            A = services[1] / rate
-            a = services[0]
-
-            moms_ser[station] = np.array(compute_first_n_moments(a, A, 10)).flatten()
-            services_times[station] = ser_norm
-
-
-        sim_time = 300
-        mu = 1.0
-        lamda = rate
 
         n_Queue_single_station = N_Queue_single_station(lamda, mu, sim_time, num_stations, services_times, arrivals_norm)
         n_Queue_single_station.run()
