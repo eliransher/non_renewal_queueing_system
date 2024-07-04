@@ -221,7 +221,7 @@ def get_ph():
 
 dump = True
 
-for sample in range(5000):
+for sample in range(1):
 
     model_num = np.random.randint(1, 1000000)
 
