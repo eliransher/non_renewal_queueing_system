@@ -29,6 +29,7 @@ import torch.optim as optim
 import math
 
 
+file_name_used = []
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
 path = '/scratch/eliransc/non_renewal/full_system'
 
@@ -56,7 +57,7 @@ for batch_num in tqdm(range(len(os.listdir(path_dump_data_depart_0)), num_batche
         inp, out_depart, out_steady = pkl.load(open(os.path.join(path, true_files[file_num]), 'rb'))
         out_depart = np.concatenate((out_depart[0], out_depart[1]))
         out_steady = np.concatenate((out_steady[0], out_steady[1]))
-
+        file_name_used.append(true_files[file_num])
         if batch_ind > 0:
             input_full = np.concatenate((input_full, inp.reshape(1, inp.shape[0])), axis=0)
             output_depart_full = np.concatenate((output_depart_full, out_depart.reshape(1, out_depart.shape[0])),
@@ -72,3 +73,4 @@ for batch_num in tqdm(range(len(os.listdir(path_dump_data_depart_0)), num_batche
 
     pkl.dump((input_full, output_depart_full, output_steady_full),
              open(os.path.join(path_dump_data_depart_0, batch_name), 'wb'))
+    pkl.dump(file_name_used, open('/scratch/eliransc/non_renewal/file_used_full_sys.pkl', 'wb'))

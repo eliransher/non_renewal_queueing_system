@@ -32,6 +32,7 @@ import math
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
 path = '/scratch/eliransc/non_renewal/steady_1'
 
+file_name_used = []
 if not os.path.exists(path):
     os.mkdir(path)
 files = os.listdir(path)
@@ -53,7 +54,7 @@ for batch_num in tqdm(range(len(os.listdir(path_dump_data_depart_0)), num_batche
     for batch_ind in range(batch_size):
         file_num = batch_num * batch_size + batch_ind
         inp, out = pkl.load(open(os.path.join(path, true_files[file_num]), 'rb'))
-
+        file_name_used.append(true_files[file_num])
         if batch_ind > 0:
             input_depart_0 = np.concatenate((input_depart_0, inp.reshape(1, inp.shape[0])), axis=0)
             output_depart_0 = np.concatenate((output_depart_0, out.reshape(1, out.shape[0])), axis=0)
@@ -64,3 +65,4 @@ for batch_num in tqdm(range(len(os.listdir(path_dump_data_depart_0)), num_batche
     batch_name = 'steady_1_from_'+cluster_name+'_batch_num_' + str(batch_num)+'.pkl'
 
     pkl.dump((input_depart_0, output_depart_0), open(os.path.join(path_dump_data_depart_0, batch_name), 'wb'))
+    pkl.dump(file_name_used, open('/scratch/eliransc/non_renewal/file_used_steady_1.pkl', 'wb'))
