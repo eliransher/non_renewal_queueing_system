@@ -28,8 +28,13 @@ import torch.nn.functional as F
 import torch.optim as optim
 import math
 
+try:
 
-file_name_used = []
+    file_name_used = pkl.load( open('/scratch/eliransc/non_renewal/file_used_full_sys.pkl', 'rb'))
+
+except:
+    file_name_used = []
+
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
 path = '/scratch/eliransc/non_renewal/full_system'
 
@@ -54,7 +59,11 @@ for batch_num in tqdm(range(len(os.listdir(path_dump_data_depart_0)), num_batche
 
     for batch_ind in range(batch_size):
         file_num = batch_num * batch_size + batch_ind
-        inp, out_depart, out_steady = pkl.load(open(os.path.join(path, true_files[file_num]), 'rb'))
+        try:
+            inp, out_depart, out_steady = pkl.load(open(os.path.join(path, true_files[file_num]), 'rb'))
+        except:
+            print('keep the same inputs')
+
         out_depart = np.concatenate((out_depart[0], out_depart[1]))
         out_steady = np.concatenate((out_steady[0], out_steady[1]))
         file_name_used.append(true_files[file_num])

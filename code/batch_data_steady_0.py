@@ -53,7 +53,10 @@ for batch_num in tqdm(range(len(os.listdir(path_dump_data_depart_0)), num_batche
     output_depart_0 = np.array([])
     for batch_ind in range(batch_size):
         file_num = batch_num * batch_size + batch_ind
-        inp, out = pkl.load(open(os.path.join(path, true_files[file_num]), 'rb'))
+        try:
+            inp, out = pkl.load(open(os.path.join(path, true_files[file_num]), 'rb'))
+        except:
+            print('keep the same')
         file_name_used.append(true_files[file_num])
         if batch_ind > 0:
             input_depart_0 = np.concatenate((input_depart_0, inp.reshape(1, inp.shape[0])), axis=0)
