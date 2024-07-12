@@ -291,7 +291,7 @@ for sample in range(5000):
         model_num = np.random.randint(1, 1000000)
 
         path_depart_0 = '/scratch/eliransc/non_renewal/depart_0'
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs_' + str(model_num)+ '.pkl'
+        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_0 = os.path.join(path_depart_0,file_name)
 
         if dump:
@@ -322,7 +322,7 @@ for sample in range(5000):
 
         path_depart_1 = '/scratch/eliransc/non_renewal/depart_1'
 
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs_' + str(model_num)+ '.pkl'
+        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_1 = os.path.join(path_depart_1, file_name)
         if dump:
             pkl.dump((inp_depart_1, out_depart_1), open(full_path_depart_1, 'wb'))
@@ -344,7 +344,7 @@ for sample in range(5000):
 
         path_steady_0 = '/scratch/eliransc/non_renewal/steady_0'
 
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs_' + str(model_num)+ '.pkl'
+        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_steady_0 = os.path.join(path_steady_0, file_name)
         if dump:
             pkl.dump((inp_steady_0, out_steady_0), open(full_path_steady_0, 'wb'))
@@ -363,7 +363,7 @@ for sample in range(5000):
 
         path_steady_1 = '/scratch/eliransc/non_renewal/steady_1'
 
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs_' + str(model_num)+ '.pkl'
+        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_steady_1 = os.path.join(path_steady_1, file_name)
         if dump:
             pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
@@ -385,7 +385,7 @@ for sample in range(5000):
 
         path_sys = '/scratch/eliransc/non_renewal/full_system'
 
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'full_sys_multi_corrs_' + str(model_num) + '.pkl'
+        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'full_sys_multi_corrs1_' + str(model_num) + '.pkl'
         full_path_sys = os.path.join(path_sys, file_name)
         pkl.dump((inp_full_system, out_full, out_full_inter), open(full_path_sys, 'wb'))
 
