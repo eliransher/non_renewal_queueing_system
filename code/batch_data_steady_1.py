@@ -32,12 +32,14 @@ import math
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
 path = '/scratch/eliransc/non_renewal/steady_1'
 
-file_name_used = []
 if not os.path.exists(path):
     os.mkdir(path)
 files = os.listdir(path)
 
 true_files = [file for file in files if 'multi' in file]
+file_name_used = pkl.load( open('/scratch/eliransc/non_renewal/file_used_steady_1.pkl', 'rb'))
+true_files = [file for file in true_files if file not in file_name_used]
+
 batch_size = 128
 
 path_dump_data_depart_0 = '/scratch/eliransc/non_renewal/training_batches/steady_1'
