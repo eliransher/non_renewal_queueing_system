@@ -1,9 +1,5 @@
-
-from sklearn.model_selection import train_test_split
-
 import os
 import numpy as np
-import pandas as pd
 from tqdm import tqdm
 import pickle as pkl
 
@@ -29,7 +25,7 @@ if not os.path.exists(path_dump_data_depart_0):
 num_batches = int(len(true_files)/batch_size)
 
 
-for batch_num in tqdm(range(len(os.listdir(path_dump_data_depart_0)), num_batches)):
+for batch_num in tqdm(range( num_batches)):
 
     input_depart_0 = np.array([])
     output_depart_0 = np.array([])
@@ -47,7 +43,7 @@ for batch_num in tqdm(range(len(os.listdir(path_dump_data_depart_0)), num_batche
             input_depart_0 = inp.reshape(1, inp.shape[0])
             output_depart_0 = out.reshape(1, out.shape[0])
 
-    batch_name = 'steady_1_from_'+cluster_name+'_batch_num_' + str(batch_num)+'.pkl'
+    batch_name = 'steady_1_from_'+cluster_name+'_batch_num_' + str(batch_num+len(os.listdir(path_dump_data_depart_0)))+'.pkl'
 
     pkl.dump((input_depart_0, output_depart_0), open(os.path.join(path_dump_data_depart_0, batch_name), 'wb'))
     pkl.dump(file_name_used, open('/scratch/eliransc/non_renewal/file_used_steady_1.pkl', 'wb'))

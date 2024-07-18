@@ -1,32 +1,8 @@
-from fastai.vision.all import *
-from fastbook import *
-from sklearn.model_selection import train_test_split
-matplotlib.rc('image', cmap='Greys')
 import os
 import numpy as np
-import pandas as pd
 from tqdm import tqdm
 import pickle as pkl
-import torch
-from numpy.linalg import matrix_power
-from scipy.stats import rv_discrete
-from scipy.linalg import expm, sinm, cosm
-from numpy.linalg import matrix_power
-import os
-import numpy as np
-import pandas as pd
-from tqdm import tqdm
-import pickle as pkl
-from scipy.linalg import expm, sinm, cosm
-from numpy.linalg import matrix_power
-from scipy.special import factorial
-import torch
-import torchvision
-from torchvision import transforms, datasets
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-import math
+
 
 file_name_used = []
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
