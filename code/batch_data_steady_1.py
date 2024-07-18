@@ -1,6 +1,5 @@
 
 from sklearn.model_selection import train_test_split
-matplotlib.rc('image', cmap='Greys')
 
 import os
 import numpy as np
