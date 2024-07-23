@@ -193,10 +193,16 @@ def main():
     len(data_paths)
 
 
-    cur_time = int(10000*time.time())
-    seed = cur_time  # + len(os.listdir(data_path)) +
-    np.random.seed(int(seed/1000))
-    print(seed)
+    try:
+        cur_time = int(1000*time.time())
+        seed = cur_time  # + len(os.listdir(data_path)) +
+        np.random.seed(int(seed/1000))
+        print(seed)
+    except:
+        cur_time = int(time.time())
+        np.random.seed(cur_time)
+        print(seed)
+
 
 
 
