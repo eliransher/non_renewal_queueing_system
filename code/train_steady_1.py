@@ -203,8 +203,20 @@ def main():
         np.random.seed(cur_time)
         print(seed)
 
+    path = '/scratch/eliransc/non_renewal/training_corrs/steady_1'
+    file_list = os.listdir(path)
+    data_paths = [os.path.join(path, name) for name in file_list]
+    len(data_paths)
 
-
+    try:
+        cur_time = int(1000*time.time())
+        seed = cur_time  # + len(os.listdir(data_path)) +
+        np.random.seed(int(seed/1000))
+        print(seed)
+    except:
+        cur_time = int(time.time())
+        np.random.seed(cur_time)
+        print(seed)
 
 
     num_arrival_moms = 5
