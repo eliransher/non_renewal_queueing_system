@@ -31,7 +31,7 @@ from torch.utils.data import Dataset, DataLoader
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 m = nn.Softmax(dim=1)
 import matplotlib.pyplot as plt
-
+import time
 
 def queue_loss(predictions, targes, utilization):
     normalizing_const = utilization
@@ -186,8 +186,10 @@ class Net(nn.Module):
 
 def main():
 
-
-
+    cur_time = int(time.time())
+    seed = cur_time + np.random.randint(1, 1000)  # + len(os.listdir(data_path)) +
+    np.random.seed(seed)
+    print(seed)
 
     path = '/scratch/eliransc/non_renewal/training_corrs/steady_1'
     file_list = os.listdir(path)
@@ -317,7 +319,7 @@ def main():
 
         pkl.dump((compute_sum_error_list, valid_list, max_lag, max_power_1, max_power_2, epoch),
                  open(os.path.join(model_results_path, file_name_model_result), 'wb'))
-        pkl.dump(net, open(os.path.join(model_results_path, file_name_model), 'wb'))
+        pkl.dump(net, open(os.path.join(model_path, file_name_model), 'wb'))
 
 
 
