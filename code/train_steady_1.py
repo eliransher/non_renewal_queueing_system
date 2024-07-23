@@ -246,7 +246,7 @@ def main():
     net = Net(input_size, output_size).to(device)
     weight_decay = 5
     curr_lr = 0.01
-    EPOCHS = 200
+    EPOCHS = 300
     lr_second = 0.99
     lr_first = 0.75
 
