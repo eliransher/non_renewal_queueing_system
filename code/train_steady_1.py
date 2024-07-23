@@ -186,7 +186,7 @@ class Net(nn.Module):
 
 def main():
 
-    cur_time = int(time.time())
+    cur_time = int(10000*time.time())
     seed = cur_time + np.random.randint(1, 1000)  # + len(os.listdir(data_path)) +
     np.random.seed(seed)
     print(seed)
