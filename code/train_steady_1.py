@@ -186,15 +186,19 @@ class Net(nn.Module):
 
 def main():
 
-    cur_time = int(10000*time.time())
-    seed = cur_time + np.random.randint(1, 1000)  # + len(os.listdir(data_path)) +
-    np.random.seed(seed)
-    print(seed)
 
     path = '/scratch/eliransc/non_renewal/training_corrs/steady_1'
     file_list = os.listdir(path)
     data_paths = [os.path.join(path, name) for name in file_list]
     len(data_paths)
+
+
+    cur_time = int(10000*time.time())
+    seed = cur_time + np.random.randint(1, 1000)  # + len(os.listdir(data_path)) +
+    np.random.seed(seed)
+    print(seed)
+
+
 
 
     num_arrival_moms = 5
