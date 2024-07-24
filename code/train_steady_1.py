@@ -290,7 +290,7 @@ def main():
     model_num = np.random.randint(0, 1000000)
     file_name_model = 'model_' + str(model_num) + '_wd_' + str(weight_decay) + '_lr_' + str(curr_lr) + '_pow1_' + str(
         max_power_1) + '_pow2_' + str(max_power_2) + '_maxlag_' + str(max_lag) + '_layer_' + str(7) + '.pkl'
-    file_name_model_result = 'modelresults_' + str(model_num) + '_wd_' + str(weight_decay) + '_lr_' + str(
+    file_name_model_result = 'mmodelresults_' + str(model_num) + '_wd_' + str(weight_decay) + '_lr_' + str(
         curr_lr) + '_pow1_' + str(max_power_1) + '_pow2_' + str(max_power_2) + '_maxlag_' + str(
         max_lag) + '_layer_' + str(7) + '.pkl'
 
