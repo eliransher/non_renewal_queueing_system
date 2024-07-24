@@ -343,7 +343,7 @@ def main():
 
         pkl.dump((compute_sum_error_list, valid_list, max_lag, max_power_1, max_power_2, epoch),
                  open(os.path.join(model_results_path, file_name_model_result), 'wb'))
-        pkl.dump(net, open(os.path.join(model_path, file_name_model), 'wb'))
+        torch.save(net.state_dict(), os.path.join(model_path, file_name_model))
 
 
 
