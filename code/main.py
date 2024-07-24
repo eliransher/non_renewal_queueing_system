@@ -219,14 +219,34 @@ def get_ph():
     return data
 
 
+def get_ph_1():
+    if sys.platform == 'linux':
+        path = '/scratch/eliransc/ph_examples_scv_1'
+    else:
+        path = r'C:\Users\user\workspace\data\ph_random\ph_mean_1'
+
+    files = os.listdir(path)
+
+    file = np.random.choice(files)
+
+    data = pkl.load(open(os.path.join(path, file), 'rb'))
+
+    return data
+
+
 dump = True
+
+scv_1 = True
 
 for sample in range(5000):
     try:
         begin = time.time()
         num_stations = 2
+        if scv_1 == True:
+            arrivals = get_ph_1()
+        else:
+            arrivals = get_ph()
 
-        arrivals = get_ph()
         rate = 1 # np.random.uniform(0.5, 0.95)
 
         arrivals_norm = arrivals[3]/rate
@@ -286,13 +306,19 @@ for sample in range(5000):
                     r = np.corrcoef(x1**mom_1, y1**mom_2)
                     corrs_0.append(r[0, 1])
 
+        corr_leg = 1
+        x1 = np.array(n_Queue_single_station.inter_departures[station][:-corr_leg])
+        y1 = np.array(n_Queue_single_station.inter_departures[station][corr_leg:])
+        r = np.corrcoef(x1, y1)
+        correlation0 = r[0, 1]
+
         out_depart_0 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0)))
 
         model_num = np.random.randint(1, 1000000)
 
-        path_depart_0 = '/scratch/eliransc/non_renewal/depart_0'
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
-        full_path_depart_0 = os.path.join(path_depart_0,file_name)
+        path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_scv1'
+        file_name = 'correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
+        full_path_depart_0 = os.path.join(path_depart_0, file_name)
 
         if dump:
 
@@ -318,11 +344,18 @@ for sample in range(5000):
                     r = np.corrcoef(x1 ** mom_1, y1 ** mom_2)
                     corrs_1.append(r[0, 1])
 
+        corr_leg = 1
+        x1 = np.array(n_Queue_single_station.inter_departures[station][:-corr_leg])
+        y1 = np.array(n_Queue_single_station.inter_departures[station][corr_leg:])
+        r = np.corrcoef(x1, y1)
+        correlation1 = r[0, 1]
+
+
         out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-        path_depart_1 = '/scratch/eliransc/non_renewal/depart_1'
+        path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_scv1'
 
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
+        file_name = 'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_1 = os.path.join(path_depart_1, file_name)
         if dump:
             pkl.dump((inp_depart_1, out_depart_1), open(full_path_depart_1, 'wb'))
@@ -342,7 +375,7 @@ for sample in range(5000):
         out_steady_0 = n_Queue_single_station.get_steady_single_station()[0]
 
 
-        path_steady_0 = '/scratch/eliransc/non_renewal/steady_0'
+        path_steady_0 = '/scratch/eliransc/non_renewal/steady_0_scv1'
 
         file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_steady_0 = os.path.join(path_steady_0, file_name)
@@ -361,9 +394,9 @@ for sample in range(5000):
 
         out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
-        path_steady_1 = '/scratch/eliransc/non_renewal/steady_1'
+        path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_scv1'
 
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
+        file_name = 'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_steady_1 = os.path.join(path_steady_1, file_name)
         if dump:
             pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
@@ -380,14 +413,14 @@ for sample in range(5000):
         ###############################
         ########### output ############
 
-        out_full = (out_steady_0, out_steady_1)
-        out_full_inter = (out_depart_0, out_depart_1)
-
-        path_sys = '/scratch/eliransc/non_renewal/full_system'
-
-        file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'full_sys_multi_corrs1_' + str(model_num) + '.pkl'
-        full_path_sys = os.path.join(path_sys, file_name)
-        pkl.dump((inp_full_system, out_full, out_full_inter), open(full_path_sys, 'wb'))
+        # out_full = (out_steady_0, out_steady_1)
+        # out_full_inter = (out_depart_0, out_depart_1)
+        #
+        # path_sys = '/scratch/eliransc/non_renewal/full_system'
+        #
+        # file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'full_sys_multi_corrs1_' + str(model_num) + '.pkl'
+        # full_path_sys = os.path.join(path_sys, file_name)
+        # pkl.dump((inp_full_system, out_full, out_full_inter), open(full_path_sys, 'wb'))
 
 
     except:
