@@ -201,4 +201,4 @@ for ind in range(500):
     services_times[1] = services_times2[0]
 
     model_name = str(np.random.randint(0,100000))+'_large_corrs.pkl'
-    pkl.dump((arrivals_norm, services_times), open(os.path.join('/scratch/eliransc/ph_large_corrs', model_name)))
+    pkl.dump((arrivals_norm, services_times), open(os.path.join('/scratch/eliransc/non_renewal/ph_large_corrs', model_name)))
