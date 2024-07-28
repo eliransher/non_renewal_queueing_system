@@ -199,10 +199,12 @@ def sec_round(classifier, moms_arrive):
     return services_times, rate
 
 for ind in range(500):
+    try:
+        services_times, rate, arrivals_norm, moms_arrive = first_round(classifier)
+        services_times2, rate = sec_round(classifier, moms_arrive)
+        services_times[1] = services_times2[0]
 
-    services_times, rate, arrivals_norm, moms_arrive = first_round(classifier)
-    services_times2, rate = sec_round(classifier, moms_arrive)
-    services_times[1] = services_times2[0]
-
-    model_name = str(np.random.randint(0,100000))+'_large_corrs.pkl'
-    pkl.dump((arrivals_norm, services_times), open(os.path.join('/scratch/eliransc/ph_large_corrs', model_name), 'wb'))
+        model_name = str(np.random.randint(0,100000))+'_large_corrs.pkl'
+        pkl.dump((arrivals_norm, services_times), open(os.path.join('/scratch/eliransc/ph_large_corrs', model_name), 'wb'))
+    except:
+        print('bad input')
