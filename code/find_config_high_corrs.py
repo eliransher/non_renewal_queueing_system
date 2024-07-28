@@ -37,8 +37,12 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
 import sys
 
+# for cedar
+# corr_res_x, _ = pkl.load( open('/home/eliransc/projects/def-dkrass/eliransc/Notebooks/non_renewal/non_renewal/corr_res_depart_0.pkl', 'rb'))
 
-corr_res_x, _ = pkl.load( open('/home/eliransc/projects/def-dkrass/eliransc/Notebooks/non_renewal/non_renewal/corr_res_depart_0.pkl', 'rb'))
+# for narval
+corr_res_x, _ = pkl.load( open('/scratch/eliransc/corr_res_depart_0.pkl', 'rb'))
+
 
 df_moms = pd.DataFrame([])
 key = 0.4
