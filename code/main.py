@@ -362,7 +362,7 @@ for sample in range(5000):
 
         ####### Input ################
 
-        inp_steady_0 = np.concatenate((moms_arrive, moms_ser[1]))
+        inp_steady_0 = np.concatenate((moms_arrive, moms_ser[0]))
         inp_steady_0 = np.log(inp_steady_0)
 
         ###############################
