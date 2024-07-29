@@ -9,6 +9,7 @@ from scipy.linalg import expm, sinm, cosm
 from numpy.linalg import matrix_power
 from scipy.special import factorial
 import time
+import shutil
 
 is_print = False
 
@@ -264,10 +265,15 @@ for sample in range(5000):
         #     moms_ser[station] = np.array(compute_first_n_moments(a, A, 10)).flatten()
         #     services_times[station] = ser_norm
 
+
         files = os.listdir('/scratch/eliransc/ph_large_corrs')
         file = np.random.choice(files)
         arrivals_norm, services_times = pkl.load(open(os.path.join('/scratch/eliransc/ph_large_corrs', file), 'rb'))
 
+        print('moving: ', file)
+        src = os.path.join('/scratch/eliransc/ph_large_corrs', file)
+        dst = os.path.join('/scratch/eliransc/ph_large_corrs_used', file)
+        shutil.move(src, dst)
 
         sim_time = 30000000
         mu = 1.0
@@ -277,6 +283,8 @@ for sample in range(5000):
 
         n_Queue_single_station = N_Queue_single_station(lamda, mu, sim_time, num_stations, services_times, arrivals_norm)
         n_Queue_single_station.run()
+
+
 
         moms_arrive = []
         for mom in range(1, 11):

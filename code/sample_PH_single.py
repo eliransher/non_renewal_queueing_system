@@ -466,7 +466,7 @@ def main(args):
 
     for ind in range(args.num_examples):
 
-        a_size = np.random.randint(1, 10)
+        a_size = np.random.randint(20, 30)
         print(a_size)
 
         elements = [0, 1, 2]
