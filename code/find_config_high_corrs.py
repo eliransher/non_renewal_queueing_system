@@ -206,5 +206,6 @@ for ind in range(500):
 
         model_name = str(np.random.randint(0,100000))+'_large_corrs.pkl'
         pkl.dump((arrivals_norm, services_times), open(os.path.join('/scratch/eliransc/ph_large_corrs', model_name), 'wb'))
+        print('Succses')
     except:
         print('bad input')
