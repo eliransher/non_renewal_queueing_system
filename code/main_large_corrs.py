@@ -273,7 +273,7 @@ for sample in range(5000):
         print('moving: ', file)
         src = os.path.join('/scratch/eliransc/ph_large_corrs', file)
         dst = os.path.join('/scratch/eliransc/ph_large_corrs_used', file)
-        shutil.move(src, dst)
+
 
         sim_time = 30000000
         mu = 1.0
@@ -284,7 +284,7 @@ for sample in range(5000):
         n_Queue_single_station = N_Queue_single_station(lamda, mu, sim_time, num_stations, services_times, arrivals_norm)
         n_Queue_single_station.run()
 
-
+        shutil.move(src, dst)
 
         moms_arrive = []
         for mom in range(1, 11):
