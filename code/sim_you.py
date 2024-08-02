@@ -285,7 +285,7 @@ scv_1 = True
 for sample in range(5000):
     try:
         begin = time.time()
-        num_stations = 2
+        num_stations = 4
 
         rate = 1   # np.random.uniform(0.5, 0.95)
         a = np.array([0.0590414481559016, 1 - 0.0590414481559016])
@@ -311,7 +311,7 @@ for sample in range(5000):
             services_times[station] = exp_samp = np.random.exponential(means[station], 5000000)
 
 
-        sim_time = 50000000
+        sim_time = 30000000
         mu = 1.0
         lamda = rate
 

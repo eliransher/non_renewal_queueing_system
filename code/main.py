@@ -258,7 +258,7 @@ for sample in range(5000):
         moms_ser = {}
         for station in range( num_stations):
             services = get_ph()
-            rate = np.random.uniform(0.5, 0.95)
+            rate = np.random.uniform(0.01, 0.5)
             ser_norm = services[3] * rate
 
             A = services[1] / rate
@@ -316,7 +316,7 @@ for sample in range(5000):
 
         model_num = np.random.randint(1, 1000000)
 
-        path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_scv1'
+        path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_low_util'
         file_name = 'correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_0 = os.path.join(path_depart_0, file_name)
 
@@ -353,7 +353,7 @@ for sample in range(5000):
 
         out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-        path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_scv1'
+        path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_low_util'
 
         file_name = 'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_1 = os.path.join(path_depart_1, file_name)
@@ -373,7 +373,7 @@ for sample in range(5000):
         out_steady_0 = n_Queue_single_station.get_steady_single_station()[0]
 
 
-        path_steady_0 = '/scratch/eliransc/non_renewal/steady_0_scv1'
+        path_steady_0 = '/scratch/eliransc/non_renewal/steady_0_low_util'
 
         file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_steady_0 = os.path.join(path_steady_0, file_name)
@@ -392,7 +392,7 @@ for sample in range(5000):
 
         out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
-        path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_scv1'
+        path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_low_util'
 
         file_name = 'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_steady_1 = os.path.join(path_steady_1, file_name)
