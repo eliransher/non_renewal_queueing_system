@@ -215,7 +215,8 @@ class N_Queue_single_station:
 
         self.services = services
         self.arrivals = arrivals_norm
-        self.num_steady_size = 2000
+        self.num_steady_size = 15000
+
 
         for station in range(num_stations):
             self.sojourn[station] = []
@@ -403,9 +404,7 @@ for util1 in util1_list:
                     df.loc[curr_ind, 'GI3_scv'] = sch_dict[GI3]
                     df.loc[curr_ind, 'scv_tot'] = sch_dict[GI1] * sch_dict[GI2] * sch_dict[GI3]
 
-unused_inds = np.arange(df.shape[0])
 
-unused_inds = pkl.dump(unused_inds, open('unused_inds.pkl', 'wb'))
 
 for sample in range(5000):
 
@@ -420,7 +419,7 @@ for sample in range(5000):
     unused_inds.remove(ind)
     unused_inds = pkl.dump(unused_inds, open('unused_inds.pkl', 'wb'))
     print(ind)
-
+    ind = 736
     if df.loc[ind, 'scv_tot'] <= 1:
         sim_time = 15000000
     else:
@@ -466,10 +465,10 @@ for sample in range(5000):
     lamda = rate
 
     # lamda, mu, sim_time, num_stations, services, arrivals_norm, moms_arrive, moms_ser = pkl.load(open('sim_setting.pkl', 'rb'))
-
+    print('Starting simulation')
     n_Queue_single_station = N_Queue_single_station(lamda, mu, sim_time, num_stations, services_times, arrivals_norm)
     n_Queue_single_station.run()
-
+    print('Simulation ended')
     for station in range(num_stations):
         print(np.array(n_Queue_single_station.sojourn[station]).mean())
     print(np.array(n_Queue_single_station.sojourn_total).mean())
@@ -515,8 +514,8 @@ for sample in range(5000):
 
         model_num = np.random.randint(1, 1000000)
 
-        path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_scv1'
-        file_name = 'correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
+        path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_testset2'
+        file_name = 'testset2_' +str(ind)+'correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_0 = os.path.join(path_depart_0, file_name)
 
         if dump:

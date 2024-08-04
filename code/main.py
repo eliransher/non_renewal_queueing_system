@@ -221,7 +221,7 @@ def get_ph():
 
 def get_ph_1():
     if sys.platform == 'linux':
-        path = '/scratch/eliransc/ph_examples_scv_1'
+        path = '/scratch/eliransc/ph_examples'
     else:
         path = r'C:\Users\user\workspace\data\ph_random\ph_mean_1'
 
