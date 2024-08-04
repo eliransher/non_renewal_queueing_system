@@ -472,7 +472,7 @@ for sample in range(5000):
         print('Simulation ended')
 
 
-        sim_train = False
+        sim_train = True
         if sim_train:
             input_ = np.concatenate((moms_arrive, moms_ser[0]), axis=0)
             output = n_Queue_single_station.get_steady_single_station()
