@@ -236,7 +236,7 @@ def get_ph_1():
 
 dump = True
 
-scv_1 = True
+scv_1 = False
 
 for sample in range(5000):
     # try:
