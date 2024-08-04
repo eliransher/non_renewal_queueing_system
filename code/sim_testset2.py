@@ -470,9 +470,7 @@ for sample in range(5000):
         n_Queue_single_station = N_Queue_single_station(lamda, mu, sim_time, num_stations, services_times, arrivals_norm)
         n_Queue_single_station.run()
         print('Simulation ended')
-        for station in range(num_stations):
-            print(np.array(n_Queue_single_station.sojourn[station]).mean())
-        print(np.array(n_Queue_single_station.sojourn_total).mean())
+
 
         sim_train = False
         if sim_train:
