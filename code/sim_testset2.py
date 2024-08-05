@@ -422,7 +422,7 @@ for sample in range(1):
         print(ind)
 
         if df.loc[ind, 'scv_tot'] <= 1:
-            sim_time = 15000000
+            sim_time = 25000000
         else:
             sim_time = 45000000
 
