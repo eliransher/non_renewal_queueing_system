@@ -18,7 +18,7 @@ batch_size = 128
 
 path_dump_data_depart_0 = '/scratch/eliransc/non_renewal/training_corrs/depart_0'
 num_batches = int(len(true_files)/batch_size)
-
+print(num_batches,len(true_files) )
 
 for batch_num in tqdm(range(num_batches)):
 
@@ -51,6 +51,7 @@ path = '/scratch/eliransc/non_renewal/depart_1_scv1'
 files = os.listdir(path)
 true_files = [file for file in files if 'multi' in file]
 len(true_files)
+print(num_batches,len(true_files) )
 
 true_files = true_files[:25000]
 batch_size = 128
@@ -94,6 +95,7 @@ batch_size = 128
 
 path_dump_data_steady_1 = '/scratch/eliransc/non_renewal/training_corrs/steady_1'
 num_batches = int(len(true_files)/batch_size)
+print(num_batches,len(true_files) )
 
 
 for batch_num in tqdm(range(num_batches)):
