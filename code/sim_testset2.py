@@ -99,7 +99,7 @@ def give_samples_moms_hyper(scv, rho):
 
     a = np.array([p, 1 - p])
     A = np.array([[-lmbda1, 0], [0, -lmbda2]])
-    samples = SamplesFromPH(ml.matrix(a), A, 9000000)
+    samples = SamplesFromPH(ml.matrix(a), A, 10000000)
 
     moms = []
     for mom in range(1, 6):
@@ -108,14 +108,15 @@ def give_samples_moms_hyper(scv, rho):
     return (moms, samples)
 
 def give_samples_moms_log_normal(scv, rho):
+
     mu_true = rho
-    sigma_true =  ((rho**2)*scv)**0.5
+    sigma_true = ((rho**2)*scv)**0.5
     # Calculate the parameters of the underlying normal distribution
     mu = np.log(mu_true**2 / np.sqrt(sigma_true**2 + mu_true**2))
     sigma = np.sqrt(np.log(1 + (sigma_true**2 / mu_true**2)))
     # Generate samples
 
-    samples = np.random.lognormal(mu, sigma, 15000000)  # Generate 1000 samples
+    samples = np.random.lognormal(mu, sigma, 30000000)  # Generate 1000 samples
     moms = []
     for mom in range(1,6):
         moms.append((samples**mom).mean())
@@ -129,7 +130,7 @@ def give_samples_moms_gamma(scv, rho):
     scale = rho/shape
 
     # Generate samples
-    samples = np.random.gamma(shape, scale, 15000000)  # Generate 1000 samples
+    samples = np.random.gamma(shape, scale, 1500000)  # Generate 1000 samples
     # print(samples.mean(), ((samples**2).mean()-samples.mean()**2)/samples.mean()**2)
 
     moms = []
@@ -383,7 +384,7 @@ util_ranges = np.linspace(0.11,0.96,18)
 
 GI1_3_list = ['erlang', 'ln4']
 GI2_list = ['erlang', 'ln25', 'm', 'h4', 'ln4', 'g4']
-util1_list = [0.7,0.9]
+util1_list = [0.7, 0.9]
 
 sch_dict = {'erlang':0.25, 'ln4':4, 'ln25': 0.25, 'm': 1,  'h4':4, 'ln4':4, 'g4':4}
 
@@ -428,8 +429,8 @@ for sample in range(5000):
         GI1 = df.loc[ind, 'GI1']
         GI2 = df.loc[ind, 'GI2']
         GI3 = df.loc[ind, 'GI3']
-        util1 = df.loc[curr_ind, 'util']
-        util2 = df.loc[curr_ind, 'util2']
+        util1 = df.loc[ind, 'util']
+        util2 = df.loc[ind, 'util2']
 
         rate = 1   # np.random.uniform(0.5, 0.95)
         print('Starting GI1')
