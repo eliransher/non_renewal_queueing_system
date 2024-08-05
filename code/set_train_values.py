@@ -18,7 +18,7 @@ batch_size = 128
 
 path_dump_data_depart_0 = '/scratch/eliransc/non_renewal/training_corrs/depart_0'
 num_batches = int(len(true_files)/batch_size)
-print(num_batches,len(true_files) )
+print(num_batches,len(true_files))
 
 for batch_num in tqdm(range(num_batches)):
 
