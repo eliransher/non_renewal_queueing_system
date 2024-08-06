@@ -17,7 +17,7 @@ path = '/scratch/eliransc/non_renewal/steady_1_low_util'
 files = os.listdir(path)
 true_files = [file for file in files if 'multi' in file]
 num_batches = int(len(true_files)/batch_size)
-true_files = true_files[:25000]
+true_files = true_files[:20000]
 batch_size = 128
 
 path_dump_data_steady_1 = '/scratch/eliransc/non_renewal/training_corrs/steady_1'

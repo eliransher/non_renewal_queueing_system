@@ -13,7 +13,7 @@ true_files = [file for file in files if 'multi' in file]
 
 
 
-true_files = true_files[:25000]
+true_files = true_files[:20000]
 batch_size = 128
 
 path_dump_data_depart_0 = '/scratch/eliransc/non_renewal/training_corrs/depart_0'

@@ -28,7 +28,7 @@ print(num_batches,len(true_files))
 len(true_files)
 print(num_batches,len(true_files) )
 
-true_files = true_files[:25000]
+true_files = true_files[:20000]
 batch_size = 128
 
 path_dump_data_depart_1 = '/scratch/eliransc/non_renewal/training_corrs/depart_1'
