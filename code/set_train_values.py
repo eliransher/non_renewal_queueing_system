@@ -7,7 +7,7 @@ import pickle as pkl
 
 file_name_used = []
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
-path = '/scratch/eliransc/non_renewal/depart_0_scv1'
+path = '/scratch/eliransc/non_renewal/depart_0_low_util'
 files = os.listdir(path)
 true_files = [file for file in files if 'multi' in file]
 
@@ -38,7 +38,7 @@ for batch_num in tqdm(range(num_batches)):
             input_depart_0 = inp.reshape(1, inp.shape[0])
             output_depart_0 = out.reshape(1, out.shape[0])
 
-    batch_name = 'low_corrs_depart_0_from_'+cluster_name+'_batch_num_' + str(batch_num)+'.pkl'
+    batch_name = 'low_utils_depart_0_from_'+cluster_name+'_batch_num_' + str(batch_num)+'.pkl'
     print(batch_name, input_depart_0.shape, output_depart_0.shape)
     pkl.dump((input_depart_0, output_depart_0), open(os.path.join(path_dump_data_depart_0, batch_name), 'wb'))
 
