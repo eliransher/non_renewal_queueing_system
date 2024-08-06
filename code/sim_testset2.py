@@ -116,9 +116,14 @@ def give_samples_moms_log_normal(scv, rho):
     sigma = np.sqrt(np.log(1 + (sigma_true**2 / mu_true**2)))
     # Generate samples
 
-    samples = np.random.lognormal(mu, sigma, 30000000)  # Generate 1000 samples
+    if scv > 3:
+        num_samp = 3000000*2
+    else:
+        num_samp = 30000000
+
+    samples = np.random.lognormal(mu, sigma, num_samp)  # Generate 1000 samples
     moms = []
-    for mom in range(1,6):
+    for mom in range(1, 6):
         moms.append((samples**mom).mean())
 
     return (moms, samples)
@@ -128,9 +133,13 @@ def give_samples_moms_gamma(scv, rho):
 
     shape = 1/scv
     scale = rho/shape
+    if scv > 3:
+        num_samp = 1500000*3
+    else:
+        num_samp = 1500000
 
     # Generate samples
-    samples = np.random.gamma(shape, scale, 1500000)  # Generate 1000 samples
+    samples = np.random.gamma(shape, scale, num_samp)  # Generate 1000 samples
     # print(samples.mean(), ((samples**2).mean()-samples.mean()**2)/samples.mean()**2)
 
     moms = []
