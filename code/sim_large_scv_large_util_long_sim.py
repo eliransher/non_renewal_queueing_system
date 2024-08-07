@@ -416,9 +416,9 @@ dump = True
 
 
 
-for sample in range(2):
+for sample in range(20):
 
-
+    # if True:
     try:
 
         begin = time.time()
@@ -432,6 +432,8 @@ for sample in range(2):
 
         util1 = np.random.uniform(0.7,0.9)
         util2 = np.random.uniform(0.7,0.95)
+
+        print(GI1, GI2, GI3)
 
         rate = 1   # np.random.uniform(0.5, 0.95)
         print('Starting GI1')
