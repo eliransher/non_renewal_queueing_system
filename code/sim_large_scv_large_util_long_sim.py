@@ -117,9 +117,9 @@ def give_samples_moms_log_normal(scv, rho):
     # Generate samples
 
     if scv > 3:
-        num_samp = 3000000*3
+        num_samp = 5000000*3
     else:
-        num_samp = 30000000
+        num_samp = 50000000
 
     samples = np.random.lognormal(mu, sigma, num_samp)  # Generate 1000 samples
     moms = []
@@ -475,10 +475,10 @@ for sample in range(20):
             moms_ser[1], services_times[1] = give_samples_moms_erlang4(util2)
         elif GI3 == 'ln4':
             moms_ser[1], services_times[1] = give_samples_moms_log_normal(SCV_GI3, util2)
-        elif GI1 == 'h4':
-            moms_ser[1], services_times[0] = give_samples_moms_hyper(SCV_GI3, util2)
-        elif GI1 == 'g4':
-            moms_ser[1], services_times[0] = give_samples_moms_log_normal(SCV_GI3, util2)
+        elif GI3 == 'h4':
+            moms_ser[1], services_times[1] = give_samples_moms_hyper(SCV_GI3, util2)
+        elif GI3 == 'g4':
+            moms_ser[1], services_times[1] = give_samples_moms_log_normal(SCV_GI3, util2)
 
         # sim_time = 30000000
         mu = 1.0
