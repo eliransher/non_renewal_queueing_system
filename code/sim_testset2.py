@@ -389,7 +389,7 @@ dump = True
 
 
 
-util_ranges = np.linspace(0.11,0.96,18)
+util_ranges = np.linspace(0.75,0.96,18)
 
 GI1_3_list = ['erlang', 'ln4']
 GI2_list = ['erlang', 'ln25', 'm', 'h4', 'ln4', 'g4']
