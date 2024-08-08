@@ -292,10 +292,11 @@ for sample in range(1):
         num_stations = 9
 
         rate = 1   # np.random.uniform(0.5, 0.95)
-        a = np.array([0.0590414481559016, 1 - 0.0590414481559016])
-        A = np.array([[-0.118082896311803, 0], [0, -1.88191710368820]])
-        arrivals_norm = SamplesFromPH(ml.matrix(a), A, 10000000)
-        moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
+        ones = np.ones(10000000)
+        moms_arrive = []
+        for mom in range(1, 11):
+            moms_arrive.append((ones ** mom).mean())
+        arrivals_norm = ones
 
         services_times = {}
         moms_ser = {}
@@ -315,7 +316,7 @@ for sample in range(1):
             services_times[station] = exp_samp = np.random.exponential(means[station], 50000000)
 
 
-        sim_time = 60000000
+        sim_time = 600000
         mu = 1.0
         lamda = rate
 
@@ -330,7 +331,7 @@ for sample in range(1):
             mean_waiting.append(curr_mean)
             print(curr_mean)
         print(np.array(n_Queue_single_station.sojourn_total).mean())
-        pkl.dump((mean_waiting),open('hyper_9_stations.pkl', 'wb'))
+        pkl.dump((mean_waiting),open('deter_9_stations.pkl', 'wb'))
         sim_train = False
         if sim_train:
             input_ = np.concatenate((moms_arrive, moms_ser[0]), axis=0)
