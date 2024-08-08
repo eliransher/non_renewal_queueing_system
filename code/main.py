@@ -203,7 +203,7 @@ class N_Queue_single_station:
 
 def get_ph_larve_scv():
     scv = 0
-    while scv < 3.5:
+    while (scv < 3.5) | (scv > 12):
 
         if sys.platform == 'linux':
             path = '/scratch/eliransc/ph_examples'
