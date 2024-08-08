@@ -201,6 +201,29 @@ class N_Queue_single_station:
         return np.array(steady_list).reshape(self.num_stations, self.num_steady_size)
 
 
+def get_ph_larve_scv():
+    scv = 0
+    while scv < 3.5:
+
+        if sys.platform == 'linux':
+            path = '/scratch/eliransc/ph_examples'
+        else:
+            path = r'C:\Users\user\workspace\data\ph_random\ph_mean_1'
+
+        files = os.listdir(path)
+
+        ind_file = np.random.randint(len(files))
+
+        data_all = pkl.load(open(os.path.join(path, files[ind_file]), 'rb'))
+
+        ind_file1 = np.random.randint(len(data_all))
+
+        data = data_all[ind_file1]
+        scv = (data[2][1] - data[2][0] ** 2) / data[2][0] ** 2
+
+    return data
+
+
 def get_ph():
     if sys.platform == 'linux':
         path = '/scratch/eliransc/ph_examples'
@@ -236,18 +259,18 @@ def get_ph_1():
 
 dump = True
 
-scv_1 = False
+scv_1 = True
 
 for sample in range(5000):
     try:
         begin = time.time()
         num_stations = 2
         if scv_1 == True:
-            arrivals = get_ph_1()
+            arrivals = get_ph_larve_scv()
         else:
-            arrivals = get_ph()
+            arrivals = get_ph_larve_scv()  ## should be returned to get_ph()
 
-        rate = 1 # np.random.uniform(0.5, 0.95)
+        rate = 1  # np.random.uniform(0.5, 0.95)
 
         arrivals_norm = arrivals[3]/rate
         A = arrivals[1]*rate
@@ -257,8 +280,8 @@ for sample in range(5000):
         services_times = {}
         moms_ser = {}
         for station in range( num_stations):
-            services = get_ph()
-            rate = np.random.uniform(0.01, 0.5)
+            services = get_ph_larve_scv() ## should be returned to get_ph()
+            rate = np.random.uniform(0.75, 0.9)
             ser_norm = services[3] * rate
 
             A = services[1] / rate
@@ -268,7 +291,7 @@ for sample in range(5000):
             services_times[station] = ser_norm
 
 
-        sim_time = 30000000
+        sim_time = 60000000
         mu = 1.0
         lamda = rate
 
@@ -316,7 +339,7 @@ for sample in range(5000):
 
         model_num = np.random.randint(1, 1000000)
 
-        path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_low_util'
+        path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_train_long'
         file_name = 'correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_0 = os.path.join(path_depart_0, file_name)
 
@@ -353,7 +376,7 @@ for sample in range(5000):
 
         out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-        path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_low_util'
+        path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_train_long'
 
         file_name = 'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_1 = os.path.join(path_depart_1, file_name)
@@ -373,7 +396,7 @@ for sample in range(5000):
         out_steady_0 = n_Queue_single_station.get_steady_single_station()[0]
 
 
-        path_steady_0 = '/scratch/eliransc/non_renewal/steady_0_low_util'
+        path_steady_0 = '/scratch/eliransc/non_renewal/steady_0_train_long'
 
         file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_steady_0 = os.path.join(path_steady_0, file_name)
@@ -392,7 +415,7 @@ for sample in range(5000):
 
         out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
-        path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_low_util'
+        path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_train_long'
 
         file_name = 'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_steady_1 = os.path.join(path_steady_1, file_name)
