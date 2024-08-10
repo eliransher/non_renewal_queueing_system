@@ -44,7 +44,7 @@ is_print = False
 
 
 def give_samples_moms_exp(rho):
-    samples = np.random.exponential(rho, 20000000)
+    samples = np.random.exponential(rho, 40000000)
 
     moms = []
     for mom in range(1, 6):
@@ -68,7 +68,7 @@ def give_samples_moms_erlang4(rho):
 
     s, A = create_Erlang4(lam)
 
-    samples = SamplesFromPH(ml.matrix(s), A, 10000000)
+    samples = SamplesFromPH(ml.matrix(s), A, 20000000)
 
     moms = []
     for mom in range(1, 6):
@@ -99,7 +99,7 @@ def give_samples_moms_hyper(scv, rho):
 
     a = np.array([p, 1 - p])
     A = np.array([[-lmbda1, 0], [0, -lmbda2]])
-    samples = SamplesFromPH(ml.matrix(a), A, 10000000)
+    samples = SamplesFromPH(ml.matrix(a), A, 20000000)
 
     moms = []
     for mom in range(1, 6):
@@ -117,7 +117,7 @@ def give_samples_moms_log_normal(scv, rho):
     # Generate samples
 
     if scv > 3:
-        num_samp = 3000000*2
+        num_samp = 3000000*4
     else:
         num_samp = 30000000
 
@@ -134,7 +134,7 @@ def give_samples_moms_gamma(scv, rho):
     shape = 1/scv
     scale = rho/shape
     if scv > 3:
-        num_samp = 1500000*3
+        num_samp = 1500000*4
     else:
         num_samp = 1500000
 
@@ -431,9 +431,9 @@ for sample in range(2):
         print(ind)
 
         if df.loc[ind, 'scv_tot'] <= 1:
-            sim_time = 25000000
+            sim_time = 35000000
         else:
-            sim_time = 45000000
+            sim_time = 65000000
 
         GI1 = df.loc[ind, 'GI1']
         GI2 = df.loc[ind, 'GI2']
@@ -524,7 +524,7 @@ for sample in range(2):
             model_num = np.random.randint(1, 1000000)
 
             path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_testset2'
-            file_name = str(ind)+'_correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
+            file_name = 'new' +str(ind)+'_correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_0 = os.path.join(path_depart_0, file_name)
 
             if dump:
@@ -562,7 +562,7 @@ for sample in range(2):
 
             path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_testset2'
 
-            file_name = str(ind)+'_correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
+            file_name = 'new' +str(ind)+'_correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_1 = os.path.join(path_depart_1, file_name)
             if dump:
                 pkl.dump((inp_depart_1, out_depart_1), open(full_path_depart_1, 'wb'))
@@ -584,7 +584,7 @@ for sample in range(2):
 
             path_steady_0 = '/scratch/eliransc/non_renewal/steady_0_testset2'
 
-            file_name = str(ind)+str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs1_' + str(model_num)+ '.pkl'
+            file_name = 'new' +str(ind)+str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_steady_0 = os.path.join(path_steady_0, file_name)
             if dump:
                 pkl.dump((inp_steady_0, out_steady_0), open(full_path_steady_0, 'wb'))
@@ -603,7 +603,7 @@ for sample in range(2):
 
             path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_testset2'
 
-            file_name = str(ind)+'_correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
+            file_name = 'new' + str(ind)+'_correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_steady_1 = os.path.join(path_steady_1, file_name)
             if dump:
                 pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
