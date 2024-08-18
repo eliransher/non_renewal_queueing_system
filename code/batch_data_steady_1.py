@@ -13,8 +13,8 @@ if not os.path.exists(path):
 files = os.listdir(path)
 
 true_files = [file for file in files if 'multi' in file]
-file_name_used = pkl.load( open('/scratch/eliransc/non_renewal/file_used_steady_1.pkl', 'rb'))
-true_files = [file for file in true_files if file not in file_name_used]
+# file_name_used = pkl.load( open('/scratch/eliransc/non_renewal/file_used_steady_1.pkl', 'rb'))
+# true_files = [file for file in true_files if file not in file_name_used]
 
 batch_size = 128
 
@@ -35,7 +35,7 @@ for batch_num in tqdm(range( num_batches)):
             inp, out = pkl.load(open(os.path.join(path, true_files[file_num]), 'rb'))
         except:
             print('keep the same')
-        file_name_used.append(true_files[file_num])
+        # file_name_used.append(true_files[file_num])
         if batch_ind > 0:
             input_depart_0 = np.concatenate((input_depart_0, inp.reshape(1, inp.shape[0])), axis=0)
             output_depart_0 = np.concatenate((output_depart_0, out.reshape(1, out.shape[0])), axis=0)

@@ -10,6 +10,7 @@ import os
 file_name_used = []
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
 path = '/scratch/eliransc/non_renewal/depart_1_train_long'
+
 files = os.listdir(path)
 true_files = [file for file in files if 'multi' in file]
 batch_size = 128
@@ -18,7 +19,7 @@ path_dump_data_depart_1 = '/scratch/eliransc/non_renewal/training_corrs/depart_1
 num_batches = int(len(true_files)/batch_size)
 
 
-for batch_num in tqdm(range(len(os.listdir(path_dump_data_depart_1)), num_batches)):
+for batch_num in tqdm(range( num_batches)):
 
     input_depart_1 = np.array([])
     output_depart_1 = np.array([])
