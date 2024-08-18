@@ -8,8 +8,6 @@ import pickle as pkl
 file_name_used = []
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
 
-
-
 ## Train depart 1
 batch_size = 128
 file_name_used = []
