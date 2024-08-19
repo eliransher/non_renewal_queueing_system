@@ -19,7 +19,7 @@ path_dump_data_depart_1 = '/scratch/eliransc/non_renewal/training_corrs/depart_1
 num_batches = int(len(true_files)/batch_size)
 
 
-for batch_num in tqdm(range( num_batches)):
+for batch_num in tqdm(range(376,  num_batches)):
 
     input_depart_1 = np.array([])
     output_depart_1 = np.array([])

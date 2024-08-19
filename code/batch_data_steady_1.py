@@ -25,7 +25,7 @@ if not os.path.exists(path_dump_data_depart_0):
 num_batches = int(len(true_files)/batch_size)
 
 
-for batch_num in tqdm(range(35,  num_batches)):
+for batch_num in tqdm(range(94,  num_batches)):
 
     input_depart_0 = np.array([])
     output_depart_0 = np.array([])
