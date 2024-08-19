@@ -26,7 +26,10 @@ for batch_num in tqdm(range(num_batches)):
     output_depart_0 = np.array([])
     for batch_ind in range(batch_size):
         file_num = batch_num * batch_size + batch_ind
-        inp, out = pkl.load(open(os.path.join(path, true_files[file_num]), 'rb'))
+        try:
+            inp, out = pkl.load(open(os.path.join(path, true_files[file_num]), 'rb'))
+        except:
+            print('Bad input')
 
         if batch_ind > 0:
             input_depart_0 = np.concatenate((inp.reshape(1, inp.shape[0]), input_depart_0), axis=0)
