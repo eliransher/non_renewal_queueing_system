@@ -4,4 +4,4 @@
 #SBATCH --mem 20000
 #SBATCH --gpus-per-node=1
 source /home/eliransc/projects/def-dkrass/eliransc/queues/bin/activate
-python /home/eliransc/projects/def-dkrass/eliransc/non_renewal_queueing_system/code/train_steady_1.py
+python /home/eliransc/projects/def-dkrass/eliransc/non_renewal_queueing_system/code/train_steady_1_a.py
