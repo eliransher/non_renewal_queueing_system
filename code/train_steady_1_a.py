@@ -428,8 +428,9 @@ def main():
                         df_tot = pd.concat([df_tot, df_res], axis=0)
 
         test2_path = '/scratch/eliransc/non_renewal/testset2_a/steady_1'
-
-        dataset_set2 = my_Dataset_set2(test2_path, df, max_lag, max_power_1, max_power_2, num_arrival_moms,
+        files_set2 = os.listdir(test2_path)
+        data_paths_set2 = [os.path.join(test2_path, file) for file in files_set2]
+        dataset_set2 = my_Dataset_set2(data_paths_set2, df, max_lag, max_power_1, max_power_2, num_arrival_moms,
                                        num_ser_moms)
         batch_size = 1
         testset2_loader = DataLoader(dataset=dataset_set2,
