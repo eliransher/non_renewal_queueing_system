@@ -469,6 +469,6 @@ def main():
 
         pkl.dump((df_tot, df_tot1, compute_sum_error_list, valid_list, max_lag, max_power_1, max_power_2, epoch),
                  open(os.path.join(model_results_path, file_name_model_result), 'wb'))
-
+        print(os.path.join(model_results_path, file_name_model_result))
 if __name__ == "__main__":
     main()
