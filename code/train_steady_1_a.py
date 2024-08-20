@@ -443,6 +443,7 @@ def main():
             errors = []
 
             for batch in tqdm(testset2_loader):
+                m = nn.Softmax(dim=1)
                 X_valid, y_valid = batch
                 X_valid = X_valid.float()
                 X_valid = X_valid.reshape(X_valid.shape[1], X_valid.shape[2])
