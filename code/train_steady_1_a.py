@@ -188,6 +188,7 @@ class my_Dataset_set2(Dataset):
 
         return x, y
 
+
 class Net(nn.Module):
 
     def __init__(self, input_size, output_size):
@@ -195,11 +196,10 @@ class Net(nn.Module):
 
         self.fc1 = nn.Linear(input_size, 50)
         self.fc2 = nn.Linear(50, 70)
-        self.fc3 = nn.Linear(70, 100)
-        self.fc4 = nn.Linear(100, 200)
-        self.fc5 = nn.Linear(200, 350)
-        self.fc6 = nn.Linear(350, 600)
-        self.fc7 = nn.Linear(600, output_size)
+        self.fc3 = nn.Linear(70, 200)
+        self.fc4 = nn.Linear(200, 350)
+        self.fc5 = nn.Linear(350, 600)
+        self.fc6 = nn.Linear(600, output_size)
 
     def forward(self, x):
         x = F.relu(self.fc1(x))
@@ -207,8 +207,7 @@ class Net(nn.Module):
         x = F.relu(self.fc3(x))
         x = F.relu(self.fc4(x))
         x = F.relu(self.fc5(x))
-        x = F.relu(self.fc6(x))
-        x = self.fc7(x)
+        x = self.fc6(x)
         return x
 
 def main():
@@ -216,7 +215,18 @@ def main():
 
     path = '/scratch/eliransc/non_renewal/training_corrs/steady_1'
     file_list = os.listdir(path)
-    data_paths = [os.path.join(path, name) for name in file_list]
+
+    if True:
+        train_files = []
+        for file in file_list:
+            if file.split('_')[0] == 'batch':
+                if np.abs(float(file.split('_')[-1][:-4])) > 0.1:
+                    train_files.append(file)
+            else:
+                train_files.append(file)
+        data_paths = [os.path.join(path, name) for name in train_files]
+    else:
+        data_paths = [os.path.join(path, name) for name in file_list]
     len(data_paths)
 
 
@@ -294,7 +304,7 @@ def main():
     output_size = labels.shape[1] - 1
     net = Net(input_size, output_size).to(device)
     weight_decay = 5
-    curr_lr = 0.05
+    curr_lr = 0.01
     EPOCHS = 300
     lr_second = 0.99
     lr_first = 0.75
