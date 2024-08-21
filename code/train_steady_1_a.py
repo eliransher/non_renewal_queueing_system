@@ -33,6 +33,37 @@ m = nn.Softmax(dim=1)
 import matplotlib.pyplot as plt
 import time
 
+
+def pare_per_batch(preds, labels, utils, prectile):
+    errors = []
+    for ind in range(preds.shape[0]):
+        errors.append(100 * PARE(preds[ind, :], labels[ind, :], utils[ind], prectile))
+    return np.array(errors)
+
+
+def PARE(preds, labels, util, prectile):
+    flag_preds = True
+    flag_true = True
+    ind_preds = False
+    ind_true = False
+    for ind in range(preds.shape[0]):
+
+        if flag_preds:
+            if 1 - util + torch.sum(preds[:ind]) > prectile:
+                ind_preds = ind + 1
+                flag_preds = False
+        if flag_true:
+            if torch.sum(labels[:ind]) > prectile:
+                ind_true = ind
+                flag_true = False
+    if ind_preds and ind_true:
+        if ind_true > 0:
+            return abs((ind_true - ind_preds) / ind_true)
+            # relative_error.append(abs((ind_true-ind_preds)/ind_true))
+        else:
+            return 0.0001
+
+
 def queue_loss(predictions, targes, utilization):
     normalizing_const = utilization
 
@@ -191,24 +222,44 @@ class my_Dataset_set2(Dataset):
 
 class Net(nn.Module):
 
-    def __init__(self, input_size, output_size):
+    def __init__(self, input_size, output_size, type_archi):
+        self.type_archi = type_archi
         super().__init__()
-
-        self.fc1 = nn.Linear(input_size, 50)
-        self.fc2 = nn.Linear(50, 70)
-        self.fc3 = nn.Linear(70, 200)
-        self.fc4 = nn.Linear(200, 350)
-        self.fc5 = nn.Linear(350, 600)
-        self.fc6 = nn.Linear(600, output_size)
+        if type_archi == 6:
+            self.fc1 = nn.Linear(input_size, 50)
+            self.fc2 = nn.Linear(50, 70)
+            self.fc3 = nn.Linear(70, 200)
+            self.fc4 = nn.Linear(200, 350)
+            self.fc5 = nn.Linear(350, 600)
+            self.fc6 = nn.Linear(600, output_size)
+        else:
+            self.fc1 = nn.Linear(input_size, 50)
+            self.fc2 = nn.Linear(50, 70)
+            self.fc3 = nn.Linear(70, 100)
+            self.fc4 = nn.Linear(100, 200)
+            self.fc5 = nn.Linear(200, 350)
+            self.fc6 = nn.Linear(350, 600)
+            self.fc7 = nn.Linear(600, output_size)
 
     def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
-        x = F.relu(self.fc4(x))
-        x = F.relu(self.fc5(x))
-        x = self.fc6(x)
-        return x
+
+        if self.type_archi == 6:
+            x = F.relu(self.fc1(x))
+            x = F.relu(self.fc2(x))
+            x = F.relu(self.fc3(x))
+            x = F.relu(self.fc4(x))
+            x = F.relu(self.fc5(x))
+            x = self.fc6(x)
+            return x
+        else:
+            x = F.relu(self.fc1(x))
+            x = F.relu(self.fc2(x))
+            x = F.relu(self.fc3(x))
+            x = F.relu(self.fc4(x))
+            x = F.relu(self.fc5(x))
+            x = F.relu(self.fc6(x))
+            x = self.fc7(x)
+            return x
 
 def main():
 
@@ -216,11 +267,12 @@ def main():
     path = '/scratch/eliransc/non_renewal/training_corrs/steady_1'
     file_list = os.listdir(path)
 
+    thresh = np.random.choice([0.0, 0.1], p=[0.5, 0.5])
     if True:
         train_files = []
         for file in file_list:
             if file.split('_')[0] == 'batch':
-                if np.abs(float(file.split('_')[-1][:-4])) > 0.1:
+                if np.abs(float(file.split('_')[-1][:-4])) > thresh:
                     train_files.append(file)
             else:
                 train_files.append(file)
@@ -300,11 +352,12 @@ def main():
                                           shuffle=True,
                                           num_workers=1)
 
+    archi_type = np.random.randint(6, 8)
     input_size = features.shape[1]
     output_size = labels.shape[1] - 1
-    net = Net(input_size, output_size).to(device)
+    net = Net(input_size, output_size, archi_type).to(device)
     weight_decay = 5
-    curr_lr = 0.01
+    curr_lr = np.random.choice([0.001,0.01, 0.05], p=[0.2, 0.4,0.4])
     EPOCHS = 300
     lr_second = 0.99
     lr_first = 0.75
@@ -325,11 +378,10 @@ def main():
     model_path = '/scratch/eliransc/non_renewal/models'
     model_results_path = '/scratch/eliransc/non_renewal/models_results'
     model_num = np.random.randint(0, 1000000)
-    file_name_model = 'model_' + str(model_num) + '_wd_' + str(weight_decay) + '_lr_' + str(curr_lr) + '_pow1_' + str(
-        max_power_1) + '_pow2_' + str(max_power_2) + '_maxlag_' + str(max_lag) + '_layer_' + str(7) + '.pkl'
-    file_name_model_result = 'mmodelresults_' + str(model_num) + '_wd_' + str(weight_decay) + '_lr_' + str(
-        curr_lr) + '_pow1_' + str(max_power_1) + '_pow2_' + str(max_power_2) + '_maxlag_' + str(
-        max_lag) + '_layer_' + str(7) + '.pkl'
+    file_name_model = 'model_' + str(model_num) +'threshdata_'+ str(thresh)+ '_wd_' + str(weight_decay) + '_lr_' + str(curr_lr) + '_pow1_' + str(
+        max_power_1) + '_pow2_' + str(max_power_2) + '_maxlag_' + str(max_lag) + '_layer_' + str(archi_type) + '.pkl'
+    file_name_model_result = 'mmodelresults_' + str(model_num) +'threshdata_'+ str(thresh)+ '_wd_' + str(weight_decay) + '_lr_' + str(curr_lr) + '_pow1_' + str(
+        max_power_1) + '_pow2_' + str(max_power_2) + '_maxlag_' + str(max_lag) + '_layer_' + str(archi_type) + '.pkl'
 
     num_probs_presenet = 20
     for epoch in tqdm(range(EPOCHS)):
@@ -424,10 +476,19 @@ def main():
                         df_res['utilization'] = np.array(utilization.to('cpu'))
                         df_res['rhos'] = np.array(rhos.to('cpu'))
                         df_res['SAE'] = np.array(error.to('cpu'))
+                        for perentile in [0.25, 0.5, 0.75, 0.9, 0.99, 0.999]:
+                            res = pare_per_batch(predictions, targes, utils, perentile)
+                            df_res['PARE_' + str(perentile)] = res
+
+                        mean_preds = (np.arange(1, predictions.shape[1] + 1) * predictions.cpu().numpy()[:, :]).sum(
+                            axis=1)
+                        mean_labels = (np.arange(1, targes.shape[1]) * targes.cpu().numpy()[:, 1:]).sum(axis=1)
+                        REM = 100 * ((np.abs(mean_preds - mean_labels)) / mean_labels)
+                        df_res['REM'] = REM
 
                         df_tot = pd.concat([df_tot, df_res], axis=0)
 
-        test2_path = '/scratch/eliransc/non_renewal/testset2_a/steady_1'
+        test2_path = '/scratch/eliransc/steady_1'
         files_set2 = os.listdir(test2_path)
         data_paths_set2 = [os.path.join(test2_path, file) for file in files_set2]
         dataset_set2 = my_Dataset_set2(data_paths_set2, df, max_lag, max_power_1, max_power_2, num_arrival_moms,
@@ -443,7 +504,6 @@ def main():
             errors = []
 
             for batch in tqdm(testset2_loader):
-                m = nn.Softmax(dim=1)
                 X_valid, y_valid = batch
                 X_valid = X_valid.float()
                 X_valid = X_valid.reshape(X_valid.shape[1], X_valid.shape[2])
@@ -477,7 +537,31 @@ def main():
                 df_res['SAE'] = np.array(error.to('cpu'))
 
                 df_tot1 = pd.concat([df_tot1, df_res], axis=0)
-            df_tot1['rho_group'] = pd.qcut(df_tot1['utilization'], q=4, labels=['Q1', 'Q2', 'Q3', 'Q4'])
+                df_tot1['rho_group'] = pd.qcut(df_tot1['utilization'], q=4, labels=['Q1', 'Q2', 'Q3', 'Q4'])
+                for perentile in [0.25, 0.5, 0.75, 0.9, 0.99, 0.999]:
+                    res = pare_per_batch(predictions, targes, utils, perentile)
+                    df_tot1['PARE_' + str(perentile)] = res
+
+                mean_preds = (np.arange(1, predictions.shape[1] + 1) * predictions.cpu().numpy()[:, :]).sum(axis=1)
+                mean_labels = (np.arange(1, targes.shape[1]) * targes.cpu().numpy()[:, 1:]).sum(axis=1)
+                REM = 100 * ((np.abs(mean_preds - mean_labels)) / mean_labels)
+                df_tot1['REM'] = REM
+
+        print('SAE test 1')
+        print(df_tot.loc[(df_tot['SCV_ser'] < 1), 'SAE'].mean())
+        print(df_tot.loc[(df_tot['SCV_ser'] > 1), 'SAE'].mean())
+
+        print('SAE test 2')
+        print(df_tot1.loc[(df_tot['SCV_ser'] < 1), 'SAE'].mean())
+        print(df_tot1.loc[(df_tot['SCV_ser'] > 1), 'SAE'].mean())
+
+        print('PARE 99 test 1')
+        print(df_tot.loc[(df_tot['SCV_ser'] < 1), 'PARE_0.9'].mean())
+        print(df_tot.loc[(df_tot['SCV_ser'] > 1), 'PARE_0.9'].mean())
+
+        print('PARE 99 test 2')
+        print(df_tot1.loc[(df_tot['SCV_ser'] < 1), 'PARE_0.9'].mean())
+        print(df_tot1.loc[(df_tot['SCV_ser'] > 1), 'PARE_0.9'].mean())
 
         pkl.dump((df_tot, df_tot1, compute_sum_error_list, valid_list, max_lag, max_power_1, max_power_2, epoch),
                  open(os.path.join(model_results_path, file_name_model_result), 'wb'))
