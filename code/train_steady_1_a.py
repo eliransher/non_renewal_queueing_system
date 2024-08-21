@@ -489,6 +489,16 @@ def main():
 
                         df_tot = pd.concat([df_tot, df_res], axis=0)
 
+                    print('SAE test 1')
+                    print(df_tot.loc[(df_tot['SCV_ser'] < 1), 'SAE'].mean())
+                    print(df_tot.loc[(df_tot['SCV_ser'] > 1), 'SAE'].mean())
+
+                    print('PARE 99 test 1')
+                    print(df_tot.loc[(df_tot['SCV_ser'] < 1), 'PARE_0.9'].mean())
+                    print(df_tot.loc[(df_tot['SCV_ser'] > 1), 'PARE_0.9'].mean())
+
+
+
         test2_path = '/scratch/eliransc/steady_1'
         files_set2 = os.listdir(test2_path)
         data_paths_set2 = [os.path.join(test2_path, file) for file in files_set2]
@@ -548,21 +558,17 @@ def main():
                 REM = 100 * ((np.abs(mean_preds - mean_labels)) / mean_labels)
                 df_tot1['REM'] = REM
 
-        print('SAE test 1')
-        print(df_tot.loc[(df_tot['SCV_ser'] < 1), 'SAE'].mean())
-        print(df_tot.loc[(df_tot['SCV_ser'] > 1), 'SAE'].mean())
 
-        print('SAE test 2')
-        print(df_tot1.loc[(df_tot['SCV_ser'] < 1), 'SAE'].mean())
-        print(df_tot1.loc[(df_tot['SCV_ser'] > 1), 'SAE'].mean())
 
-        print('PARE 99 test 1')
-        print(df_tot.loc[(df_tot['SCV_ser'] < 1), 'PARE_0.9'].mean())
-        print(df_tot.loc[(df_tot['SCV_ser'] > 1), 'PARE_0.9'].mean())
+                print('SAE test 2')
+                print(df_tot1.loc[(df_tot['SCV_ser'] < 1), 'SAE'].mean())
+                print(df_tot1.loc[(df_tot['SCV_ser'] > 1), 'SAE'].mean())
 
-        print('PARE 99 test 2')
-        print(df_tot1.loc[(df_tot['SCV_ser'] < 1), 'PARE_0.9'].mean())
-        print(df_tot1.loc[(df_tot['SCV_ser'] > 1), 'PARE_0.9'].mean())
+                print('PARE 99 test 2')
+                print(df_tot1.loc[(df_tot['SCV_ser'] < 1), 'PARE_0.9'].mean())
+                print(df_tot1.loc[(df_tot['SCV_ser'] > 1), 'PARE_0.9'].mean())
+
+
 
         pkl.dump((df_tot, df_tot1, compute_sum_error_list, valid_list, max_lag, max_power_1, max_power_2, epoch),
                  open(os.path.join(model_results_path, file_name_model_result), 'wb'))
