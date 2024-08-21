@@ -267,19 +267,7 @@ def main():
     path = '/scratch/eliransc/non_renewal/training_corrs/steady_1'
     file_list = os.listdir(path)
 
-    thresh = np.random.choice([0.2, 0.3], p=[0.5, 0.5])
-    if True:
-        train_files = []
-        for file in file_list:
-            if file.split('_')[0] == 'batch':
-                if np.abs(float(file.split('_')[-1][:-4])) > thresh:
-                    train_files.append(file)
-            else:
-                train_files.append(file)
-        data_paths = [os.path.join(path, name) for name in train_files]
-    else:
-        data_paths = [os.path.join(path, name) for name in file_list]
-    len(data_paths)
+
 
 
     try:
@@ -306,6 +294,20 @@ def main():
         cur_time = int(time.time())
         np.random.seed(cur_time)
         print(seed)
+
+    thresh = np.random.choice([0.2, 0.3], p=[0.5, 0.5])
+    if True:
+        train_files = []
+        for file in file_list:
+            if file.split('_')[0] == 'batch':
+                if np.abs(float(file.split('_')[-1][:-4])) > thresh:
+                    train_files.append(file)
+            else:
+                train_files.append(file)
+        data_paths = [os.path.join(path, name) for name in train_files]
+    else:
+        data_paths = [os.path.join(path, name) for name in file_list]
+    len(data_paths)
 
 
     num_arrival_moms = 5
@@ -351,6 +353,17 @@ def main():
                                           batch_size=batch_size,
                                           shuffle=True,
                                           num_workers=1)
+
+
+    try:
+        cur_time = int(1000*time.time())
+        seed = cur_time  # + len(os.listdir(data_path)) +
+        np.random.seed(int(seed/1000))
+        print(seed)
+    except:
+        cur_time = int(time.time())
+        np.random.seed(cur_time)
+        print(seed)
 
     archi_type = np.random.randint(6, 8)
     input_size = features.shape[1]
