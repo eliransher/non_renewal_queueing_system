@@ -503,7 +503,7 @@ def main():
         with torch.no_grad():
             df_tot1 = pd.DataFrame([])
             errors = []
-
+            m = nn.Softmax(dim=1)
             for batch in tqdm(testset2_loader):
                 X_valid, y_valid = batch
                 X_valid = X_valid.float()
