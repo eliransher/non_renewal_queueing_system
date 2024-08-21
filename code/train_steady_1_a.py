@@ -295,7 +295,7 @@ def main():
         np.random.seed(cur_time)
         print(seed)
 
-    thresh = np.random.choice([0.2, 0.3], p=[0.5, 0.5])
+    thresh = np.random.choice([-0.001, 0.0, 0.1], p=[0.2,0.4, 0.4])
     if True:
         train_files = []
         for file in file_list:
