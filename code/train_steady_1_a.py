@@ -267,7 +267,7 @@ def main():
     path = '/scratch/eliransc/non_renewal/training_corrs/steady_1'
     file_list = os.listdir(path)
 
-    thresh = np.random.choice([0.0, 0.1], p=[0.5, 0.5])
+    thresh = np.random.choice([0.2, 0.3], p=[0.5, 0.5])
     if True:
         train_files = []
         for file in file_list:
@@ -382,6 +382,16 @@ def main():
         max_power_1) + '_pow2_' + str(max_power_2) + '_maxlag_' + str(max_lag) + '_layer_' + str(archi_type) + '.pkl'
     file_name_model_result = 'mmodelresults_' + str(model_num) +'threshdata_'+ str(thresh)+ '_wd_' + str(weight_decay) + '_lr_' + str(curr_lr) + '_pow1_' + str(
         max_power_1) + '_pow2_' + str(max_power_2) + '_maxlag_' + str(max_lag) + '_layer_' + str(archi_type) + '.pkl'
+
+    file_name_df_tot = 'df_tot_' + str(model_num) + 'threshdata_' + str(thresh) + '_wd_' + str(
+        weight_decay) + '_lr_' + str(curr_lr) + '_pow1_' + str(
+        max_power_1) + '_pow2_' + str(max_power_2) + '_maxlag_' + str(max_lag) + '_layer_' + str(archi_type) + '.pkl'
+
+    file_name_df_tot1 = 'df_tot1_' + str(model_num) + 'threshdata_' + str(thresh) + '_wd_' + str(
+        weight_decay) + '_lr_' + str(curr_lr) + '_pow1_' + str(
+        max_power_1) + '_pow2_' + str(max_power_2) + '_maxlag_' + str(max_lag) + '_layer_' + str(archi_type) + '.pkl'
+
+
     print(file_name_model_result)
     num_probs_presenet = 20
     print('start training')
@@ -489,6 +499,8 @@ def main():
 
                         df_tot = pd.concat([df_tot, df_res], axis=0)
 
+                        pkl.dump(df_tot, open(os.path.join(model_results_path, file_name_df_tot), 'wb'))
+
                     print('SAE test 1')
                     print(df_tot.loc[(df_tot['SCV_ser'] < 1), 'SAE'].mean())
                     print(df_tot.loc[(df_tot['SCV_ser'] > 1), 'SAE'].mean())
@@ -558,6 +570,8 @@ def main():
                 REM = 100 * ((np.abs(mean_preds - mean_labels)) / mean_labels)
                 df_tot1['REM'] = REM
 
+                pkl.dump(df_tot1, open(os.path.join(model_results_path, file_name_df_tot1), 'wb'))
+
 
 
                 print('SAE test 2')
@@ -568,7 +582,8 @@ def main():
                 print(df_tot1.loc[(df_tot1['SCV_ser'] < 1), 'PARE_0.9'].mean())
                 print(df_tot1.loc[(df_tot1['SCV_ser'] > 1), 'PARE_0.9'].mean())
 
-
+        df_tot = pkl.load(open(os.path.join(model_results_path, file_name_df_tot), 'rb'))
+        df_tot1 = pkl.load(open(os.path.join(model_results_path, file_name_df_tot1), 'rb'))
 
         pkl.dump((df_tot, df_tot1, compute_sum_error_list, valid_list, max_lag, max_power_1, max_power_2, epoch),
                  open(os.path.join(model_results_path, file_name_model_result), 'wb'))
