@@ -433,7 +433,7 @@ def main():
 
         torch.save(net.state_dict(), os.path.join(model_path, file_name_model))
 
-        if epoch > 10:
+        if (epoch > 10) & ( epoch %10 == 0):
             m = nn.Softmax(dim=1)
 
             df_tot = pd.DataFrame([])
