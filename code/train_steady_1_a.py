@@ -561,12 +561,12 @@ def main():
 
 
                 print('SAE test 2')
-                print(df_tot1.loc[(df_tot['SCV_ser'] < 1), 'SAE'].mean())
-                print(df_tot1.loc[(df_tot['SCV_ser'] > 1), 'SAE'].mean())
+                print(df_tot1.loc[(df_tot1['SCV_ser'] < 1), 'SAE'].mean())
+                print(df_tot1.loc[(df_tot1['SCV_ser'] > 1), 'SAE'].mean())
 
                 print('PARE 99 test 2')
-                print(df_tot1.loc[(df_tot['SCV_ser'] < 1), 'PARE_0.9'].mean())
-                print(df_tot1.loc[(df_tot['SCV_ser'] > 1), 'PARE_0.9'].mean())
+                print(df_tot1.loc[(df_tot1['SCV_ser'] < 1), 'PARE_0.9'].mean())
+                print(df_tot1.loc[(df_tot1['SCV_ser'] > 1), 'PARE_0.9'].mean())
 
 
 
