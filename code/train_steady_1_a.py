@@ -499,7 +499,7 @@ def main():
 
                         df_tot = pd.concat([df_tot, df_res], axis=0)
 
-                        pkl.dump(df_tot, open(os.path.join(model_results_path, file_name_df_tot), 'wb'))
+                    pkl.dump(df_tot, open(os.path.join(model_results_path, file_name_df_tot), 'wb'))
 
                     print('SAE test 1')
                     print(df_tot.loc[(df_tot['SCV_ser'] < 1), 'SAE'].mean())
