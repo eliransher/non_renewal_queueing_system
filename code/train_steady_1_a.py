@@ -499,7 +499,7 @@ def main():
 
                         df_tot = pd.concat([df_tot, df_res], axis=0)
 
-                    pkl.dump(df_tot, open(os.path.join(model_results_path, file_name_df_tot), 'wb'))
+                    # pkl.dump(df_tot, open(os.path.join(model_results_path, file_name_df_tot), 'wb'))
 
                     print('SAE test 1')
                     print(df_tot.loc[(df_tot['SCV_ser'] < 1), 'SAE'].mean())
@@ -511,82 +511,82 @@ def main():
 
 
 
-        test2_path = '/scratch/eliransc/steady_1'
-        files_set2 = os.listdir(test2_path)
-        data_paths_set2 = [os.path.join(test2_path, file) for file in files_set2]
-        dataset_set2 = my_Dataset_set2(data_paths_set2, df, max_lag, max_power_1, max_power_2, num_arrival_moms,
-                                       num_ser_moms)
-        batch_size = 1
-        testset2_loader = DataLoader(dataset=dataset_set2,
-                                     batch_size=batch_size,
-                                     shuffle=True,
-                                     num_workers=1)
+            test2_path = '/scratch/eliransc/steady_1'
+            files_set2 = os.listdir(test2_path)
+            data_paths_set2 = [os.path.join(test2_path, file) for file in files_set2]
+            dataset_set2 = my_Dataset_set2(data_paths_set2, df, max_lag, max_power_1, max_power_2, num_arrival_moms,
+                                           num_ser_moms)
+            batch_size = 1
+            testset2_loader = DataLoader(dataset=dataset_set2,
+                                         batch_size=batch_size,
+                                         shuffle=True,
+                                         num_workers=1)
 
-        with torch.no_grad():
-            df_tot1 = pd.DataFrame([])
-            errors = []
-            m = nn.Softmax(dim=1)
-            for batch in tqdm(testset2_loader):
-                X_valid, y_valid = batch
-                X_valid = X_valid.float()
-                X_valid = X_valid.reshape(X_valid.shape[1], X_valid.shape[2])
-                y_valid = y_valid.float()
-                y_valid = y_valid.reshape(y_valid.shape[1], y_valid.shape[2])
-                X_valid = X_valid.to(device)
-                y_valid = y_valid.to(device)
+            with torch.no_grad():
+                df_tot1 = pd.DataFrame([])
+                errors = []
+                m = nn.Softmax(dim=1)
+                for batch in tqdm(testset2_loader):
+                    X_valid, y_valid = batch
+                    X_valid = X_valid.float()
+                    X_valid = X_valid.reshape(X_valid.shape[1], X_valid.shape[2])
+                    y_valid = y_valid.float()
+                    y_valid = y_valid.reshape(y_valid.shape[1], y_valid.shape[2])
+                    X_valid = X_valid.to(device)
+                    y_valid = y_valid.to(device)
 
-                targes = y_valid
+                    targes = y_valid
 
-                utils = ((1 / torch.exp(X_valid[:, 0])) * torch.exp(X_valid[:, -num_ser_moms])).reshape(-1, 1)
-                normalizing_const = utils
-                predictions = net(X_valid)
-                predictions = m(predictions)
-                predictions = predictions * normalizing_const
+                    utils = ((1 / torch.exp(X_valid[:, 0])) * torch.exp(X_valid[:, -num_ser_moms])).reshape(-1, 1)
+                    normalizing_const = utils
+                    predictions = net(X_valid)
+                    predictions = m(predictions)
+                    predictions = predictions * normalizing_const
 
-                error = (torch.pow(torch.abs(predictions - targes[:, 1:]), 1)).sum(axis=1)
-                # print(error)
-                errors.append(error.mean())
-                SCV_ser = (torch.exp(X_valid[:, -4]) - torch.exp(X_valid[:, -5]) ** 2) / torch.exp(X_valid[:, -5]) ** 2
-                SCV_arrive = (torch.exp(X_valid[:, 1]) - torch.exp(X_valid[:, 0]) ** 2) / torch.exp(X_valid[:, 0]) ** 2
-                # print(SCV_ser.max(), SCV_arrive.max(), SCV_ser.min(), SCV_arrive.min())
-                utilization = 1 - y_valid[:, 0]
-                rhos = X_valid[:, 5]
+                    error = (torch.pow(torch.abs(predictions - targes[:, 1:]), 1)).sum(axis=1)
+                    # print(error)
+                    errors.append(error.mean())
+                    SCV_ser = (torch.exp(X_valid[:, -4]) - torch.exp(X_valid[:, -5]) ** 2) / torch.exp(X_valid[:, -5]) ** 2
+                    SCV_arrive = (torch.exp(X_valid[:, 1]) - torch.exp(X_valid[:, 0]) ** 2) / torch.exp(X_valid[:, 0]) ** 2
+                    # print(SCV_ser.max(), SCV_arrive.max(), SCV_ser.min(), SCV_arrive.min())
+                    utilization = 1 - y_valid[:, 0]
+                    rhos = X_valid[:, 5]
 
-                df_res = pd.DataFrame([])
-                df_res['SCV_ser'] = np.array(SCV_ser.to('cpu'))
-                df_res['SCV_arrive'] = np.array(SCV_arrive.to('cpu'))
-                df_res['utilization'] = np.array(utilization.to('cpu'))
-                df_res['rhos'] = np.array(rhos.to('cpu'))
-                df_res['SAE'] = np.array(error.to('cpu'))
+                    df_res = pd.DataFrame([])
+                    df_res['SCV_ser'] = np.array(SCV_ser.to('cpu'))
+                    df_res['SCV_arrive'] = np.array(SCV_arrive.to('cpu'))
+                    df_res['utilization'] = np.array(utilization.to('cpu'))
+                    df_res['rhos'] = np.array(rhos.to('cpu'))
+                    df_res['SAE'] = np.array(error.to('cpu'))
 
-                df_tot1 = pd.concat([df_tot1, df_res], axis=0)
-                df_tot1['rho_group'] = pd.qcut(df_tot1['utilization'], q=4, labels=['Q1', 'Q2', 'Q3', 'Q4'])
-                for perentile in [0.25, 0.5, 0.75, 0.9, 0.99, 0.999]:
-                    res = pare_per_batch(predictions, targes, utils, perentile)
-                    df_tot1['PARE_' + str(perentile)] = res
+                    df_tot1 = pd.concat([df_tot1, df_res], axis=0)
+                    df_tot1['rho_group'] = pd.qcut(df_tot1['utilization'], q=4, labels=['Q1', 'Q2', 'Q3', 'Q4'])
+                    for perentile in [0.25, 0.5, 0.75, 0.9, 0.99, 0.999]:
+                        res = pare_per_batch(predictions, targes, utils, perentile)
+                        df_tot1['PARE_' + str(perentile)] = res
 
-                mean_preds = (np.arange(1, predictions.shape[1] + 1) * predictions.cpu().numpy()[:, :]).sum(axis=1)
-                mean_labels = (np.arange(1, targes.shape[1]) * targes.cpu().numpy()[:, 1:]).sum(axis=1)
-                REM = 100 * ((np.abs(mean_preds - mean_labels)) / mean_labels)
-                df_tot1['REM'] = REM
+                    mean_preds = (np.arange(1, predictions.shape[1] + 1) * predictions.cpu().numpy()[:, :]).sum(axis=1)
+                    mean_labels = (np.arange(1, targes.shape[1]) * targes.cpu().numpy()[:, 1:]).sum(axis=1)
+                    REM = 100 * ((np.abs(mean_preds - mean_labels)) / mean_labels)
+                    df_tot1['REM'] = REM
 
-                pkl.dump(df_tot1, open(os.path.join(model_results_path, file_name_df_tot1), 'wb'))
+                    # pkl.dump(df_tot1, open(os.path.join(model_results_path, file_name_df_tot1), 'wb'))
 
 
 
-                print('SAE test 2')
-                print(df_tot1.loc[(df_tot1['SCV_ser'] < 1), 'SAE'].mean())
-                print(df_tot1.loc[(df_tot1['SCV_ser'] > 1), 'SAE'].mean())
+                    print('SAE test 2')
+                    print(df_tot1.loc[(df_tot1['SCV_ser'] < 1), 'SAE'].mean())
+                    print(df_tot1.loc[(df_tot1['SCV_ser'] > 1), 'SAE'].mean())
 
-                print('PARE 99 test 2')
-                print(df_tot1.loc[(df_tot1['SCV_ser'] < 1), 'PARE_0.9'].mean())
-                print(df_tot1.loc[(df_tot1['SCV_ser'] > 1), 'PARE_0.9'].mean())
+                    print('PARE 99 test 2')
+                    print(df_tot1.loc[(df_tot1['SCV_ser'] < 1), 'PARE_0.9'].mean())
+                    print(df_tot1.loc[(df_tot1['SCV_ser'] > 1), 'PARE_0.9'].mean())
 
-        df_tot = pkl.load(open(os.path.join(model_results_path, file_name_df_tot), 'rb'))
-        df_tot1 = pkl.load(open(os.path.join(model_results_path, file_name_df_tot1), 'rb'))
+            # df_tot = pkl.load(open(os.path.join(model_results_path, file_name_df_tot), 'rb'))
+            # df_tot1 = pkl.load(open(os.path.join(model_results_path, file_name_df_tot1), 'rb'))
 
-        pkl.dump((df_tot, df_tot1, compute_sum_error_list, valid_list, max_lag, max_power_1, max_power_2, epoch),
-                 open(os.path.join(model_results_path, file_name_model_result), 'wb'))
-        print(os.path.join(model_results_path, file_name_model_result))
+            pkl.dump((df_tot, df_tot1, compute_sum_error_list, valid_list, max_lag, max_power_1, max_power_2, epoch),
+                     open(os.path.join(model_results_path, file_name_model_result), 'wb'))
+            print(os.path.join(model_results_path, file_name_model_result))
 if __name__ == "__main__":
     main()
