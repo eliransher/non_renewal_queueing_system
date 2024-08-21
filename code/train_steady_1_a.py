@@ -382,7 +382,7 @@ def main():
         max_power_1) + '_pow2_' + str(max_power_2) + '_maxlag_' + str(max_lag) + '_layer_' + str(archi_type) + '.pkl'
     file_name_model_result = 'mmodelresults_' + str(model_num) +'threshdata_'+ str(thresh)+ '_wd_' + str(weight_decay) + '_lr_' + str(curr_lr) + '_pow1_' + str(
         max_power_1) + '_pow2_' + str(max_power_2) + '_maxlag_' + str(max_lag) + '_layer_' + str(archi_type) + '.pkl'
-    print(model_results_path)
+    print(file_name_model_result)
     num_probs_presenet = 20
     print('start training')
     for epoch in tqdm(range(EPOCHS)):
