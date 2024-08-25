@@ -9,7 +9,7 @@ from scipy.linalg import expm, sinm, cosm
 from numpy.linalg import matrix_power
 from scipy.special import factorial
 import time
-sys.path.append(r'C:\Users\user\workspace\butools2\Python')
+sys.path.append(r'C:\Users\Eshel\workspace\butools2\Python')
 sys.path.append('/home/d/dkrass/eliransc/Python')
 sys.path.append('/home/eliransc/projects/def-dkrass/eliransc/butools/Python')
 
@@ -35,7 +35,7 @@ from scipy.stats import loguniform
 # from butools.fitting import *
 from datetime import datetime
 # from fastbook import *
-import torch
+# import torch
 import itertools
 from scipy.special import factorial
 import pickle as pkl
@@ -44,7 +44,7 @@ is_print = False
 
 
 def give_samples_moms_exp(rho):
-    samples = np.random.exponential(rho, 40000000)
+    samples = np.random.exponential(rho, 400000)
 
     moms = []
     for mom in range(1, 6):
@@ -69,7 +69,7 @@ def give_samples_moms_erlang4(rho):
 
     s, A = create_Erlang4(lam)
 
-    samples = SamplesFromPH(ml.matrix(s), A, 20000000)
+    samples = SamplesFromPH(ml.matrix(s), A, 200000)
 
     moms = []
     for mom in range(1, 6):
@@ -100,7 +100,7 @@ def give_samples_moms_hyper(scv, rho):
 
     a = np.array([p, 1 - p])
     A = np.array([[-lmbda1, 0], [0, -lmbda2]])
-    samples = SamplesFromPH(ml.matrix(a), A, 20000000)
+    samples = SamplesFromPH(ml.matrix(a), A, 200000)
 
     moms = []
     for mom in range(1, 6):
@@ -118,9 +118,9 @@ def give_samples_moms_log_normal(scv, rho):
     # Generate samples
 
     if scv > 3:
-        num_samp = 3000000*4
+        num_samp = 300000*4
     else:
-        num_samp = 30000000
+        num_samp = 300000
 
     samples = np.random.lognormal(mu, sigma, num_samp)  # Generate 1000 samples
     moms = []
@@ -135,9 +135,9 @@ def give_samples_moms_gamma(scv, rho):
     shape = 1/scv
     scale = rho/shape
     if scv > 3:
-        num_samp = 1500000*4
+        num_samp = 150000*4
     else:
-        num_samp = 1500000
+        num_samp = 150000
 
     # Generate samples
     samples = np.random.gamma(shape, scale, num_samp)  # Generate 1000 samples
@@ -432,9 +432,9 @@ for sample in range(2):
         print(ind)
 
         if df.loc[ind, 'scv_tot'] <= 1:
-            sim_time = 35000000
+            sim_time = 350000
         else:
-            sim_time = 65000000
+            sim_time = 650000
 
         GI1 = df.loc[ind, 'GI1']
         GI2 = df.loc[ind, 'GI2']
@@ -466,6 +466,7 @@ for sample in range(2):
             moms_ser[0], services_times[0] = give_samples_moms_hyper(4, util1)
         elif GI2 == 'g4':
             moms_ser[0], services_times[0] = give_samples_moms_log_normal(4, util1)
+
         print('Starting GI3')
         if GI3 == 'erlang':
             moms_ser[1], services_times[1] = give_samples_moms_erlang4(util2)

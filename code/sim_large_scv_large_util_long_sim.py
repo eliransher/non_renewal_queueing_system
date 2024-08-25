@@ -9,7 +9,7 @@ from scipy.linalg import expm, sinm, cosm
 from numpy.linalg import matrix_power
 from scipy.special import factorial
 import time
-sys.path.append(r'C:\Users\user\workspace\butools2\Python')
+sys.path.append(r'C:\Users\Eshel\workspace\butools2\Python')
 sys.path.append('/home/d/dkrass/eliransc/Python')
 sys.path.append('/home/eliransc/projects/def-dkrass/eliransc/butools/Python')
 
@@ -35,7 +35,7 @@ from scipy.stats import loguniform
 # from butools.fitting import *
 from datetime import datetime
 # from fastbook import *
-import torch
+# import torch
 import itertools
 from scipy.special import factorial
 import pickle as pkl
@@ -426,9 +426,10 @@ for sample in range(20):
 
         sim_time = 60000000
 
-        GI1 = np.random.choice(['h4', 'ln4', 'g4'])
-        GI2 = np.random.choice(['h4', 'ln4', 'g4'])
-        GI3 = np.random.choice(['h4', 'ln4', 'g4'])
+        GI1 = np.random.choice(['h4', 'ln4', 'g4', 'ln25', 'erlang'])
+        GI2 = np.random.choice(['h4', 'ln4', 'g4', 'ln25', 'erlang'])
+        GI3 = np.random.choice(['h4', 'ln4', 'g4', 'ln25', 'erlang'])
+        GI2 = 'ln4'
 
         util1 = np.random.uniform(0.7,0.9)
         util2 = np.random.uniform(0.7,0.95)
@@ -459,7 +460,7 @@ for sample in range(20):
         if GI2 == 'erlang':
             moms_ser[0], services_times[0] = give_samples_moms_erlang4(util1)
         elif GI2 == 'ln4':
-            moms_ser[0], services_times[0] = give_samples_moms_log_normal(SCV_GI2, util2)
+            moms_ser[0], services_times[0] = give_samples_moms_log_normal(SCV_GI2, util1)
         elif GI2 == 'ln25':
             moms_ser[0], services_times[0] = give_samples_moms_log_normal(0.25, util1)
         elif GI2 == 'm':
@@ -470,7 +471,7 @@ for sample in range(20):
             moms_ser[0], services_times[0] = give_samples_moms_log_normal(SCV_GI2, util1)
 
         print('Starting GI3')
-        SCV_GI3 = np.random.uniform(2.5, 4.5)
+        SCV_GI3 = np.random.uniform(0.25, 4.5)
         if GI3 == 'erlang':
             moms_ser[1], services_times[1] = give_samples_moms_erlang4(util2)
         elif GI3 == 'ln4':
@@ -532,7 +533,7 @@ for sample in range(20):
 
             model_num = np.random.randint(1, 1000000)
 
-            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_train_long'
+            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_train_long2'
             file_name = 'correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_0 = os.path.join(path_depart_0, file_name)
 
@@ -569,7 +570,7 @@ for sample in range(20):
 
             out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-            path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_train_long'
+            path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_train_long2'
 
             file_name = 'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_1 = os.path.join(path_depart_1, file_name)
@@ -591,7 +592,7 @@ for sample in range(20):
             out_steady_0 = n_Queue_single_station.get_steady_single_station()[0]
 
 
-            path_steady_0 = '/scratch/eliransc/non_renewal/steady_0_train_long'
+            path_steady_0 = '/scratch/eliransc/non_renewal/steady_0_train_long2'
 
             file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_steady_0 = os.path.join(path_steady_0, file_name)
@@ -610,7 +611,7 @@ for sample in range(20):
 
             out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
-            path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_train_long'
+            path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_train_long2'
 
             file_name = 'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_steady_1 = os.path.join(path_steady_1, file_name)
