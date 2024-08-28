@@ -9,7 +9,7 @@ import os
 
 file_name_used = []
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
-path = '/scratch/eliransc/non_renewal/depart_1_train_long'
+path = '/scratch/eliransc/non_renewal/depart_1_train_long2'
 
 files = os.listdir(path)
 true_files = [file for file in files if 'multi' in file]
@@ -37,7 +37,7 @@ for batch_num in tqdm(range(376,  num_batches)):
             input_depart_1 = inp.reshape(1, inp.shape[0])
             output_depart_1 = out.reshape(1, out.shape[0])
 
-    batch_name = 'train_long_large_scv_depart_1_from_'+cluster_name+'_batch_num_' + str(batch_num)+'.pkl'
+    batch_name = 'train_long2_depart_1_from_'+cluster_name+'_batch_num_' + str(batch_num)+'.pkl'
 
     pkl.dump((input_depart_1, output_depart_1), open(os.path.join(path_dump_data_depart_1, batch_name), 'wb'))
     # pkl.dump(file_name_used, open('/scratch/eliransc/non_renewal/file_used_depart_1.pkl', 'wb'))

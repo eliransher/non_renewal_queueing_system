@@ -5,7 +5,7 @@ import pickle as pkl
 
 
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
-path = '/scratch/eliransc/non_renewal/depart_0_train_long'
+path = '/scratch/eliransc/non_renewal/depart_0_train_long2'
 
 if not os.path.exists(path):
     os.mkdir(path)
@@ -38,6 +38,6 @@ for batch_num in tqdm(range(35, num_batches)):
             input_depart_0 = inp.reshape(1, inp.shape[0])
             output_depart_0 = out.reshape(1, out.shape[0])
 
-    batch_name = 'train_long_large_scv_depart_0_from_'+cluster_name+'_batch_num_' + str(batch_num)+'.pkl'
+    batch_name = 'train_long2_depart_0_from_'+cluster_name+'_batch_num_' + str(batch_num)+'.pkl'
     # print(os.path.join(path_dump_data_depart_0, batch_name), input_depart_0.shape, output_depart_0.shape)
     pkl.dump((input_depart_0, output_depart_0), open(os.path.join(path_dump_data_depart_0, batch_name), 'wb'))
