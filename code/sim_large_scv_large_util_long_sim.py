@@ -99,7 +99,7 @@ def give_samples_moms_hyper(scv, rho):
 
     a = np.array([p, 1 - p])
     A = np.array([[-lmbda1, 0], [0, -lmbda2]])
-    samples = SamplesFromPH(ml.matrix(a), A, 40000000)
+    samples = SamplesFromPH(ml.matrix(a), A, 20000000)
 
     moms = []
     for mom in range(1, 11):
