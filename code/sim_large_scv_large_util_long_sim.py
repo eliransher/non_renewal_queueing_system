@@ -117,7 +117,7 @@ def give_samples_moms_log_normal(scv, rho):
     # Generate samples
 
     if scv > 3:
-        num_samp = 5000000*3
+        num_samp = 8000000*5
     else:
         num_samp = 50000000
 
@@ -418,18 +418,18 @@ dump = True
 
 for sample in range(20):
 
-    # if True:
-    try:
+    if True:
+    # try:
 
         begin = time.time()
         num_stations = 2
 
         sim_time = 60000000
 
-        GI1 = np.random.choice(['h4', 'ln4', 'g4', 'ln25', 'erlang'])
-        GI2 = np.random.choice(['h4', 'ln4', 'g4', 'ln25', 'erlang'])
-        GI3 = np.random.choice(['h4', 'ln4', 'g4', 'ln25', 'erlang'])
-        GI2 = 'ln4'
+        GI1 = np.random.choice(['h4', 'ln4', 'g4', 'ln25', 'erlang','m'])
+        GI2 = np.random.choice(['h4', 'ln4', 'g4', 'ln25', 'erlang','m'])
+        GI3 = np.random.choice(['h4', 'ln4', 'g4', 'ln25', 'erlang','m'])
+
 
         util1 = np.random.uniform(0.7,0.9)
         util2 = np.random.uniform(0.7,0.95)
@@ -442,7 +442,6 @@ for sample in range(20):
         SCV_GI1 = np.random.uniform(3.5, 4.5)
         if GI1 == 'erlang':
             moms_arrive, arrivals_norm = give_samples_moms_erlang4(1)
-
         elif GI1 == 'ln4':
             SCV_GI1 = np.random.uniform(3.5,4.5)
             moms_arrive, arrivals_norm = give_samples_moms_log_normal(SCV_GI1, 1)
@@ -450,6 +449,14 @@ for sample in range(20):
             moms_arrive, arrivals_norm = give_samples_moms_hyper(SCV_GI1, 1)
         elif GI1 == 'g4':
             moms_arrive, arrivals_norm = give_samples_moms_log_normal(SCV_GI1, 1)
+        elif GI1 == 'ln25':
+            SCV_GI1 = np.random.uniform(0.05, 0.5)
+            moms_arrive, arrivals_norm = give_samples_moms_log_normal(SCV_GI1, 1)
+        elif GI1 == 'm':
+            moms_arrive, arrivals_norm = give_samples_moms_exp(1)
+
+        for mom in range(len(moms_arrive)):
+            moms_arrive[mom] = float(moms_arrive[mom])
 
 
         print('Starting GI2')
@@ -469,18 +476,32 @@ for sample in range(20):
             moms_ser[0], services_times[0] = give_samples_moms_hyper(SCV_GI2, util1)
         elif GI2 == 'g4':
             moms_ser[0], services_times[0] = give_samples_moms_log_normal(SCV_GI2, util1)
+        print(len(moms_ser[0]), services_times[0].shape)
+
+        for mom in range(len(moms_ser[0])):
+            moms_ser[0][mom] = float(moms_ser[0][mom])
 
         print('Starting GI3')
-        SCV_GI3 = np.random.uniform(0.25, 4.5)
         if GI3 == 'erlang':
             moms_ser[1], services_times[1] = give_samples_moms_erlang4(util2)
         elif GI3 == 'ln4':
+            SCV_GI3 = np.random.uniform(3.5, 4.5)
             moms_ser[1], services_times[1] = give_samples_moms_log_normal(SCV_GI3, util2)
         elif GI3 == 'h4':
+            SCV_GI3 = np.random.uniform(3.5, 4.5)
             moms_ser[1], services_times[1] = give_samples_moms_hyper(SCV_GI3, util2)
         elif GI3 == 'g4':
+            SCV_GI3 = np.random.uniform(3.5, 4.5)
             moms_ser[1], services_times[1] = give_samples_moms_log_normal(SCV_GI3, util2)
+        elif GI3 == 'ln25':
+            SCV_GI3 = np.random.uniform(0.05, 0.5)
+            moms_ser[1], services_times[1] = give_samples_moms_log_normal(SCV_GI3, util2)
+        elif GI3 == 'm':
+            moms_ser[1], services_times[1] = give_samples_moms_exp(util2)
 
+        for mom in range(len(moms_ser[1])):
+            moms_ser[1][mom] = float(moms_ser[1][mom])
+        print(len(moms_ser[1]), services_times[1].shape)
         # sim_time = 30000000
         mu = 1.0
         lamda = rate
@@ -533,10 +554,11 @@ for sample in range(20):
 
             model_num = np.random.randint(1, 1000000)
 
-            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_train_long2'
+            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_train_long3'
+
             file_name = GI1+'_'+GI2+'_'+GI3+'_correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_0 = os.path.join(path_depart_0, file_name)
-
+            print(full_path_depart_0)
             if dump:
 
                 pkl.dump((inp_depart_0, out_depart_0), open(full_path_depart_0, 'wb'))
@@ -570,7 +592,7 @@ for sample in range(20):
 
             out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-            path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_train_long2'
+            path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_train_long3'
 
             file_name = GI1+'_'+GI2+'_'+GI3+'_'+'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_1 = os.path.join(path_depart_1, file_name)
@@ -585,19 +607,18 @@ for sample in range(20):
             ###############################
             ########### output ############
 
-            station = 0
-
-            depart_1_moms = [(np.array(n_Queue_single_station.inter_departures[station])**mom).mean() for mom in range(1, 11)]
-
-            out_steady_0 = n_Queue_single_station.get_steady_single_station()[0]
-
-
-            path_steady_0 = '/scratch/eliransc/non_renewal/steady_0_train_long2'
-
-            file_name = GI1+'_'+GI2+'_'+GI3+'_'+str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs1_' + str(model_num)+ '.pkl'
-            full_path_steady_0 = os.path.join(path_steady_0, file_name)
-            if dump:
-                pkl.dump((inp_steady_0, out_steady_0), open(full_path_steady_0, 'wb'))
+            # station = 0
+            #
+            # depart_1_moms = [(np.array(n_Queue_single_station.inter_departures[station])**mom).mean() for mom in range(1, 11)]
+            #
+            # out_steady_0 = n_Queue_single_station.get_steady_single_station()[0]
+            #
+            #
+            # path_steady_0 = '/scratch/eliransc/non_renewal/steady_0_train_long3'
+            # file_name = GI1+'_'+GI2+'_'+GI3+'_'+str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs1_' + str(model_num)+ '.pkl'
+            # full_path_steady_0 = os.path.join(path_steady_0, file_name)
+            # if dump:
+            #     pkl.dump((inp_steady_0, out_steady_0), open(full_path_steady_0, 'wb'))
 
 
             ####### Input ################
@@ -611,13 +632,13 @@ for sample in range(20):
 
             out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
-            path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_train_long2'
-
+            path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_train_long3'
             file_name = GI1+'_'+GI2+'_'+GI3+'_'+'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_steady_1 = os.path.join(path_steady_1, file_name)
+            print(full_path_steady_1)
             if dump:
                 pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
-
+                print(full_path_steady_1)
 
             ###############################
             ######### Full system #########
@@ -640,5 +661,5 @@ for sample in range(20):
             # pkl.dump((inp_full_system, out_full, out_full_inter), open(full_path_sys, 'wb'))
 
 
-    except:
-        print('Exceeded 500 customers')
+    # except:
+    #     print('Exceeded 500 customers')
