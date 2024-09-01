@@ -9,7 +9,7 @@ from scipy.linalg import expm, sinm, cosm
 from numpy.linalg import matrix_power
 from scipy.special import factorial
 import time
-sys.path.append(r'C:\Users\user\workspace\butools2\Python')
+sys.path.append(r'C:\Users\Eshel\workspace\butools2\Python')
 sys.path.append('/home/d/dkrass/eliransc/Python')
 sys.path.append('/home/eliransc/projects/def-dkrass/eliransc/butools/Python')
 
@@ -35,7 +35,6 @@ from scipy.stats import loguniform
 # from butools.fitting import *
 from datetime import datetime
 # from fastbook import *
-import torch
 import itertools
 from scipy.special import factorial
 import pickle as pkl

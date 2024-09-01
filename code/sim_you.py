@@ -9,7 +9,7 @@ from scipy.linalg import expm, sinm, cosm
 from numpy.linalg import matrix_power
 from scipy.special import factorial
 import time
-sys.path.append(r'C:\Users\user\workspace\butools2\Python')
+sys.path.append(r'C:\Users\Eshel\workspace\butools2\Python')
 sys.path.append('/home/d/dkrass/eliransc/Python')
 sys.path.append('/home/eliransc/projects/def-dkrass/eliransc/butools/Python')
 
@@ -35,7 +35,6 @@ from scipy.stats import loguniform
 # from butools.fitting import *
 from datetime import datetime
 # from fastbook import *
-import torch
 import itertools
 from scipy.special import factorial
 import pickle as pkl
@@ -296,6 +295,7 @@ for sample in range(1):
         A = np.array([[-0.118082896311803, 0], [0, -1.88191710368820]])
         arrivals_norm = SamplesFromPH(ml.matrix(a), A, 10000000)
         moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
+        print(moms_arrive)
 
         services_times = {}
         moms_ser = {}
@@ -312,7 +312,7 @@ for sample in range(1):
             A = np.array([[-1/means[station]]])
 
             moms_ser[station] = np.array(compute_first_n_moments(a, A, 10)).flatten()
-            services_times[station] = exp_samp = np.random.exponential(means[station], 50000000)
+            services_times[station] = np.random.exponential(means[station], 50000000)
 
 
         sim_time = 50000000

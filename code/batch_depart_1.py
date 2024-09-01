@@ -42,7 +42,7 @@ for batch_num in tqdm(range(num_batches)):
             input_depart_1 = inp.reshape(1, inp.shape[0])
             output_depart_1 = out.reshape(1, out.shape[0])
 
-    batch_name = 'depart_1_from_'+cluster_name+'_batch_num_' + str(batch_num)+'.pkl'
+    batch_name = 'train_long3_depart_1_from_'+cluster_name+'_batch_num_' + str(batch_num)+'.pkl'
     print(batch_name, input_depart_1.shape, output_depart_1.shape)
     pkl.dump((input_depart_1, output_depart_1), open(os.path.join(path_dump_data_depart_1, batch_name), 'wb'))
 

@@ -9,7 +9,7 @@ import os
 
 file_name_used = []
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
-path = '/scratch/eliransc/non_renewal/depart_1_train_long2'
+path = '/scratch/eliransc/non_renewal/depart_1_train_long3'
 
 files = os.listdir(path)
 true_files = [file for file in files if 'multi' in file]
