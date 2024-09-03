@@ -2,20 +2,28 @@
 import simpy
 import numpy as np
 import sys
-
+import pandas as pd
+import os
+import pickle as pkl
+from scipy.linalg import expm, sinm, cosm
+from numpy.linalg import matrix_power
+from scipy.special import factorial
+import time
 sys.path.append(r'C:\Users\Eshel\workspace\butools2\Python')
-# sys.path.append('/home/d/dkrass/eliransc/Python')
-# sys.path.append('/home/eliransc/projects/def-dkrass/eliransc/butools/Python')
-sys.path.append(r'C:\Users\Eshel\workspace\butools2\Python\butools\ph')
-
+sys.path.append('/home/d/dkrass/eliransc/Python')
+sys.path.append('/home/eliransc/projects/def-dkrass/eliransc/butools/Python')
 
 import os
+
 import pandas as pd
 import argparse
 from tqdm import tqdm
 from butools.ph import *
+from butools.map import *
+from butools.queues import *
 import time
-
+from butools.mam import *
+from butools.dph import *
 from scipy.linalg import expm, sinm, cosm
 import matplotlib.pyplot as plt
 
@@ -24,7 +32,10 @@ from scipy.stats import rv_discrete
 # import seaborn as sns
 import random
 from scipy.stats import loguniform
+# from butools.fitting import *
 from datetime import datetime
+# from fastbook import *
+# import torch
 import itertools
 from scipy.special import factorial
 import pickle as pkl
@@ -33,10 +44,10 @@ is_print = False
 
 
 def give_samples_moms_exp(rho):
-    samples = np.random.exponential(rho, 40000000)
+    samples = np.random.exponential(rho, 20000000)
 
     moms = []
-    for mom in range(1, 6):
+    for mom in range(1, 11):
         moms.append((samples ** mom).mean())
 
     return (moms, samples)
@@ -50,11 +61,23 @@ def create_Erlang4(lam):
     return (s, A)
 
 
-def give_samples_moms_erlang4(rho):
-    # lam = 4 / (rho)
+
+
+# def give_samples_moms_erlang4(rho):
+    lam = 4 / (rho)
     #
     # s, A = create_Erlang4(lam)
-    # samples = SamplesFromPH(ml.matrix(s), A, 20000000)
+    #
+    # samples = SamplesFromPH(ml.matrix(s), A, 10000000)
+    #
+    # moms = []
+    # for mom in range(1, 11):
+    #     moms.append((samples ** mom).mean())
+    #
+    # return (moms, samples)
+
+def give_samples_moms_erlang4(rho):
+
 
     lam = rho / 4
     samples = np.random.gamma(shape=4, scale=lam, size=20000000)
@@ -91,7 +114,7 @@ def give_samples_moms_hyper(scv, rho):
     samples = SamplesFromPH(ml.matrix(a), A, 20000000)
 
     moms = []
-    for mom in range(1, 6):
+    for mom in range(1, 11):
         moms.append((samples ** mom).mean())
 
     return (moms, samples)
@@ -106,13 +129,13 @@ def give_samples_moms_log_normal(scv, rho):
     # Generate samples
 
     if scv > 3:
-        num_samp = 3000000*4
+        num_samp = 8000000*5
     else:
-        num_samp = 30000000
+        num_samp = 50000000
 
     samples = np.random.lognormal(mu, sigma, num_samp)  # Generate 1000 samples
     moms = []
-    for mom in range(1, 6):
+    for mom in range(1, 11):
         moms.append((samples**mom).mean())
 
     return (moms, samples)
@@ -123,16 +146,16 @@ def give_samples_moms_gamma(scv, rho):
     shape = 1/scv
     scale = rho/shape
     if scv > 3:
-        num_samp = 1500000*4
+        num_samp = 60000000
     else:
-        num_samp = 1500000
+        num_samp = 40000000
 
     # Generate samples
     samples = np.random.gamma(shape, scale, num_samp)  # Generate 1000 samples
     # print(samples.mean(), ((samples**2).mean()-samples.mean()**2)/samples.mean()**2)
 
     moms = []
-    for mom in range(1,6):
+    for mom in range(1,11):
         moms.append((samples**mom).mean())
 
     return (moms, samples)
@@ -405,222 +428,236 @@ for util1 in util1_list:
 
 
 
-for sample in range(2):
+for sample in range(150):
 
-    begin = time.time()
-    num_stations = 2
-    unused_inds = list(np.arange(800))
-    ind = np.random.choice(unused_inds)
-    unused_inds.remove(ind)
-    unused_inds = pkl.dump(unused_inds, open('unused_inds.pkl', 'wb'))
-    print(ind)
+    if True:
+    # try:
 
-    if df.loc[ind, 'scv_tot'] <= 1:
-        sim_time = 3500000
-    else:
-        sim_time = 6500000
+        begin = time.time()
+        num_stations = 2
+        unused_inds = pkl.load(open('unused_inds.pkl', 'rb'))
+        ind = np.random.choice(unused_inds)
+        unused_inds.remove(ind)
+        unused_inds = pkl.dump(unused_inds, open('unused_inds.pkl', 'wb'))
+        print(ind)
 
-    sim_time = 12000000
+        if df.loc[ind, 'scv_tot'] <= 1:
+            sim_time = 40000000
+        else:
+            sim_time = 60000000
 
-    GI1 = df.loc[ind, 'GI1']
-    GI2 = df.loc[ind, 'GI2']
-    GI3 = df.loc[ind, 'GI3']
-    util1 = df.loc[ind, 'util']
-    util2 = df.loc[ind, 'util2']
-
-    GI1 = 'erlang'
-    GI2 = 'erlang'
-    GI3 = 'erlang'
-    print(util1, util2)
-
-    rate = 1   # np.random.uniform(0.5, 0.95)
-    print('Starting GI1')
-    if GI1 == 'erlang':
-        moms_arrive, arrivals_norm = give_samples_moms_erlang4(1)
-    elif GI1 == 'ln4':
-        moms_arrive, arrivals_norm = give_samples_moms_log_normal(4, 1)
-
-    print('Starting GI2')
-    services_times = {}
-    moms_ser = {}
+        GI1 = df.loc[ind, 'GI1']
+        GI2 = df.loc[ind, 'GI2']
+        GI3 = df.loc[ind, 'GI3']
+        util1 = df.loc[ind, 'util']
+        util2 = df.loc[ind, 'util2']
 
 
-    if GI2 == 'erlang':
-        moms_ser[0], services_times[0] = give_samples_moms_erlang4(util1)
-    elif GI2 == 'ln4':
-        moms_ser[0], services_times[0] = give_samples_moms_log_normal(4, util1)
-    elif GI2 == 'ln25':
-        moms_ser[0], services_times[0] = give_samples_moms_log_normal(0.25, util1)
-    elif GI2 == 'm':
-        moms_ser[0], services_times[0] = give_samples_moms_exp(util1)
-    elif GI2 == 'h4':
-        moms_ser[0], services_times[0] = give_samples_moms_hyper(4, util1)
-    elif GI2 == 'g4':
-        moms_ser[0], services_times[0] = give_samples_moms_log_normal(4, util1)
-    print('Starting GI3')
-    if GI3 == 'erlang':
-        moms_ser[1], services_times[1] = give_samples_moms_erlang4(util2)
-    elif GI3 == 'ln4':
-        moms_ser[1], services_times[1] = give_samples_moms_log_normal(4, util2)
+        print(GI1, GI2, GI3)
 
-    # sim_time = 30000000
-    mu = 1.0
-    lamda = rate
+        rate = 1   # np.random.uniform(0.5, 0.95)
+        print('Starting GI1')
+
+        if GI1 == 'erlang':
+            moms_arrive, arrivals_norm = give_samples_moms_erlang4(1)
+        elif GI1 == 'ln4':
+            moms_arrive, arrivals_norm = give_samples_moms_log_normal(4, 1)
+
+        for mom in range(len(moms_arrive)):
+            moms_arrive[mom] = float(moms_arrive[mom])
 
 
+        print('Starting GI2')
+        services_times = {}
+        moms_ser = {}
 
-    # lamda, mu, sim_time, num_stations, services, arrivals_norm, moms_arrive, moms_ser = pkl.load(open('sim_setting.pkl', 'rb'))
-    print('Starting simulation')
-    n_Queue_single_station = N_Queue_single_station(lamda, mu, sim_time, num_stations, services_times, arrivals_norm)
-    n_Queue_single_station.run()
-    print('Simulation ended')
+        if GI2 == 'erlang':
+            moms_ser[0], services_times[0] = give_samples_moms_erlang4(util1)
+        elif GI2 == 'ln4':
+            moms_ser[0], services_times[0] = give_samples_moms_log_normal(4, util1)
+        elif GI2 == 'ln25':
+            moms_ser[0], services_times[0] = give_samples_moms_log_normal(0.25, util1)
+        elif GI2 == 'm':
+            moms_ser[0], services_times[0] = give_samples_moms_exp(util1)
+        elif GI2 == 'h4':
+            moms_ser[0], services_times[0] = give_samples_moms_hyper(4, util1)
+        elif GI2 == 'g4':
+            moms_ser[0], services_times[0] = give_samples_moms_log_normal(4, util1)
+        print(len(moms_ser[0]), services_times[0].shape)
+
+        for mom in range(len(moms_ser[0])):
+            moms_ser[0][mom] = float(moms_ser[0][mom])
+
+        print('Starting GI3')
+        if GI3 == 'erlang':
+            moms_ser[1], services_times[1] = give_samples_moms_erlang4(util2)
+        elif GI3 == 'ln4':
+            moms_ser[1], services_times[1] = give_samples_moms_log_normal(4, util2)
+
+        for mom in range(len(moms_ser[1])):
+            moms_ser[1][mom] = float(moms_ser[1][mom])
+        print(len(moms_ser[1]), services_times[1].shape)
+        # sim_time = 30000000
+        mu = 1.0
+        lamda = rate
+
+        # lamda, mu, sim_time, num_stations, services, arrivals_norm, moms_arrive, moms_ser = pkl.load(open('sim_setting.pkl', 'rb'))
+        print('Starting simulation')
+        n_Queue_single_station = N_Queue_single_station(lamda, mu, sim_time, num_stations, services_times, arrivals_norm)
+        n_Queue_single_station.run()
+        print('Simulation ended')
 
 
-    sim_train = True
-    if sim_train:
-        input_ = np.concatenate((moms_arrive, moms_ser[0]), axis=0)
-        output = n_Queue_single_station.get_steady_single_station()
+        sim_train = True
+        if sim_train:
+            input_ = np.concatenate((moms_arrive, moms_ser[0]), axis=0)
+            output = n_Queue_single_station.get_steady_single_station()
 
-        end = time.time()
+            end = time.time()
 
-        print(end-begin)
+            print(end-begin)
 
-        inp_depart_0 = np.concatenate((moms_arrive, moms_ser[0]))
-        inp_depart_0 = np.log(inp_depart_0)
+            inp_depart_0 = np.concatenate((moms_arrive, moms_ser[0]))
+            inp_depart_0 = np.log(inp_depart_0)
 
-        ###############################
+            ###############################
 
-        ########### output ############
+            ########### output ############
 
-        station = 0
+            station = 0
 
-        depart_0_moms = [(np.array(n_Queue_single_station.inter_departures[station])**mom).mean() for mom in range(1,11)]
+            depart_0_moms = [(np.array(n_Queue_single_station.inter_departures[station])**mom).mean() for mom in range(1,11)]
 
-        corrs_0 = []
+            corrs_0 = []
 
-        for corr_leg in range(1, 6):
+            for corr_leg in range(1, 6):
+                x1 = np.array(n_Queue_single_station.inter_departures[station][:-corr_leg])
+                y1 = np.array(n_Queue_single_station.inter_departures[station][corr_leg:])
+                for mom_1 in range(1,6):
+                    for mom_2 in range(1,6):
+
+                        r = np.corrcoef(x1**mom_1, y1**mom_2)
+                        corrs_0.append(r[0, 1])
+
+            corr_leg = 1
             x1 = np.array(n_Queue_single_station.inter_departures[station][:-corr_leg])
             y1 = np.array(n_Queue_single_station.inter_departures[station][corr_leg:])
-            for mom_1 in range(1,6):
-                for mom_2 in range(1,6):
+            r = np.corrcoef(x1, y1)
+            correlation0 = r[0, 1]
 
-                    r = np.corrcoef(x1**mom_1, y1**mom_2)
-                    corrs_0.append(r[0, 1])
+            out_depart_0 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0)))
 
-        corr_leg = 1
-        x1 = np.array(n_Queue_single_station.inter_departures[station][:-corr_leg])
-        y1 = np.array(n_Queue_single_station.inter_departures[station][corr_leg:])
-        r = np.corrcoef(x1, y1)
-        correlation0 = r[0, 1]
+            model_num = np.random.randint(1, 1000000)
 
-        out_depart_0 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0)))
+            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_test2_take2'
 
-        model_num = np.random.randint(1, 1000000)
-        print(model_num)
+            file_name = GI1+'_'+GI2+'_'+GI3+'_correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
+            full_path_depart_0 = os.path.join(path_depart_0, file_name)
+            print(full_path_depart_0)
+            print(np.exp(inp_depart_0), out_depart_0[:10])
+            if dump:
 
-        path_depart_0 = r'C:\Users\Eshel\workspace\data\test2_non_renewal_experiment\depart_0'
-        file_name = 'new' +str(ind)+'_correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
-        full_path_depart_0 = os.path.join(path_depart_0, file_name)
-
-        if dump:
-
-            pkl.dump((inp_depart_0, out_depart_0), open(full_path_depart_0, 'wb'))
+                pkl.dump((inp_depart_0, out_depart_0), open(full_path_depart_0, 'wb'))
 
 
-        inp_depart_1 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0), np.log(np.array(moms_ser[1]))))
+            inp_depart_1 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0), np.log(np.array(moms_ser[1]))))
 
-        ###############################
-        ########### output ############
+            ###############################
+            ########### output ############
 
-        station = 1
+            station = 1
 
-        depart_1_moms = [(np.array(n_Queue_single_station.inter_departures[station])**mom).mean() for mom in range(1,11)]
+            depart_1_moms = [(np.array(n_Queue_single_station.inter_departures[station])**mom).mean() for mom in range(1,11)]
 
-        corrs_1 = []
+            corrs_1 = []
 
-        for corr_leg in range(1, 6):
+            for corr_leg in range(1, 6):
+                x1 = np.array(n_Queue_single_station.inter_departures[station][:-corr_leg])
+                y1 = np.array(n_Queue_single_station.inter_departures[station][corr_leg:])
+                for mom_1 in range(1, 6):
+                    for mom_2 in range(1, 6):
+                        r = np.corrcoef(x1 ** mom_1, y1 ** mom_2)
+                        corrs_1.append(r[0, 1])
+
+            corr_leg = 1
             x1 = np.array(n_Queue_single_station.inter_departures[station][:-corr_leg])
             y1 = np.array(n_Queue_single_station.inter_departures[station][corr_leg:])
-            for mom_1 in range(1, 6):
-                for mom_2 in range(1, 6):
-                    r = np.corrcoef(x1 ** mom_1, y1 ** mom_2)
-                    corrs_1.append(r[0, 1])
-
-        corr_leg = 1
-        x1 = np.array(n_Queue_single_station.inter_departures[station][:-corr_leg])
-        y1 = np.array(n_Queue_single_station.inter_departures[station][corr_leg:])
-        r = np.corrcoef(x1, y1)
-        correlation1 = r[0, 1]
+            r = np.corrcoef(x1, y1)
+            correlation1 = r[0, 1]
 
 
-        out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
+            out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-        path_depart_1 = r'C:\Users\Eshel\workspace\data\test2_non_renewal_experiment\depart_1'
+            path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_test2_take2'
 
-        file_name = 'new' +str(ind)+'_correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
-        full_path_depart_1 = os.path.join(path_depart_1, file_name)
-        if dump:
-            pkl.dump((inp_depart_1, out_depart_1), open(full_path_depart_1, 'wb'))
+            file_name = GI1+'_'+GI2+'_'+GI3+'_'+'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
+            full_path_depart_1 = os.path.join(path_depart_1, file_name)
+            print(np.exp(inp_depart_1[:5]), np.exp(inp_depart_1[-10:-5]),np.exp(out_depart_1[:5]))
+            if dump:
+                pkl.dump((inp_depart_1, out_depart_1), open(full_path_depart_1, 'wb'))
 
-        ####### Input ################
+            ####### Input ################
 
-        inp_steady_0 = np.concatenate((moms_arrive, moms_ser[0]))
-        inp_steady_0 = np.log(inp_steady_0)
+            inp_steady_0 = np.concatenate((moms_arrive, moms_ser[0]))
+            inp_steady_0 = np.log(inp_steady_0)
 
-        ###############################
-        ########### output ############
+            ###############################
+            ########### output ############
 
-        station = 0
-
-        depart_1_moms = [(np.array(n_Queue_single_station.inter_departures[station])**mom).mean() for mom in range(1, 11)]
-
-        out_steady_0 = n_Queue_single_station.get_steady_single_station()[0]
-
-
-        path_steady_0 = r'C:\Users\Eshel\workspace\data\test2_non_renewal_experiment\steady_0'
-
-        file_name = 'new' +str(ind)+str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs1_' + str(model_num)+ '.pkl'
-        full_path_steady_0 = os.path.join(path_steady_0, file_name)
-        if dump:
-            pkl.dump((inp_steady_0, out_steady_0), open(full_path_steady_0, 'wb'))
-
-
-        ####### Input ################
-
-        inp_steady_1 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0), np.log(np.array(moms_ser[1]))))
-
-        ###############################
-        ########### output ############
-
-        station = 1
-
-        out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
-
-        path_steady_1 = r'C:\Users\Eshel\workspace\data\test2_non_renewal_experiment\steady_1'
-
-        file_name = 'new' + str(ind)+'_correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
-        full_path_steady_1 = os.path.join(path_steady_1, file_name)
-        if dump:
-            pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
+            # station = 0
+            #
+            # depart_1_moms = [(np.array(n_Queue_single_station.inter_departures[station])**mom).mean() for mom in range(1, 11)]
+            #
+            # out_steady_0 = n_Queue_single_station.get_steady_single_station()[0]
+            #
+            #
+            # path_steady_0 = '/scratch/eliransc/non_renewal/steady_0_train_long3'
+            # file_name = GI1+'_'+GI2+'_'+GI3+'_'+str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_0_multi_corrs1_' + str(model_num)+ '.pkl'
+            # full_path_steady_0 = os.path.join(path_steady_0, file_name)
+            # if dump:
+            #     pkl.dump((inp_steady_0, out_steady_0), open(full_path_steady_0, 'wb'))
 
 
-        ###############################
-        ######### Full system #########
-        ###############################
+            ####### Input ################
 
-        ####### Input ################
+            inp_steady_1 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0), np.log(np.array(moms_ser[1]))))
 
-        inp_full_system = np.concatenate((np.log(np.array(moms_arrive)),  np.log(np.array(moms_ser[0])), np.log(np.array(moms_ser[1]))))
+            ###############################
+            ########### output ############
 
-        ###############################
-        ########### output ############
+            station = 1
 
-        # out_full = (out_steady_0, out_steady_1)
-        # out_full_inter = (out_depart_0, out_depart_1)
-        #
-        # path_sys = '/scratch/eliransc/non_renewal/full_system'
-        #
-        # file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'full_sys_multi_corrs1_' + str(model_num) + '.pkl'
-        # full_path_sys = os.path.join(path_sys, file_name)
-        # pkl.dump((inp_full_system, out_full, out_full_inter), open(full_path_sys, 'wb'))
+            out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
+            path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_test2_take2'
+            file_name = GI1+'_'+GI2+'_'+GI3+'_'+'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
+            full_path_steady_1 = os.path.join(path_steady_1, file_name)
+            print(full_path_steady_1)
+            print(np.exp(inp_steady_1[:5]), np.exp(inp_steady_1[-10:-5]),out_steady_1[:10])
+            if dump:
+                pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
+                print(full_path_steady_1)
+
+            ###############################
+            ######### Full system #########
+            ###############################
+
+            ####### Input ################
+
+            inp_full_system = np.concatenate((np.log(np.array(moms_arrive)),  np.log(np.array(moms_ser[0])), np.log(np.array(moms_ser[1]))))
+
+            ###############################
+            ########### output ############
+
+            # out_full = (out_steady_0, out_steady_1)
+            # out_full_inter = (out_depart_0, out_depart_1)
+            #
+            # path_sys = '/scratch/eliransc/non_renewal/full_system'
+            #
+            # file_name = str(rate)[:5] + 'sim_time_' + str(sim_time) + 'full_sys_multi_corrs1_' + str(model_num) + '.pkl'
+            # full_path_sys = os.path.join(path_sys, file_name)
+            # pkl.dump((inp_full_system, out_full, out_full_inter), open(full_path_sys, 'wb'))
+
+
+    # except:
+    #     print('Exceeded 500 customers')
