@@ -551,7 +551,7 @@ for sample in range(150):
 
             path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_test2_take2'
 
-            file_name = GI1+'_'+GI2+'_'+GI3+'_correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
+            file_name = ind+ '_' + GI1+'_'+GI2+'_'+GI3+'_correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_0 = os.path.join(path_depart_0, file_name)
             print(full_path_depart_0)
             print(np.exp(inp_depart_0), out_depart_0[:10])
@@ -590,7 +590,7 @@ for sample in range(150):
 
             path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_test2_take2'
 
-            file_name = GI1+'_'+GI2+'_'+GI3+'_'+'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
+            file_name = ind+ '_' + GI1+'_'+GI2+'_'+GI3+'_'+'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_1 = os.path.join(path_depart_1, file_name)
             print(np.exp(inp_depart_1[:5]), np.exp(inp_depart_1[-10:-5]),np.exp(out_depart_1[:5]))
             if dump:
@@ -630,7 +630,7 @@ for sample in range(150):
             out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
             path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_test2_take2'
-            file_name = GI1+'_'+GI2+'_'+GI3+'_'+'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
+            file_name = ind+ '_' +  GI1+'_'+GI2+'_'+GI3+'_'+'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_steady_1 = os.path.join(path_steady_1, file_name)
             print(full_path_steady_1)
             print(np.exp(inp_steady_1[:5]), np.exp(inp_steady_1[-10:-5]),out_steady_1[:10])
