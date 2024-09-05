@@ -45,7 +45,8 @@ for folder in ['depart_0_train_long','depart_0_train_long3', 'depart_0_train_lon
         SCV_ser = (np.exp(X[:, -9]) - np.exp(X[:, -10]) ** 2) / np.exp(X[:, -10]) ** 2
         SCV_arrive = (np.exp(X[:, 1]) - np.exp(X[:, 0]) ** 2) / np.exp(X[:, 0]) ** 2
         print(SCV_ser.max(), SCV_arrive.max())
-        inds_good = (SCV_ser < 18) & (SCV_arrive < 18)
+
+        inds_good = (SCV_ser < 15) & (SCV_arrive < 15)
         inds_bad = ~inds_good
         temp_x = X[inds_good, :].copy()
         new_x = np.concatenate((X[inds_good, :], temp_x[:inds_bad.sum(), :]), axis=0)
