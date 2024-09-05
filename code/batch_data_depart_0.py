@@ -5,8 +5,7 @@ import pickle as pkl
 
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
 
-for folder in ['depart_0_low_util',
-               'depart_0_scv1', ]:  # 'depart_0_train_long','depart_0_train_long3', 'depart_0_train_long2'
+for folder in ['depart_0_train_long','depart_0_train_long3', 'depart_0_train_long2']:  # 'depart_0_low_util', 'depart_0_scv1',
     path = os.path.join('/scratch/eliransc/non_renewal', folder)
     if not os.path.exists(path):
         os.mkdir(path)
@@ -19,11 +18,8 @@ for folder in ['depart_0_low_util',
         os.mkdir(path_dump_data_depart_0)
 
     num_batches = int(len(true_files) / batch_size)
-    if folder == 'depart_0_low_util':
-        init = 154
-    else:
-        init = 0
-    for batch_num in tqdm(range(init, num_batches)):
+
+    for batch_num in tqdm(range(num_batches)):
 
         input_depart_0 = np.array([])
         output_depart_0 = np.array([])
