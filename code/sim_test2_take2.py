@@ -83,7 +83,7 @@ def give_samples_moms_erlang4(rho):
     samples = np.random.gamma(shape=4, scale=lam, size=20000000)
 
     moms = []
-    for mom in range(1, 6):
+    for mom in range(1, 11):
         moms.append((samples ** mom).mean())
 
     return (moms, samples)
