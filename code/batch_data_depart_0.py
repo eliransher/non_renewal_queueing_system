@@ -5,7 +5,7 @@ import pickle as pkl
 
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
 
-for folder in ['depart_0_train_long','depart_0_train_long3', 'depart_0_train_long2']:  # 'depart_0_low_util', 'depart_0_scv1',
+for folder in ['depart_0_low_util']:  # 'depart_0_low_util', 'depart_0_scv1',
     path = os.path.join('/scratch/eliransc/non_renewal', folder)
     if not os.path.exists(path):
         os.mkdir(path)
@@ -54,7 +54,8 @@ for folder in ['depart_0_train_long','depart_0_train_long3', 'depart_0_train_lon
         temp_y = y[inds_good, :].copy()
         new_y = np.concatenate((y[inds_good, :], temp_y[:inds_bad.sum(), :]), axis=0)
 
-        batch_name = 'trial_' + folder + '_from_' + cluster_name + '_batch_num_' + str(batch_num) + '.pkl'
+
+        batch_name = 'low_util_' + folder + '_from_' + cluster_name + '_batch_num_' + str(batch_num) + '.pkl'
         print(os.path.join(path_dump_data_depart_0, batch_name), input_depart_0.shape, output_depart_0.shape)
 
         pkl.dump((new_x, new_y), open(os.path.join(path_dump_data_depart_0, batch_name), 'wb'))
