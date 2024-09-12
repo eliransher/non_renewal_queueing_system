@@ -246,6 +246,33 @@ def get_ph_larve_scv():
     return data
 
 
+def get_ph_by_scv_val(lb, ub):
+
+
+    scv_flag = True
+    while scv_flag:
+
+        if sys.platform == 'linux':
+            path = '/scratch/eliransc/ph_examples'
+        else:
+            path = r'C:\Users\Eshel\workspace\data\ph_examples'
+
+        files = os.listdir(path)
+
+        ind_file = np.random.randint(len(files))
+
+        data_all = pkl.load(open(os.path.join(path, files[ind_file]), 'rb'))
+
+        ind_file1 = np.random.randint(len(data_all))
+
+        data = data_all[ind_file1]
+
+        if data[2][1] - 1 > lb:
+            if data[2][1] - 1 < ub:
+                scv_flag = False
+
+    return data
+
 def get_ph():
     if sys.platform == 'linux':
         path = '/scratch/eliransc/ph_examples'
@@ -292,33 +319,34 @@ for sample in range(5000):
         # else:
         #     arrivals = get_ph_larve_scv()  ## should be returned to get_ph()
 
+        arrivals = get_ph_by_scv_val(4, 15)
+
         rate = 1  # np.random.uniform(0.5, 0.95)
 
-        # arrivals_norm = arrivals[3]/rate
-        # A = arrivals[1]*rate
-        # a = arrivals[0]
-        # moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
+        arrivals_norm = arrivals[3]/rate
+        A = arrivals[1]*rate
+        a = arrivals[0]
+        moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
 
-        moms_arrive, arrivals_norm = give_samples_moms_erlang4(rate)
+
 
         services_times = {}
         moms_ser = {}
-        rates_ser = [0.9, 0.8858823529411765]
+        rates_ser = [np.random.uniform(0,0.5), np.random.uniform(0,0.5)]
         for station in range( num_stations):
-            # services = get_ph_larve_scv() ## should be returned to get_ph()
+            services = get_ph_by_scv_val(0, 15) ## should be returned to get_ph()
             rate = rates_ser[station] #np.random.uniform(0.75, 0.9)
-            # ser_norm = services[3] * rate
+            ser_norm = services[3] * rate
 
-            # A = services[1] / rate
-            # a = services[0]
+            A = services[1] / rate
+            a = services[0]
 
-            # moms_ser[station] = np.array(compute_first_n_moments(a, A, 10)).flatten()
-            # services_times[station] = ser_norm
-
-            moms_ser[station] ,services_times[station]  =  give_samples_moms_erlang4(rate)
+            moms_ser[station] = np.array(compute_first_n_moments(a, A, 10)).flatten()
+            services_times[station] = ser_norm
 
 
-        sim_time = 12000000
+
+        sim_time = 60000000
         mu = 1.0
         lamda = rate
 
@@ -367,9 +395,8 @@ for sample in range(5000):
         model_num = np.random.randint(1, 1000000)
         print(model_num)
 
-        path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_train_long'
-        path_depart_0 = r'C:\Users\Eshel\workspace\data\test2_non_renewal_experiment\depart_0'
-        file_name = 'wwcorrelation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
+        path_depart_0 = '/scratch/eliransc/non_renewal/new_depart_0'
+        file_name = 'correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_0 = os.path.join(path_depart_0, file_name)
 
         if dump:
@@ -405,10 +432,9 @@ for sample in range(5000):
 
         out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-        path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_train_long'
-        path_depart_1 = r'C:\Users\Eshel\workspace\data\test2_non_renewal_experiment\depart_1'
+        path_depart_1 = '/scratch/eliransc/non_renewal/new_depart_1'
 
-        file_name = 'wwcorrelation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
+        file_name = 'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_1 = os.path.join(path_depart_1, file_name)
         if dump:
             pkl.dump((inp_depart_1, out_depart_1), open(full_path_depart_1, 'wb'))
@@ -445,9 +471,8 @@ for sample in range(5000):
 
         out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
-        path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_train_long'
-        path_steady_1 = r'C:\Users\Eshel\workspace\data\test2_non_renewal_experiment\steady_1'
-        file_name = 'wwcorrelation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
+        path_steady_1 = '/scratch/eliransc/non_renewal/new_steady_1'
+        file_name = 'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_steady_1 = os.path.join(path_steady_1, file_name)
         if dump:
             pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
