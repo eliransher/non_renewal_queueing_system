@@ -5,7 +5,7 @@ import pickle as pkl
 
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
 
-for folder in ['depart_0_low_util']:  # 'depart_0_low_util', 'depart_0_scv1',
+for folder in ['new_depart_0']:  # 'depart_0_low_util', 'depart_0_scv1',
     path = os.path.join('/scratch/eliransc/non_renewal', folder)
     if not os.path.exists(path):
         os.mkdir(path)
@@ -13,7 +13,7 @@ for folder in ['depart_0_low_util']:  # 'depart_0_low_util', 'depart_0_scv1',
     true_files = [file for file in files if 'multi' in file]
     batch_size = 128
 
-    path_dump_data_depart_0 = '/scratch/eliransc/non_renewal/training_corrs/depart_0'  # '/scratch/eliransc/non_renewal/depart_0_from_narval/depart_0'
+    path_dump_data_depart_0 = '/scratch/eliransc/non_renewal/training_corrs/new_depart_0'  # '/scratch/eliransc/non_renewal/depart_0_from_narval/depart_0'
     if not os.path.exists(path_dump_data_depart_0):
         os.mkdir(path_dump_data_depart_0)
 
@@ -55,7 +55,7 @@ for folder in ['depart_0_low_util']:  # 'depart_0_low_util', 'depart_0_scv1',
         new_y = np.concatenate((y[inds_good, :], temp_y[:inds_bad.sum(), :]), axis=0)
 
 
-        batch_name = 'low_util_' + folder + '_from_' + cluster_name + '_batch_num_' + str(batch_num) + '.pkl'
+        batch_name = 'new_' + folder + '_from_' + cluster_name + '_batch_num_' + str(batch_num) + '.pkl'
         print(os.path.join(path_dump_data_depart_0, batch_name), input_depart_0.shape, output_depart_0.shape)
 
         pkl.dump((new_x, new_y), open(os.path.join(path_dump_data_depart_0, batch_name), 'wb'))

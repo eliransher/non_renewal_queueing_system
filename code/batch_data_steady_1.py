@@ -6,7 +6,7 @@ import pickle as pkl
 
 
 cluster_name = os.listdir('/scratch/eliransc/cluster_name/')[0]
-path = '/scratch/eliransc/non_renewal/steady_1_train_long3'
+path = '/scratch/eliransc/non_renewal/new_steady_1'
 
 if not os.path.exists(path):
     os.mkdir(path)
@@ -41,7 +41,7 @@ for batch_num in tqdm(range( num_batches)):
             input_depart_0 = inp.reshape(1, inp.shape[0])
             output_depart_0 = out.reshape(1, out.shape[0])
 
-    batch_name = 'train_long3_steady_1_from_'+cluster_name+'_batch_num_' + str(batch_num+len(os.listdir(path_dump_data_depart_0)))+'.pkl'
+    batch_name = 'new_steady_1_from_'+cluster_name+'_batch_num_' + str(batch_num+len(os.listdir(path_dump_data_depart_0)))+'.pkl'
 
     pkl.dump((input_depart_0, output_depart_0), open(os.path.join(path_dump_data_depart_0, batch_name), 'wb'))
     # pkl.dump(file_name_used, open('/scratch/eliransc/non_renewal/file_used_steady_1.pkl', 'wb'))
