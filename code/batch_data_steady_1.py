@@ -16,7 +16,7 @@ true_files = os.listdir(path)
 
 batch_size = 128
 
-path_dump_data_depart_0 = '/scratch/eliransc/non_renewal/training_corrs/steady_1'
+path_dump_data_depart_0 = '/scratch/eliransc/non_renewal/training_corrs/new_steady_1'
 if not os.path.exists(path_dump_data_depart_0):
     os.mkdir(path_dump_data_depart_0)
 
