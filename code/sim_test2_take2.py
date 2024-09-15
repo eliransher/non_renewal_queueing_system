@@ -426,9 +426,7 @@ for util1 in util1_list:
                     df.loc[curr_ind, 'GI3_scv'] = sch_dict[GI3]
                     df.loc[curr_ind, 'scv_tot'] = sch_dict[GI1] * sch_dict[GI2] * sch_dict[GI3]
 
-unused_inds = list(np.arange(df.shape[0]))
-unused_inds = pkl.dump(unused_inds, open('unused_inds.pkl', 'wb'))
-print(unused_inds)
+
 for sample in range(150):
 
     if True:
