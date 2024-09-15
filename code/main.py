@@ -319,7 +319,7 @@ for sample in range(5000):
         # else:
         #     arrivals = get_ph_larve_scv()  ## should be returned to get_ph()
 
-        arrivals = get_ph_by_scv_val(4, 15)
+        arrivals = get_ph_by_scv_val(3, 15)
 
         rate = 1  # np.random.uniform(0.5, 0.95)
 
@@ -332,7 +332,7 @@ for sample in range(5000):
 
         services_times = {}
         moms_ser = {}
-        rates_ser = [np.random.uniform(0.5,0.75), np.random.uniform(0.5,0.75)]
+        rates_ser = [np.random.uniform(0.5,0.85), np.random.uniform(0.5,0.85)]
         for station in range( num_stations):
             services = get_ph_by_scv_val(0, 15) ## should be returned to get_ph()
             rate = rates_ser[station] #np.random.uniform(0.75, 0.9)
