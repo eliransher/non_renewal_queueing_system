@@ -405,7 +405,7 @@ for util1 in util1_list:
 
 
 
-for sample in range(2):
+for sample in range(210):
 
     begin = time.time()
     num_stations = 2
@@ -428,9 +428,7 @@ for sample in range(2):
     util1 = df.loc[ind, 'util']
     util2 = df.loc[ind, 'util2']
 
-    GI1 = 'erlang'
-    GI2 = 'erlang'
-    GI3 = 'erlang'
+
     print(util1, util2)
 
     rate = 1   # np.random.uniform(0.5, 0.95)
