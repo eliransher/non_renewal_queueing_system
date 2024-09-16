@@ -332,9 +332,9 @@ for sample in range(5000):
 
         services_times = {}
         moms_ser = {}
-        rates_ser = [np.random.uniform(0.5,0.85), np.random.uniform(0.5,0.85)]
+        rates_ser = [np.random.uniform(0.5,0.75), np.random.uniform(0.5,0.75)]
         for station in range( num_stations):
-            services = get_ph_by_scv_val(0, 15) ## should be returned to get_ph()
+            services = get_ph_by_scv_val(0, 4) ## should be returned to get_ph()
             rate = rates_ser[station] #np.random.uniform(0.75, 0.9)
             ser_norm = services[3] * rate
 
