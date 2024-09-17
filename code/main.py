@@ -319,7 +319,7 @@ for sample in range(5000):
         # else:
         #     arrivals = get_ph_larve_scv()  ## should be returned to get_ph()
 
-        arrivals = get_ph_by_scv_val(3, 15)
+        arrivals = get_ph_by_scv_val(4, 15)
 
         rate = 1  # np.random.uniform(0.5, 0.95)
 
@@ -328,11 +328,9 @@ for sample in range(5000):
         a = arrivals[0]
         moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
 
-
-
         services_times = {}
         moms_ser = {}
-        rates_ser = [np.random.uniform(0.5,0.75), np.random.uniform(0.5,0.75)]
+        rates_ser = [np.random.uniform(0.0,0.5), np.random.uniform(0.0,0.5)]
         for station in range( num_stations):
             services = get_ph_by_scv_val(0, 4) ## should be returned to get_ph()
             rate = rates_ser[station] #np.random.uniform(0.75, 0.9)
@@ -395,7 +393,7 @@ for sample in range(5000):
         model_num = np.random.randint(1, 1000000)
         print(model_num)
 
-        path_depart_0 = '/scratch/eliransc/non_renewal/new_depart_0'
+        path_depart_0 = '/scratch/eliransc/non_renewal/new_depart_0_low'
         file_name = 'correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_0 = os.path.join(path_depart_0, file_name)
 
@@ -432,7 +430,7 @@ for sample in range(5000):
 
         out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-        path_depart_1 = '/scratch/eliransc/non_renewal/new_depart_1'
+        path_depart_1 = '/scratch/eliransc/non_renewal/new_depart_1_low'
 
         file_name = 'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_1 = os.path.join(path_depart_1, file_name)
@@ -471,7 +469,7 @@ for sample in range(5000):
 
         out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
-        path_steady_1 = '/scratch/eliransc/non_renewal/new_steady_1'
+        path_steady_1 = '/scratch/eliransc/non_renewal/new_steady_1_low'
         file_name = 'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_steady_1 = os.path.join(path_steady_1, file_name)
         if dump:
