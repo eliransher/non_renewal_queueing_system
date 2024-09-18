@@ -425,8 +425,6 @@ for util1 in util1_list:
                     df.loc[curr_ind, 'GI2_scv'] = sch_dict[GI2]
                     df.loc[curr_ind, 'GI3_scv'] = sch_dict[GI3]
                     df.loc[curr_ind, 'scv_tot'] = sch_dict[GI1] * sch_dict[GI2] * sch_dict[GI3]
-
-
 for sample in range(150):
 
     if True:

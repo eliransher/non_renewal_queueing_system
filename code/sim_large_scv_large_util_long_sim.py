@@ -44,7 +44,7 @@ is_print = False
 
 
 def give_samples_moms_exp(rho):
-    samples = np.random.exponential(rho, 20000000)
+    samples = np.random.exponential(rho, 50000000)
 
     moms = []
     for mom in range(1, 11):
@@ -63,18 +63,18 @@ def create_Erlang4(lam):
 
 
 
-def give_samples_moms_erlang4(rho):
-    lam = 4 / (rho)
-
-    s, A = create_Erlang4(lam)
-
-    samples = SamplesFromPH(ml.matrix(s), A, 10000000)
-
-    moms = []
-    for mom in range(1, 11):
-        moms.append((samples ** mom).mean())
-
-    return (moms, samples)
+# def give_samples_moms_erlang4(rho):
+#     lam = 4 / (rho)
+#
+#     s, A = create_Erlang4(lam)
+#
+#     samples = SamplesFromPH(ml.matrix(s), A, 10000000)
+#
+#     moms = []
+#     for mom in range(1, 11):
+#         moms.append((samples ** mom).mean())
+#
+#     return (moms, samples)
 
 
 import sympy as sp
@@ -99,7 +99,7 @@ def give_samples_moms_hyper(scv, rho):
 
     a = np.array([p, 1 - p])
     A = np.array([[-lmbda1, 0], [0, -lmbda2]])
-    samples = SamplesFromPH(ml.matrix(a), A, 20000000)
+    samples = SamplesFromPH(ml.matrix(a), A, 30000000)
 
     moms = []
     for mom in range(1, 11):
@@ -117,9 +117,9 @@ def give_samples_moms_log_normal(scv, rho):
     # Generate samples
 
     if scv > 3:
-        num_samp = 8000000*5
+        num_samp = 90000000
     else:
-        num_samp = 50000000
+        num_samp = 90000000
 
     samples = np.random.lognormal(mu, sigma, num_samp)  # Generate 1000 samples
     moms = []
@@ -388,6 +388,17 @@ def create_Erlang4(lam):
 dump = True
 
 
+def give_samples_moms_erlang4(rho):
+
+
+    lam = rho / 4
+    samples = np.random.gamma(shape=4, scale=lam, size=80000000)
+
+    moms = []
+    for mom in range(1, 11):
+        moms.append((samples ** mom).mean())
+
+    return (moms, samples)
 
 # util_ranges = np.linspace(0.75,0.96,18)
 #
@@ -426,13 +437,13 @@ for sample in range(20):
 
         sim_time = 60000000
 
-        GI1 = np.random.choice(['h4', 'ln4', 'g4', 'ln25', 'erlang','m'])
+        GI1 = np.random.choice([ 'ln4', 'erlang'])
         GI2 = np.random.choice(['h4', 'ln4', 'g4', 'ln25', 'erlang','m'])
-        GI3 = np.random.choice(['h4', 'ln4', 'g4', 'ln25', 'erlang','m'])
+        GI3 = np.random.choice(['ln4', 'erlang'])
 
 
-        util1 = np.random.uniform(0.7,0.9)
-        util2 = np.random.uniform(0.7,0.95)
+        util1 = np.random.uniform(0.65,0.95)
+        util2 = np.random.uniform(0.5,0.75)
 
         print(GI1, GI2, GI3)
 
@@ -554,7 +565,7 @@ for sample in range(20):
 
             model_num = np.random.randint(1, 1000000)
 
-            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_train_long3'
+            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_train_long4'
 
             file_name = GI1+'_'+GI2+'_'+GI3+'_correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_0 = os.path.join(path_depart_0, file_name)
@@ -592,7 +603,7 @@ for sample in range(20):
 
             out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-            path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_train_long3'
+            path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_train_long4'
 
             file_name = GI1+'_'+GI2+'_'+GI3+'_'+'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_1 = os.path.join(path_depart_1, file_name)
@@ -632,7 +643,7 @@ for sample in range(20):
 
             out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
-            path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_train_long3'
+            path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_train_long4'
             file_name = GI1+'_'+GI2+'_'+GI3+'_'+'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_steady_1 = os.path.join(path_steady_1, file_name)
             print(full_path_steady_1)
