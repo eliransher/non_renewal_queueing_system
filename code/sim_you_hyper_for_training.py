@@ -290,9 +290,9 @@ for sample in range(500):
     rate = 1   # np.random.uniform(0.5, 0.95)
     a = np.array([0.0590414481559016, 1 - 0.0590414481559016])
     A = np.array([[-0.118082896311803, 0], [0, -1.88191710368820]])
-    # arrivals_norm = SamplesFromPH(ml.matrix(a), A, 50000000)
-    # moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
-    # print(moms_arrive)
+    arrivals_norm = SamplesFromPH(ml.matrix(a), A, 50000000)
+    moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
+    print(moms_arrive)
 
     services_times = {}
     moms_ser = {}
