@@ -211,9 +211,6 @@ class N_Queue_single_station:
 
         while True:
 
-            if np.random.rand() < 0.00001:
-                print(self.env.now)
-
 
             ind_ser = np.random.randint(self.arrivals.shape[0])
             yield self.env.timeout(self.arrivals[ind_ser])
@@ -285,7 +282,7 @@ dump = True
 
 scv_1 = True
 
-for sample in range(1):
+for sample in range(500):
 
     begin = time.time()
     num_stations = 2
@@ -301,10 +298,10 @@ for sample in range(1):
     moms_ser = {}
     means = {}
     for station in range(num_stations):
-        if station == num_stations:
-            means[station] = 0.9
+        if station == num_stations-1:
+            means[station] = np.random.uniform(0.7,0.9)
         else:
-            means[station] = 0.6
+            means[station] = np.random.uniform(0.25,0.9)
 
     for station in range(num_stations):
 
@@ -372,15 +369,15 @@ for sample in range(1):
 
         out_depart_0 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0)))
 
-        model_num = np.random.randint(1, 1000000)
+        model_num = np.random.randint(1, 10000000)
 
-        path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_scv1'
-        file_name = 'correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
+        path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_train_9'
+        file_name = 'hyper_correlation_'+str(correlation0)+ '_means'+ str(means[0])+ '_' + str(means[1]) +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_0 = os.path.join(path_depart_0, file_name)
 
         if dump:
 
-            pkl.dump((inp_depart_0, out_depart_0), open('hyper_depart_0.pkl', 'wb'))
+            pkl.dump((inp_depart_0, out_depart_0), open(full_path_depart_0, 'wb'))
 
 
         inp_depart_1 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0), np.log(np.array(moms_ser[1]))))
@@ -411,12 +408,12 @@ for sample in range(1):
 
         out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-        path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_scv1'
+        path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_train_9'
 
-        file_name = 'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
+        file_name = 'hyper_correlation_'+str(correlation1)+ '_means'+ str(means[0])+ '_' + str(means[1]) +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_1 = os.path.join(path_depart_1, file_name)
         if dump:
-            pkl.dump((inp_depart_1, out_depart_1), open('hyper_depart_1.pkl', 'wb'))
+            pkl.dump((inp_depart_1, out_depart_1), open(full_path_depart_1, 'wb'))
 
         ####### Input ################
 
@@ -452,12 +449,12 @@ for sample in range(1):
 
         out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
-        path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_scv1'
+        path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_train_9'
 
-        file_name = 'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
+        file_name = 'hyper_correlation_'+str(correlation1)+ '_means'+ str(means[0])+ '_' + str(means[1]) +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_steady_1 = os.path.join(path_steady_1, file_name)
         if dump:
-            pkl.dump((inp_steady_1, out_steady_1), open('hyper_steady_1.pkl', 'wb'))
+            pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
 
 
         ###############################
