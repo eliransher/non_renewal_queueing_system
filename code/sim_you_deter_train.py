@@ -312,7 +312,7 @@ for sample in range(500):
             services_times[station] =  np.random.exponential(means[station], 50000000)
 
 
-        sim_time = 60000000
+        sim_time = 40000000
         mu = 1.0
         lamda = rate
 

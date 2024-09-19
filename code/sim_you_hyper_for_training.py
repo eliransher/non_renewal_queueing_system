@@ -313,8 +313,8 @@ for sample in range(500):
 
     # pkl.dump((moms_arrive,  arrivals_norm), open('arrivals.pkl', 'wb'))
 
-    moms_arrive, arrivals_norm =  pkl.load(open('arrivals.pkl', 'rb'))
-    sim_time = 500000
+    moms_arrive, arrivals_norm =  pkl.load(open('/home/eliransc/projects/def-dkrass/eliransc/non_renewal_queueing_system/code/arrivals.pkl', 'rb'))
+    sim_time = 6000000
     mu = 1.0
     lamda = rate
 
