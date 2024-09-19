@@ -314,7 +314,7 @@ for sample in range(500):
     # pkl.dump((moms_arrive,  arrivals_norm), open('arrivals1.pkl', 'wb'))
 
     moms_arrive, arrivals_norm =  pkl.load(open('arrivals1.pkl', 'rb'))
-    sim_time = 6000000
+    sim_time = 60000000
     mu = 1.0
     lamda = rate
 
