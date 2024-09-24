@@ -313,7 +313,12 @@ for sample in range(500):
 
     # pkl.dump((moms_arrive,  arrivals_norm), open('arrivals.pkl', 'wb'))
 
-    moms_arrive, arrivals_norm =  pkl.load(open('arrivals.pkl', 'rb'))
+    moms_arrive, arrivals_norm =  pkl.load(open('arrivals1.pkl', 'rb'))
+
+    moms_arrive = np.array(moms_arrive)
+    arrivals_norm = np.array(arrivals_norm)
+
+
     sim_time = 50000000
     mu = 1.0
     lamda = rate
