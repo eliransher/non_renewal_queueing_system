@@ -282,7 +282,7 @@ dump = True
 
 scv_1 = True
 
-for sample in range(500):
+for sample in range(1):
 
     begin = time.time()
     num_stations = 2
@@ -299,9 +299,9 @@ for sample in range(500):
     means = {}
     for station in range(num_stations):
         if station == num_stations-1:
-            means[station] = np.random.uniform(0.7,0.9)
+            means[station] = np.random.uniform(0.55,0.65)
         else:
-            means[station] = np.random.uniform(0.25,0.9)
+            means[station] =  np.random.uniform(0.55,0.65)
 
     for station in range(num_stations):
 
@@ -313,7 +313,7 @@ for sample in range(500):
 
     # pkl.dump((moms_arrive,  arrivals_norm), open('arrivals1.pkl', 'wb'))
 
-    moms_arrive, arrivals_norm =  pkl.load(open('arrivals1.pkl', 'rb'))
+    moms_arrive, arrivals_norm =  pkl.load(open('arrivals.pkl', 'rb'))
     sim_time = 60000000
     mu = 1.0
     lamda = rate
@@ -374,7 +374,8 @@ for sample in range(500):
         path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_train_9'
         file_name = 'hyper_correlation_'+str(correlation0)+ '_means'+ str(means[0])+ '_' + str(means[1]) +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_0 = os.path.join(path_depart_0, file_name)
-
+        # print(inp_depart_0, out_depart_0)
+        # pkl.dump((inp_depart_0, out_depart_0), open('depart_0_hyper.pkl', 'wb'))
         if dump:
 
             pkl.dump((inp_depart_0, out_depart_0), open(full_path_depart_0, 'wb'))
@@ -412,6 +413,9 @@ for sample in range(500):
 
         file_name = 'hyper_correlation_'+str(correlation1)+ '_means'+ str(means[0])+ '_' + str(means[1]) +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_depart_1 = os.path.join(path_depart_1, file_name)
+
+        # print(inp_depart_1, out_depart_1)
+        # pkl.dump((inp_depart_1, out_depart_1), open('depart_1_hyper.pkl', 'wb'))
         if dump:
             pkl.dump((inp_depart_1, out_depart_1), open(full_path_depart_1, 'wb'))
 
@@ -453,6 +457,8 @@ for sample in range(500):
 
         file_name = 'hyper_correlation_'+str(correlation1)+ '_means'+ str(means[0])+ '_' + str(means[1]) +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_steady_1 = os.path.join(path_steady_1, file_name)
+        # print(inp_steady_1, out_steady_1[:50])
+        # pkl.dump((inp_steady_1, out_steady_1), open('steady_1_hyper.pkl', 'wb'))
         if dump:
             pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
 

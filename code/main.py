@@ -473,7 +473,7 @@ for sample in range(5000):
         file_name = 'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
         full_path_steady_1 = os.path.join(path_steady_1, file_name)
         if dump:
-            pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
+                pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
 
 
         ###############################

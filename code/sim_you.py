@@ -288,7 +288,7 @@ scv_1 = True
 for sample in range(1):
 
     begin = time.time()
-    num_stations = 2
+    num_stations = 9
 
     rate = 1   # np.random.uniform(0.5, 0.95)
     a = np.array([0.0590414481559016, 1 - 0.0590414481559016])
@@ -301,7 +301,7 @@ for sample in range(1):
     moms_ser = {}
     means = {}
     for station in range(num_stations):
-        if station == num_stations:
+        if station == num_stations-1:
             means[station] = 0.9
         else:
             means[station] = 0.6
@@ -317,7 +317,7 @@ for sample in range(1):
     # pkl.dump((moms_arrive,  arrivals_norm), open('arrivals.pkl', 'wb'))
 
     moms_arrive, arrivals_norm =  pkl.load(open('arrivals.pkl', 'rb'))
-    sim_time = 500000
+    sim_time = 5000000
     mu = 1.0
     lamda = rate
 
