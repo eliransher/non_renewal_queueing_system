@@ -313,7 +313,7 @@ for sample in range(500):
 
     # pkl.dump((moms_arrive,  arrivals_norm), open('arrivals.pkl', 'wb'))
 
-    moms_arrive, arrivals_norm =  pkl.load(open('arrivals.pkl', 'rb'))
+    moms_arrive, arrivals_norm =  pkl.load(open('arrivals1.pkl', 'rb'))
 
     # moms_arrive = np.array(moms_arrive)
     # arrivals_norm = np.array(arrivals_norm)
@@ -323,7 +323,7 @@ for sample in range(500):
     mu = 1.0
     lamda = rate
 
-    pkl.dump(moms_arrive, open('mom_arrivals_check.pkl', 'wb'))
+    # pkl.dump(moms_arrive, open('mom_arrivals_check.pkl', 'wb'))
 
     # lamda, mu, sim_time, num_stations, services, arrivals_norm, moms_arrive, moms_ser = pkl.load(open('sim_setting.pkl', 'rb'))
     print('start sim')
