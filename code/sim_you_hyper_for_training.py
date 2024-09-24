@@ -290,8 +290,8 @@ for sample in range(1):
     rate = 1   # np.random.uniform(0.5, 0.95)
     a = np.array([0.0590414481559016, 1 - 0.0590414481559016])
     A = np.array([[-0.118082896311803, 0], [0, -1.88191710368820]])
-    # arrivals_norm = SamplesFromPH(ml.matrix(a), A, 50000000)
-    # moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
+    arrivals_norm = SamplesFromPH(ml.matrix(a), A, 50000000)
+    moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
     # print(moms_arrive)
 
     services_times = {}
@@ -311,9 +311,9 @@ for sample in range(1):
         moms_ser[station] = np.array(compute_first_n_moments(a, A, 10)).flatten()
         services_times[station] = np.random.exponential(means[station], 50000000)
 
-    # pkl.dump((moms_arrive,  arrivals_norm), open('arrivals1.pkl', 'wb'))
+    pkl.dump((moms_arrive,  arrivals_norm), open('arrivals.pkl', 'wb'))
 
-    moms_arrive, arrivals_norm =  pkl.load(open('/home/eliransc/projects/def-dkrass/eliransc/non_renewal_queueing_system/code/arrivals.pkl', 'rb'))
+    moms_arrive, arrivals_norm =  pkl.load(open('arrivals.pkl', 'rb'))
     sim_time = 50000000
     mu = 1.0
     lamda = rate
