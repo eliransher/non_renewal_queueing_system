@@ -318,6 +318,8 @@ for sample in range(500):
     mu = 1.0
     lamda = rate
 
+    pkl.dump(moms_arrive, open('mom_arrivals_check.pkl', 'wb'))
+
     # lamda, mu, sim_time, num_stations, services, arrivals_norm, moms_arrive, moms_ser = pkl.load(open('sim_setting.pkl', 'rb'))
     print('start sim')
     n_Queue_single_station = N_Queue_single_station(lamda, mu, sim_time, num_stations, services_times, arrivals_norm)
