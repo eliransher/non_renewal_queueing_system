@@ -565,7 +565,7 @@ for sample in range(200):
 
             model_num = np.random.randint(1, 1000000)
 
-            path_depart_0 = '/scratch/eliransc/non_renewal/'
+            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_like2_low'
 
             file_name = GI1+'_'+GI2+'_'+GI3+'_correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_0 = os.path.join(path_depart_0, file_name)
