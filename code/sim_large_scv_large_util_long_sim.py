@@ -442,7 +442,7 @@ for sample in range(200):
         GI3 = np.random.choice(['ln4', 'erlang'])
 
 
-        util1 = np.random.uniform(0.0,0.95)
+        util1 = np.random.uniform(0.0,0.8)
         util2 = np.random.uniform(0.0,0.5)
 
         print(GI1, GI2, GI3)
@@ -450,11 +450,11 @@ for sample in range(200):
         rate = 1   # np.random.uniform(0.5, 0.95)
         print('Starting GI1')
 
-        SCV_GI1 = np.random.uniform(3.5, 4.5)
+        SCV_GI1 = np.random.uniform(4, 9)
         if GI1 == 'erlang':
             moms_arrive, arrivals_norm = give_samples_moms_erlang4(1)
         elif GI1 == 'ln4':
-            SCV_GI1 = np.random.uniform(2.5,5.5)
+            SCV_GI1 = np.random.uniform(4, 8)
             moms_arrive, arrivals_norm = give_samples_moms_log_normal(SCV_GI1, 1)
         elif GI1 == 'h4':
             moms_arrive, arrivals_norm = give_samples_moms_hyper(SCV_GI1, 1)
@@ -565,7 +565,7 @@ for sample in range(200):
 
             model_num = np.random.randint(1, 1000000)
 
-            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_like2_low'
+            path_depart_0 = '/scratch/eliransc/non_renewal/'
 
             file_name = GI1+'_'+GI2+'_'+GI3+'_correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_0 = os.path.join(path_depart_0, file_name)
