@@ -439,18 +439,18 @@ for sample in range(200):
 
         GI1 = np.random.choice([ 'ln4', 'erlang'])
         GI2 = np.random.choice(['h4', 'ln4', 'g4', 'ln25', 'erlang','m'])
-        GI3 = np.random.choice(['ln4', 'erlang'])
+        GI3 = np.random.choice(['ln4',  'g4', 'h4']) # 'erlang'
 
 
-        util1 = np.random.uniform(0.5,0.8)
-        util2 = np.random.uniform(0.0,0.95)
+        util1 = np.random.uniform(0.0,0.95)
+        util2 = np.random.uniform(0.0,0.5)
 
         print(GI1, GI2, GI3)
 
         rate = 1   # np.random.uniform(0.5, 0.95)
         print('Starting GI1')
 
-        SCV_GI1 = np.random.uniform(4, 9)
+        SCV_GI1 = np.random.uniform(4, 12)
         if GI1 == 'erlang':
             moms_arrive, arrivals_norm = give_samples_moms_erlang4(1)
         elif GI1 == 'ln4':
@@ -496,13 +496,13 @@ for sample in range(200):
         if GI3 == 'erlang':
             moms_ser[1], services_times[1] = give_samples_moms_erlang4(util2)
         elif GI3 == 'ln4':
-            SCV_GI3 = np.random.uniform(3.5, 4.5)
+            SCV_GI3 = np.random.uniform(4, 10)
             moms_ser[1], services_times[1] = give_samples_moms_log_normal(SCV_GI3, util2)
         elif GI3 == 'h4':
-            SCV_GI3 = np.random.uniform(3.5, 4.5)
+            SCV_GI3 = np.random.uniform(4, 10)
             moms_ser[1], services_times[1] = give_samples_moms_hyper(SCV_GI3, util2)
         elif GI3 == 'g4':
-            SCV_GI3 = np.random.uniform(3.5, 4.5)
+            SCV_GI3 = np.random.uniform(4, 10)
             moms_ser[1], services_times[1] = give_samples_moms_log_normal(SCV_GI3, util2)
         elif GI3 == 'ln25':
             SCV_GI3 = np.random.uniform(0.05, 0.5)
@@ -565,7 +565,7 @@ for sample in range(200):
 
             model_num = np.random.randint(1, 1000000)
 
-            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_like2_aa'
+            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_like2_aa_large_scv_low_util'
 
             file_name = GI1+'_'+GI2+'_'+GI3+'_correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_0 = os.path.join(path_depart_0, file_name)
@@ -603,7 +603,7 @@ for sample in range(200):
 
             out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-            path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_like2_aa'
+            path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_like2_aa_large_scv_low_util'
 
             file_name = GI1+'_'+GI2+'_'+GI3+'_'+'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_1 = os.path.join(path_depart_1, file_name)
@@ -643,7 +643,7 @@ for sample in range(200):
 
             out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
-            path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_like2_aa'
+            path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_like2_aa_large_scv_low_util'
             file_name = GI1+'_'+GI2+'_'+GI3+'_'+'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_steady_1 = os.path.join(path_steady_1, file_name)
             print(full_path_steady_1)
