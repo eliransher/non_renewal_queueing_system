@@ -643,7 +643,7 @@ for sample in range(200):
 
             out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
-            path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_like2_aa_large_scv_arrive_low_ser_low_util'
+            path_steady_1 = '/scratch/eliransc/non_renewal/depart_1_like2_aa_large_scv_arrive_low_ser_low_util'
             file_name = GI1+'_'+GI2+'_'+GI3+'_'+'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_steady_1 = os.path.join(path_steady_1, file_name)
             print(full_path_steady_1)
