@@ -565,7 +565,7 @@ for sample in range(200):
 
             model_num = np.random.randint(1, 1000000)
 
-            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_like2_aa_large_scv_arrive_low_ser_low_util'
+            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_like2_aa_large_scv_arrive_low_ser_low_util_a'
 
             file_name = GI1+'_'+GI2+'_'+GI3+'_correlation_'+str(correlation0)+ '_' +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_0 = os.path.join(path_depart_0, file_name)
@@ -603,7 +603,7 @@ for sample in range(200):
 
             out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-            path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_like2_aa_large_scv_arrive_low_ser_low_util'
+            path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_like2_aa_large_scv_arrive_low_ser_low_util_a'
 
             file_name = GI1+'_'+GI2+'_'+GI3+'_'+'correlation_'+str(correlation1)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_1 = os.path.join(path_depart_1, file_name)
@@ -643,7 +643,7 @@ for sample in range(200):
 
             out_steady_1 = n_Queue_single_station.get_steady_single_station()[1]
 
-            path_steady_1 = '/scratch/eliransc/non_renewal/depart_1_like2_aa_large_scv_arrive_low_ser_low_util'
+            path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_like2_aa_large_scv_arrive_low_ser_low_util_a'
             file_name = GI1+'_'+GI2+'_'+GI3+'_'+'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_steady_1 = os.path.join(path_steady_1, file_name)
             print(full_path_steady_1)

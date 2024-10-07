@@ -284,7 +284,7 @@ scv_1 = True
 
 for sample in range(500):
 
-    try:
+    if True: # try:
         begin = time.time()
         num_stations = 2
 
@@ -492,5 +492,5 @@ for sample in range(500):
             # full_path_sys = os.path.join(path_sys, file_name)
             # pkl.dump((inp_full_system, out_full, out_full_inter),
 
-    except:
-        print('Exceeded 500 customers')
+    # except:
+    #     print('Exceeded 500 customers')
