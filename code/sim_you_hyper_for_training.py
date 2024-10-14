@@ -271,6 +271,30 @@ def get_ph_1():
     return data
 
 
+def sample_hyper_exponential(lambdas, probabilities, size=1):
+    """
+    Sample from a hyper-exponential distribution.
+
+    Parameters:
+    - lambdas: List of rates (1/mean) for the exponential distributions.
+    - probabilities: List of probabilities associated with each rate.
+    - size: Number of samples to generate.
+
+    Returns:
+    - samples: Array of generated samples.
+    """
+    # Ensure probabilities sum to 1
+    probabilities = np.array(probabilities)
+    probabilities /= probabilities.sum()
+
+    # Choose which exponential distribution to sample from for each value
+    choices = np.random.choice(len(lambdas), size=size, p=probabilities)
+
+    # Generate samples from the chosen exponential distributions
+    samples = np.random.exponential(scale=1 / np.array(lambdas)[choices])
+
+    return samples
+
 def create_Erlang4(lam):
     s = np.array([[1, 0, 0, 0]])
 
@@ -289,11 +313,22 @@ for sample in range(1):
         num_stations = 9
 
         rate = 1   # np.random.uniform(0.5, 0.95)
-        a = np.array([0.0590414481559016, 1 - 0.0590414481559016])
-        A = np.array([[-0.118082896311803, 0], [0, -1.88191710368820]])
+        # a = np.array([0.0590414481559016, 1 - 0.0590414481559016])
+        # A = np.array([[-0.118082896311803, 0], [0, -1.88191710368820]])
         # arrivals_norm = SamplesFromPH(ml.matrix(a), A, 50000000)
         # moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
         # print(moms_arrive)
+
+        # Example usage
+        lambdas = [0.118082896311803, 1.88191710368820]  # Two exponential distributions with different rates
+        probabilities = [0.0590414481559016, 1 - 0.0590414481559016]  # Their respective probabilities
+        size = 60000000  # Number of samples to generate
+
+        samples = sample_hyper_exponential(lambdas, probabilities, size)
+        arrivals_norm = np.array(samples)
+        moms_arrive = []
+        for mom in range(1,11):
+            moms_arrive.append( (arrivals_norm**mom).mean().item())
 
         services_times = {}
         moms_ser = {}
@@ -314,7 +349,7 @@ for sample in range(1):
 
         # pkl.dump((moms_arrive,  arrivals_norm), open('arrivals2.pkl', 'wb'))
 
-        moms_arrive, arrivals_norm =  pkl.load(open('arrivals.pkl', 'rb'))
+        # moms_arrive, arrivals_norm =  pkl.load(open('arrivals.pkl', 'rb'))
 
         # moms_arrive = np.array(moms_arrive)
         # arrivals_norm = np.array(arrivals_norm)
@@ -393,8 +428,8 @@ for sample in range(1):
 
             ###############################
             ########### output ############
+            ###############################
 
-            station = 1
             for station in range(1,9):
                 print(station)
 
