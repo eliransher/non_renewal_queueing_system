@@ -282,8 +282,8 @@ dump = True
 
 scv_1 = True
 
-for sample in range(1):
-    if True:
+for sample in range(20):
+    try:
         begin = time.time()
         num_stations = 9
 
@@ -444,4 +444,5 @@ for sample in range(1):
                 if dump:
                     pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
 
-
+    except:
+        print('not work')
