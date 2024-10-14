@@ -357,7 +357,7 @@ for sample in range(1):
         # arrivals_norm = np.array(arrivals_norm)
 
 
-        sim_time = 3000
+        sim_time = 50000000
         mu = 1.0
         lamda = rate
 
