@@ -271,6 +271,15 @@ def get_ph_1():
     return data
 
 
+def create_Erlang4(lam):
+    s = np.array([[1, 0, 0, 0]])
+
+    A = np.array([[-lam, lam, 0, 0], [0, -lam, lam, 0], [0, 0, -lam, lam], [0, 0, 0, -lam]])
+
+    return (s, A)
+
+
+
 def sample_hyper_exponential(lambdas, probabilities, size=1):
     """
     Sample from a hyper-exponential distribution.
@@ -294,13 +303,6 @@ def sample_hyper_exponential(lambdas, probabilities, size=1):
     samples = np.random.exponential(scale=1 / np.array(lambdas)[choices])
 
     return samples
-
-def create_Erlang4(lam):
-    s = np.array([[1, 0, 0, 0]])
-
-    A = np.array([[-lam, lam, 0, 0], [0, -lam, lam, 0], [0, 0, -lam, lam], [0, 0, 0, -lam]])
-
-    return (s, A)
 
 dump = True
 
