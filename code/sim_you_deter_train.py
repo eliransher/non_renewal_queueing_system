@@ -285,7 +285,7 @@ scv_1 = True
 for sample in range(20):
     try:
         begin = time.time()
-        num_stations = 9
+        num_stations = 6
 
         rate = 1   # np.random.uniform(0.5, 0.95)
         ones = np.ones(10000000)
@@ -311,7 +311,7 @@ for sample in range(20):
             services_times[station] = np.random.exponential(means[station], 50000000)
 
 
-        sim_time = 30000000
+        sim_time = 25000000
         mu = 1.0
         lamda = rate
 
