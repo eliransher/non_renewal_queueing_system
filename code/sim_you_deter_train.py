@@ -285,7 +285,7 @@ scv_1 = True
 for sample in range(20):
     try:
         begin = time.time()
-        num_stations = 6
+        num_stations = 9
 
         rate = 1   # np.random.uniform(0.5, 0.95)
         ones = np.ones(10000000)
@@ -299,9 +299,9 @@ for sample in range(20):
         means = {}
         for station in range(num_stations):
             if station == num_stations - 1:
-                means[station] = np.random.uniform(0.85, 0.92)
+                means[station] = np.random.uniform(0.899999999, 0.9)
             else:
-                means[station] = np.random.uniform(0.55, 0.65)
+                means[station] = np.random.uniform(0.59999999999, 0.6)
 
         for station in range(num_stations):
             a = np.array([1.])
@@ -388,6 +388,10 @@ for sample in range(20):
 
 
             for station in range(1, 9):
+
+
+
+
                 print(station)
 
                 depart_1_moms_ = [(np.array(n_Queue_single_station.inter_departures[station]) ** mom).mean() for mom in range(1, 11)]
@@ -419,13 +423,24 @@ for sample in range(20):
                     model_num) + '.pkl'
                 full_path_depart_1 = os.path.join(path_depart_1, file_name)
 
+                if station  == 1:
+                    inp_depart_1 = np.concatenate(
+                        (np.log(np.array(depart_0_moms)), np.array(corrs_0), np.log(np.array(moms_ser[station]))))
+                else:
+                    inp_depart_1 = np.concatenate(
+                        (np.log(np.array(moms_prev)), np.array(corrs_prev), np.log(np.array(moms_ser[station]))))
+
                 if dump:
                     pkl.dump((inp_depart_1, out_depart_1), open(full_path_depart_1, 'wb'))
 
                 ####### Input ################
 
-                inp_steady_1 = np.concatenate(
-                    (np.log(np.array(depart_0_moms)), np.array(corrs_0), np.log(np.array(moms_ser[station]))))
+                if station == 1:
+                    inp_steady_1 = np.concatenate(
+                        (np.log(np.array(depart_0_moms)), np.array(corrs_0), np.log(np.array(moms_ser[station]))))
+                else:
+                    inp_steady_1 = np.concatenate(
+                        (np.log(np.array(moms_prev)), np.array(corrs_prev), np.log(np.array(moms_ser[station]))))
 
                 ###############################
                 ########### output ############
@@ -443,6 +458,9 @@ for sample in range(20):
 
                 if dump:
                     pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
+
+                corrs_prev = corrs_1
+                moms_prev = depart_1_moms_
 
     except:
         print('not work')
