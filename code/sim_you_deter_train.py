@@ -299,9 +299,9 @@ for sample in range(20):
         means = {}
         for station in range(num_stations):
             if station == num_stations - 1:
-                means[station] = np.random.uniform(0.899999999, 0.9)
+                means[station] = np.random.uniform(0.8, 0.92)
             else:
-                means[station] = np.random.uniform(0.59999999999, 0.6)
+                means[station] = np.random.uniform(0.5, 0.7)
 
         for station in range(num_stations):
             a = np.array([1.])
