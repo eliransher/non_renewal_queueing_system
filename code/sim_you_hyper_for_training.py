@@ -312,7 +312,7 @@ for sample in range(50):
 
     try:
         begin = time.time()
-        num_stations = 9
+        num_stations = 6
 
         rate = 1   # np.random.uniform(0.5, 0.95)
         # a = np.array([0.0590414481559016, 1 - 0.0590414481559016])
@@ -416,8 +416,8 @@ for sample in range(50):
 
             model_num = np.random.randint(1, 10000000)
 
-            # path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_train_9_a'
-            path_depart_0 =  r'C:\Users\Eshel\workspace\data\hyper_training\depart_0_a'
+            path_depart_0 = '/scratch/eliransc/non_renewal/depart_0_train_9_a'
+            # path_depart_0 =  r'C:\Users\Eshel\workspace\data\hyper_training\depart_0_a'
             file_name = 'hyper_correlation_'+str(correlation0)+ '_means'+ str(means[0])+ '_' + str(means[1]) +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
             full_path_depart_0 = os.path.join(path_depart_0, file_name)
 
@@ -432,11 +432,15 @@ for sample in range(50):
             ########### output ############
             ###############################
 
-            for station in range(1,9):
+            for station in range(1, num_stations):
+
                 print(station)
 
-                depart_1_moms = [(np.array(n_Queue_single_station.inter_departures[station])**mom).mean() for mom in range(1,11)]
-
+                depart_1_moms_ = [(np.array(n_Queue_single_station.inter_departures[station]) ** mom).mean() for mom in
+                                  range(1, 11)]
+                depart_1_moms = []
+                for val in depart_1_moms_:
+                    depart_1_moms.append(val.item())
                 corrs_1 = []
 
                 for corr_leg in range(1, 6):
@@ -453,37 +457,53 @@ for sample in range(50):
                 r = np.corrcoef(x1, y1)
                 correlation1 = r[0, 1]
 
-
                 out_depart_1 = np.concatenate((np.log(np.array(depart_1_moms)), np.array(corrs_1)))
 
-                # path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_train_9_a'
-                path_depart_1 = r'C:\Users\Eshel\workspace\data\hyper_training\depart_1_a'
-                file_name = 'hyper_correlation_'+str(correlation1)+ '_station'+ str(station)+ '_' + str(means[station]) +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(model_num)+ '.pkl'
+                path_depart_1 = '/scratch/eliransc/non_renewal/depart_1_train_9_a'
+                # path_depart_1 = r'C:\Users\Eshel\workspace\data\deter_training\depart_1_a'
+                file_name = 'hyper_correlation_' + str(correlation1) + '_station' + str(station) + '_' + str(
+                    means[station]) + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'depart_0_multi_corrs1_' + str(
+                    model_num) + '.pkl'
                 full_path_depart_1 = os.path.join(path_depart_1, file_name)
 
+                if station == 1:
+                    inp_depart_1 = np.concatenate(
+                        (np.log(np.array(depart_0_moms)), np.array(corrs_0), np.log(np.array(moms_ser[station]))))
+                else:
+                    inp_depart_1 = np.concatenate(
+                        (np.log(np.array(moms_prev)), np.array(corrs_prev), np.log(np.array(moms_ser[station]))))
 
                 if dump:
                     pkl.dump((inp_depart_1, out_depart_1), open(full_path_depart_1, 'wb'))
 
-
                 ####### Input ################
 
-                inp_steady_1 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0), np.log(np.array(moms_ser[station]))))
+                if station == 1:
+                    inp_steady_1 = np.concatenate(
+                        (np.log(np.array(depart_0_moms)), np.array(corrs_0), np.log(np.array(moms_ser[station]))))
+                else:
+                    inp_steady_1 = np.concatenate(
+                        (np.log(np.array(moms_prev)), np.array(corrs_prev), np.log(np.array(moms_ser[station]))))
 
                 ###############################
                 ########### output ############
 
-
-
                 out_steady_1 = n_Queue_single_station.get_steady_single_station()[station]
 
-                # path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_train_9_a'
-                path_steady_1 = r'C:\Users\Eshel\workspace\data\hyper_training\steady_1_a'
-                file_name = 'hyper_correlation_'+str(correlation1)+ '_station'+ str(station)+ '_' + str(means[station]) +  str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(model_num)+ '.pkl'
+                path_steady_1 = '/scratch/eliransc/non_renewal/steady_1_train_9_a'
+                # path_steady_1 = r'C:\Users\Eshel\workspace\data\deter_training\steady_1_a'
+                file_name = 'hyper_correlation_' + str(correlation1) + '_station' + str(station) + '_' + str(
+                    means[station]) + str(rate)[:5] + 'sim_time_' + str(sim_time) + 'steady_1_multi_corrs1_' + str(
+                    model_num) + '.pkl'
                 full_path_steady_1 = os.path.join(path_steady_1, file_name)
+
+                print(station, out_steady_1[:5])
 
                 if dump:
                     pkl.dump((inp_steady_1, out_steady_1), open(full_path_steady_1, 'wb'))
+
+                corrs_prev = corrs_1
+                moms_prev = depart_1_moms_
 
     except:
         print('Exceeded 500 customers')
