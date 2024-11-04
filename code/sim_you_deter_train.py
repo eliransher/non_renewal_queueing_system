@@ -285,7 +285,7 @@ scv_1 = True
 for sample in range(20):
     try:
         begin = time.time()
-        num_stations = 9
+        num_stations = 6
 
         rate = 1   # np.random.uniform(0.5, 0.95)
         ones = np.ones(10000000)
@@ -387,7 +387,7 @@ for sample in range(20):
             ########### output ############
 
 
-            for station in range(1, 9):
+            for station in range(1, num_stations):
 
 
 
