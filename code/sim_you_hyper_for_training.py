@@ -312,7 +312,7 @@ for sample in range(50):
 
     try:
         begin = time.time()
-        num_stations = 6
+        num_stations = 5
 
         rate = 1   # np.random.uniform(0.5, 0.95)
         # a = np.array([0.0590414481559016, 1 - 0.0590414481559016])
