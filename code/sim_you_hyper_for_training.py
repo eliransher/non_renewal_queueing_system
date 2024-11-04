@@ -337,9 +337,9 @@ for sample in range(50):
         means = {}
         for station in range(num_stations):
             if station == num_stations-1:
-                means[station] = np.random.uniform(0.8999999,0.9)
+                means[station] = np.random.uniform(0.8,0.92)
             else:
-                means[station] =  np.random.uniform(0.59999,0.6)
+                means[station] =  np.random.uniform(0.5,0.65)
 
         for station in range(num_stations):
 
