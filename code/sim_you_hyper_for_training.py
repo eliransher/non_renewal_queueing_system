@@ -312,7 +312,7 @@ for sample in range(50):
 
     try:
         begin = time.time()
-        num_stations = 5
+        num_stations = 9
 
         rate = 1   # np.random.uniform(0.5, 0.95)
         # a = np.array([0.0590414481559016, 1 - 0.0590414481559016])
@@ -339,7 +339,7 @@ for sample in range(50):
             if station == num_stations-1:
                 means[station] = np.random.uniform(0.8,0.92)
             else:
-                means[station] =  np.random.uniform(0.5,0.65)
+                means[station] =  np.random.uniform(0.5,0.7)
 
         for station in range(num_stations):
 
@@ -357,7 +357,7 @@ for sample in range(50):
         # arrivals_norm = np.array(arrivals_norm)
 
 
-        sim_time = 60000000
+        sim_time = 40000000
         mu = 1.0
         lamda = rate
 
