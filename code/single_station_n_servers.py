@@ -201,18 +201,17 @@ def get_ph():
     if sys.platform == 'linux':
         path = '/scratch/eliransc/ph_random/medium_ph_1'
     else:
-        path = r'C:\Users\user\workspace\data\ph_random\ph_mean_1'
+        path = r'C:\Users\Eshel\workspace\data\PH_samples'
 
-    files = os.listdir(path)
+    folders = os.listdir(path)
 
-    ind_file = np.random.randint(len(files))
+    folder_ind = np.random.randint(len(folders))
+    files = os.listdir(os.path.join(path, folders[folder_ind]))
+    ind_file1 = np.random.randint(len(files))
 
-    data_all = pkl.load(open(os.path.join(path, files[ind_file]), 'rb'))
+    data_all = pkl.load(open(os.path.join(path,folders[folder_ind], files[ind_file1]), 'rb'))
 
-    ind_file1 = np.random.randint(len(data_all))
-
-    data = data_all[ind_file1]
-    return data
+    return data_all
 
 for sample in range(5000):
 

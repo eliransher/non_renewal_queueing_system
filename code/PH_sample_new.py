@@ -773,8 +773,8 @@ def main(args):
     probabilities = [0.2, 0.4, 0.4]
     flag = True
 
-    min_ph_size = 90
-    max_ph_size = 100
+    min_ph_size = 150
+    max_ph_size = 160
 
     for example in range(500):
         scv_range =  np.random.randint(1, 20)
