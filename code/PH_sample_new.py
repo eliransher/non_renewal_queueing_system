@@ -760,85 +760,55 @@ def main(args):
     print('The current path is:')
     print(os.getcwd())
     if sys.platform == 'linux':
-        data_path = '/scratch/eliransc/ph_examples_more_samples'
+        data_path = '/scratch/eliransc/ph_samples'
     else:
-        data_path = r'C:\Users\user\workspace\data\ph_examples'
+        data_path = r'C:\Users\Eshel\workspace\data\PH_samples'
 
 
+    for scv_val in range(1, 7):
+        if not os.path.exists(os.path.join(data_path, str(scv_val))):
+            os.mkdir(os.path.join(data_path, str(scv_val)))
 
     elements = [0, 1, 2]
     probabilities = [0.2, 0.4, 0.4]
     flag = True
 
-    batch_size = 500
     min_ph_size = 5
     max_ph_size = 15
 
-    scv_range = 7 #np.random.randint(1,7)
-    print(scv_range)
-    SCVs = []
+
+
+
     for example in range(500):
-        ph_list = []
-        plt.figure()
-        x_vals = np.linspace(0,2,45)
-        for ind in tqdm(range(batch_size)):
-            flag = True
-            a_size = np.random.randint(min_ph_size, max_ph_size)
-            while flag:  # sample until it is valid
+        scv_range =  np.random.randint(1, 7)
+        print(scv_range)
+        folder_path = os.path.join(os.path.join(data_path, str(scv_range)))
+        flag = True
+        a_size = np.random.randint(min_ph_size, max_ph_size)
+        while flag:  # sample until it is valid
 
-                arrival_result = send_to_the_right_generator(np.random.choice(elements, 1, p=probabilities)[0], a_size)
-                if arrival_result:
-                    s_arrival, A_arrival = arrival_result
-                    try:
-                        scv_curr = compute_first_n_moments(s_arrival, A_arrival, 2)[1][0]-1
-                    except:
-                        print('bad')
-                    if (scv_curr > scv_range - 1 ) & (scv_curr < scv_range):
+            arrival_result = send_to_the_right_generator(np.random.choice(elements, 1, p=probabilities)[0], a_size)
+            if arrival_result:
+                s_arrival, A_arrival = arrival_result
+                try:
+                    scv_curr = compute_first_n_moments(s_arrival, A_arrival, 2)[1][0]-1
+                    if (scv_curr > scv_range - 1) & (scv_curr < scv_range):
                         flag = False
-                        y_vals = compute_pdf_within_range(x_vals,s_arrival, A_arrival)
-                        # print('######### fit', scv_curr, scv_range - 1, scv_range)
-                    # else:
-                    #     print('not fit', scv_curr,scv_range-1, scv_range)
-
-            try:
-                plt.plot(x_vals, y_vals)
-                # print(compute_first_n_moments(s_arrival, A_arrival, 2)[1][0]-1)
-                SCVs.append(scv_curr)
-            except:
-                print('bad')
-            # print(compute_first_n_moments(s_arrival, A_arrival, 2)[1][0]-1)
+                except:
+                    print('bad')
 
 
-
-            # if compute_first_n_moments(s_arrival, A_arrival, 2)[1][0]-1 > 3000:
-            #     x_vals = np.linspace(0, 5, 70)
-            #     y_vals = compute_pdf_within_range(x_vals, s_arrival, A_arrival)
-            #
-            #     try:
-            #         arrivals = SamplesFromPH(ml.matrix(s_arrival), A_arrival, 15000000)
-            #         moms = np.array(compute_first_n_moments(s_arrival, A_arrival, 10)).flatten()
-            #         tot_data = (s_arrival, A_arrival, moms, arrivals)
-            #         ph_list.append(tot_data)
-            #         for mom in range(1,7):
-            #             print((arrivals**mom).mean())
-            #         print(moms)
-            #     except:
-            #         print('unable to sample')
-
-        plt.ylim(0,4)
-        plt.show()
-        print(len(SCVs))
-        plt.figure()
-        plt.hist(SCVs, bins=150)
-        plt.show()
+        arrivals = SamplesFromPH(ml.matrix(s_arrival), A_arrival, 40000000)
+        moms = np.array(compute_first_n_moments(s_arrival, A_arrival, 10)).flatten()
+        tot_data = (s_arrival, A_arrival, moms, arrivals)
 
 
-        batch_num = np.random.randint(1, 100000000)
-        batch_name = 'batch_size_' + str(batch_size) + '_min_ph_size_' + str(min_ph_size) + '_max_ph_size_' + str(max_ph_size) + \
-                     'batch_num_' + str(batch_num)+  '.pkl'
+        batch_num = np.random.randint(1, 10000000)
+        file_name = 'min_' + str(min_ph_size) + '_max_' + str(max_ph_size) + \
+                     'batch_num_' + str(batch_num)+ '_scv_'+ str(scv_range) +   '.pkl'
 
 
-        pkl.dump(ph_list, open(os.path.join(data_path,batch_name)  ,'wb'))
+        pkl.dump(tot_data, open(os.path.join(folder_path,file_name)  ,'wb'))
 
 
 

@@ -216,64 +216,62 @@ def get_ph():
 
 for sample in range(5000):
 
-    try:
-        begin = time.time()
 
-        services = get_ph()
-        moms_ser = np.array(compute_first_n_moments(services[0], services[1], 10)).flatten()
-        num_servers = np.random.randint(1, 6)
-        arrivals = get_ph()
-        rho = np.random.uniform(0.5, 0.95)
-        rate = rho * num_servers
+    begin = time.time()
 
-        arrivals_norm = arrivals[3] / rate
+    services = get_ph()
+    moms_ser = np.array(compute_first_n_moments(services[0], services[1], 10)).flatten()
+    num_servers = np.random.randint(1, 6)
+    arrivals = get_ph()
+    rho = np.random.uniform(0.02, 0.95)
+    rate = rho * num_servers
 
-        A = arrivals[1] * rate
-        a = arrivals[0]
-        moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
+    arrivals_norm = arrivals[3] / rate
 
-        sim_time = 30000000
-        mu = 1.0
-        num_stations = 1
+    A = arrivals[1] * rate
+    a = arrivals[0]
+    moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
 
-        print(num_servers)
+    sim_time = 6000
+    mu = 1.0
+    num_stations = 1
 
-        lamda = rate
+    print(num_servers)
 
-        n_Queue_single_station = N_Queue_single_station(lamda, mu, sim_time, num_stations, services[3], arrivals_norm,
-                                                        num_servers)
-        n_Queue_single_station.run()
+    lamda = rate
 
-        input_ = np.concatenate((moms_arrive, moms_ser), axis=0)
-        output = n_Queue_single_station.get_steady_single_station()
+    n_Queue_single_station = N_Queue_single_station(lamda, mu, sim_time, num_stations, services[3], arrivals_norm,
+                                                    num_servers)
+    n_Queue_single_station.run()
 
-        end = time.time()
+    input_ = np.concatenate((moms_arrive, moms_ser), axis=0)
+    output = n_Queue_single_station.get_steady_single_station()
 
-        print(end - begin)
+    end = time.time()
 
-        inp_depart_0 = np.concatenate((moms_arrive, moms_ser))
-        inp_depart_0 = np.log(inp_depart_0)
+    print(end - begin)
 
-        model_num = np.random.randint(1, 10000000)
+    inp_depart_0 = np.concatenate((moms_arrive, moms_ser))
+    inp_depart_0 = np.log(inp_depart_0)
 
-        ########### output ############
+    model_num = np.random.randint(1, 10000000)
 
-        station = 0
+    ########### output ############
 
-        ####### Input ################
+    station = 0
 
-        inp_steady_0 = np.concatenate((np.log(moms_arrive), np.log(moms_ser), np.array([num_servers])))
+    ####### Input ################
 
-        ###############################
-        ########### output ############
+    inp_steady_0 = np.concatenate((np.log(moms_arrive), np.log(moms_ser), np.array([num_servers])))
 
-        out_steady_0 = n_Queue_single_station.get_steady_single_station()[0]
+    ###############################
+    ########### output ############
 
-        path_steady_0 = '/scratch/eliransc/n_servers'
-        file_name = str(rate)[:5] + 'num_servers_' + str(num_servers) + '_sim_time_' + str(sim_time) + 'steady_' + str(
-            model_num) + '.pkl'
-        full_path_steady_0 = os.path.join(path_steady_0, file_name)
-        pkl.dump((inp_steady_0, out_steady_0), open(full_path_steady_0, 'wb'))
+    out_steady_0 = n_Queue_single_station.get_steady_single_station()[0]
 
-    except:
-        print('Exceed 500')
+    path_steady_0 = '/scratch/eliransc/n_servers'
+    file_name = str(rate)[:5] + 'num_servers_' + str(num_servers) + '_sim_time_' + str(sim_time) + 'steady_' + str(
+        model_num) + '.pkl'
+    full_path_steady_0 = os.path.join(path_steady_0, file_name)
+    pkl.dump((inp_steady_0, out_steady_0), open(full_path_steady_0, 'wb'))
+
