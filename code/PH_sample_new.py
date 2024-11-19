@@ -765,7 +765,7 @@ def main(args):
         data_path = r'C:\Users\Eshel\workspace\data\PH_samples'
 
 
-    for scv_val in range(1, 7):
+    for scv_val in range(1, 21):
         if not os.path.exists(os.path.join(data_path, str(scv_val))):
             os.mkdir(os.path.join(data_path, str(scv_val)))
 
@@ -777,7 +777,7 @@ def main(args):
     max_ph_size = 160
 
     for example in range(500):
-        scv_range =  np.random.randint(1, 7)
+        scv_range =  np.random.randint(1, 20)
         print(scv_range)
         folder_path = os.path.join(os.path.join(data_path, str(scv_range)))
         flag = True
