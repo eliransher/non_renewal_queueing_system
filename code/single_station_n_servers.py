@@ -9,6 +9,9 @@ import pickle as pkl
 from numpy.linalg import matrix_power
 # from scipy.special import factorial
 import time
+from tqdm import tqdm
+from scipy.special import factorial
+from scipy.linalg import expm, sinm, cosm
 
 is_print = False
 
@@ -59,7 +62,7 @@ is_print = False
 
 class N_Queue_single_station:
 
-    def __init__(self, lamda, mu, sim_time, num_stations, services, arrivals_norm, num_servers):
+    def __init__(self,  sim_time, num_stations, services, arrivals_norm, num_servers):
 
         self.env = simpy.Environment()  # initializing simpy enviroment
         # Defining a resource with capacity 1
@@ -68,8 +71,6 @@ class N_Queue_single_station:
         # an event can one of three: (1. arrival, 2. entering service 3. service completion)
         self.num_stations = num_stations
 
-        self.mu = mu  # service rate
-        self.lamda = lamda  # inter-arrival rate
 
         self.servers = []
         self.df_waiting_times = pd.DataFrame([])  # is a dataframe the holds all information waiting time
@@ -81,6 +82,7 @@ class N_Queue_single_station:
         self.df_events = []  # is a dataframe the holds all information of the queue dynamic:
         self.last_depart = []
         self.inter_departures = {}
+        self.sojourn_times = []
 
         self.services = services
         self.arrivals = arrivals_norm
@@ -122,19 +124,14 @@ class N_Queue_single_station:
         self.last_event_time[station] = self.env.now
 
         with self.servers[station].request() as req:
-            # Updating the a new cusotmer arrived
-            # self.update_new_row(customer, 'Arrival', station)
+
 
             yield req
 
-            # Updating the a new cusotmer entered service
-            # self.update_new_row(customer, 'Enter service', station)
-            # print('customer {} enter service at station {} at {}'.format(customer.id, station, self.env.now))
             ind_ser = np.random.randint(self.services.shape[0])
             yield self.env.timeout(self.services[ind_ser])
 
 
-            # yield self.env.timeout(np.random.exponential(1 / self.mu))
 
             tot_time = self.env.now - self.last_event_time[station]  # keeping track of the last event
             self.num_cust_durations[station][
@@ -144,24 +141,8 @@ class N_Queue_single_station:
             self.num_cust_sys[station] -= 1  # updating number of cusotmers in the system
             self.last_event_time[station] = self.env.now
 
-            # Updating the a cusotmer departed the system
-            # self.update_new_row(customer, 'Departure', station)
-
-            if is_print:
-                print('Departed customer {} at {}'.format(customer.id, self.env.now))
-
-            # new_waiting_row = {'Customer': customer.id, 'WaitingTime': self.env.now - customer.arrival_time, 'station': station}
-            #
-            # self.df_waiting_times[station] = pd.concat([self.df_waiting_times[station], pd.DataFrame([new_waiting_row])],
-            #                                   ignore_index=True)
-
-            if station < self.num_stations - 1:
-                # print('customer {} arrived at station {} at {}' .format(customer.id, station+1, self.env.now))
-                customer.arrival_time = self.env.now
-                self.env.process(self.service(customer, station + 1))
-            else:
-                pass
-                # print('customer {} departs the system station {} at {}'.format(customer.id, station, self.env.now))
+            sojourn_time = self.env.now.item() -  customer.arrival_time.item()
+            self.sojourn_times.append(sojourn_time)
 
     #########################################################
     ################# Arrival block #########################
@@ -171,16 +152,13 @@ class N_Queue_single_station:
 
         while True:
 
-            ind_ser = np.random.randint(self.arrivals.shape[0])
-            yield self.env.timeout(self.arrivals[ind_ser])
-            # yield self.env.timeout(np.random.exponential(1 / self.lamda))
+            # ind_ser = np.random.randint(self.arrivals.shape[0])
+            self.id_current += 1
+            yield self.env.timeout(self.arrivals[self.id_current%self.arrivals.shape[0]])
 
             curr_id = self.id_current
             arrival_time = self.env.now
             customer = Customer(curr_id, arrival_time, 1)
-            # print('customer {} arrived at station {} at {}'.format(customer.id, station, self.env.now))
-
-            self.id_current += 1
 
             if is_print:
                 print('Arrived customer {} at {}'.format(customer.id, self.env.now))
@@ -199,13 +177,13 @@ class N_Queue_single_station:
 
 def get_ph():
     if sys.platform == 'linux':
-        path = '/scratch/eliransc/ph_random/medium_ph_1'
+        path = '/scratch/eliransc/ph_samples'
     else:
         path = r'C:\Users\Eshel\workspace\data\PH_samples'
 
     folders = os.listdir(path)
 
-    folder_ind = np.random.randint(len(folders))
+    folder_ind =   np.random.randint(len(folders))
     files = os.listdir(os.path.join(path, folders[folder_ind]))
     ind_file1 = np.random.randint(len(files))
 
@@ -218,59 +196,80 @@ for sample in range(5000):
 
     begin = time.time()
 
-    services = get_ph()
-    moms_ser = np.array(compute_first_n_moments(services[0], services[1], 10)).flatten()
-    num_servers = np.random.randint(1, 6)
     arrivals = get_ph()
     rho = np.random.uniform(0.02, 0.95)
-    rate = rho * num_servers
+    arrive_moms = []
+    for mom in range(1, 11):
+        arrive_moms.append(factorial(mom) / 1 ** mom)
 
-    arrivals_norm = arrivals[3] / rate
+    moms_arrive = arrivals[2]
 
-    A = arrivals[1] * rate
-    a = arrivals[0]
-    moms_arrive = np.array(compute_first_n_moments(a, A, 10)).flatten()
 
-    sim_time = 6000
+    services = get_ph()
+
+    num_servers = np.random.randint(1, 6)
+    rate = 1/(rho * num_servers)
+
+    services_norm =  services[3] / rate
+
+    A = services[1] * rate
+    a = services[0]
+
+
+    moms_ser = np.array(compute_first_n_moments(a, A, 10)).flatten()
+
+
+    sim_time = 60000000
     mu = 1.0
     num_stations = 1
 
     print(num_servers)
 
     lamda = rate
+    inps = []
+    outputs1 = []
+    outputs2 = []
 
-    n_Queue_single_station = N_Queue_single_station(lamda, mu, sim_time, num_stations, services[3], arrivals_norm,
-                                                    num_servers)
-    n_Queue_single_station.run()
+    for trails in tqdm(range(2)):
 
-    input_ = np.concatenate((moms_arrive, moms_ser), axis=0)
-    output = n_Queue_single_station.get_steady_single_station()
+        n_Queue_single_station = N_Queue_single_station(sim_time, num_stations, services_norm, arrivals[3],
+                                                        num_servers)
+        n_Queue_single_station.run()
 
-    end = time.time()
+        input_ = np.concatenate((moms_arrive, moms_ser), axis=0)
+        output = n_Queue_single_station.get_steady_single_station()
 
-    print(end - begin)
+        end = time.time()
 
-    inp_depart_0 = np.concatenate((moms_arrive, moms_ser))
-    inp_depart_0 = np.log(inp_depart_0)
+        print(end - begin)
 
-    model_num = np.random.randint(1, 10000000)
+        model_num = np.random.randint(1, 10000000)
 
-    ########### output ############
+        ########### output ############
 
-    station = 0
+        station = 0
 
-    ####### Input ################
+        ####### Input ################
 
-    inp_steady_0 = np.concatenate((np.log(moms_arrive), np.log(moms_ser), np.array([num_servers])))
+        inp_steady_0 = np.concatenate((np.log(moms_arrive), np.log(moms_ser), np.array([num_servers])))
+        inps.append(inp_steady_0)
+        ###############################
+        ########### output ############
 
-    ###############################
-    ########### output ############
+        output1 = n_Queue_single_station.get_steady_single_station()[0]
+        output2 = np.array(n_Queue_single_station.sojourn_times).mean().item()
 
-    out_steady_0 = n_Queue_single_station.get_steady_single_station()[0]
+        outputs1.append(output1)
+        outputs2.append(output2)
 
-    path_steady_0 = '/scratch/eliransc/n_servers'
-    file_name = str(rate)[:5] + 'num_servers_' + str(num_servers) + '_sim_time_' + str(sim_time) + 'steady_' + str(
+    if sys.platform == 'linux':
+        path_steady_0 = '/scratch/eliransc/n_servers'
+    else:
+        path_steady_0 = r'C:\Users\Eshel\workspace\data\ggc_training_data'
+
+    file_name =  'rho_' + str(rho)[:5] + '_num_servers_' + str(num_servers) + '_sim_time_' + str(sim_time) + 'steady_' + str(
         model_num) + '.pkl'
+
     full_path_steady_0 = os.path.join(path_steady_0, file_name)
-    pkl.dump((inp_steady_0, out_steady_0), open(full_path_steady_0, 'wb'))
+    pkl.dump((inps, outputs1, outputs2), open(full_path_steady_0, 'wb'))
 
