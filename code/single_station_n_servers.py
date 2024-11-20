@@ -237,7 +237,7 @@ for sample in range(5000):
         n_Queue_single_station.run()
 
         input_ = np.concatenate((moms_arrive, moms_ser), axis=0)
-        output = n_Queue_single_station.get_steady_single_station()
+        # output = n_Queue_single_station.get_steady_single_station()
 
         end = time.time()
 
@@ -258,6 +258,9 @@ for sample in range(5000):
 
         output1 = n_Queue_single_station.get_steady_single_station()[0]
         output2 = np.array(n_Queue_single_station.sojourn_times).mean().item()
+
+        mean_val = (np.arange(output1.shape[0])*output1).sum()
+        print(mean_val, output2)
 
         outputs1.append(output1)
         outputs2.append(output2)

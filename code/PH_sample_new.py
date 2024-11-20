@@ -773,11 +773,11 @@ def main(args):
     probabilities = [0.2, 0.4, 0.4]
     flag = True
 
-    min_ph_size = 30
-    max_ph_size = 50
+    min_ph_size = 160
+    max_ph_size = 170
 
     for example in range(500):
-        scv_range =  np.random.randint(1, 11)
+        scv_range =  np.random.randint(1, 21)
         print(scv_range)
         folder_path = os.path.join(os.path.join(data_path, str(scv_range)))
         flag = True
