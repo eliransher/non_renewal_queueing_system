@@ -175,6 +175,9 @@ class N_Queue_single_station:
         return np.array(steady_list).reshape(self.num_stations, 500)
 
 
+
+
+
 def get_ph():
     if sys.platform == 'linux':
         path = '/scratch/eliransc/ph_samples'
@@ -230,49 +233,55 @@ for sample in range(5000):
     outputs1 = []
     outputs2 = []
 
-    for trails in tqdm(range(2)):
+    try:
 
-        n_Queue_single_station = N_Queue_single_station(sim_time, num_stations, services_norm, arrivals[3],
-                                                        num_servers)
-        n_Queue_single_station.run()
+        for trails in tqdm(range(2)):
 
-        input_ = np.concatenate((moms_arrive, moms_ser), axis=0)
-        # output = n_Queue_single_station.get_steady_single_station()
+            n_Queue_single_station = N_Queue_single_station(sim_time, num_stations, services_norm, arrivals[3],
+                                                            num_servers)
+            n_Queue_single_station.run()
 
-        end = time.time()
+            input_ = np.concatenate((moms_arrive, moms_ser), axis=0)
+            # output = n_Queue_single_station.get_steady_single_station()
 
-        print(end - begin)
+            end = time.time()
 
-        model_num = np.random.randint(1, 10000000)
+            print(end - begin)
 
-        ########### output ############
+            model_num = np.random.randint(1, 10000000)
 
-        station = 0
+            ########### output ############
 
-        ####### Input ################
+            station = 0
 
-        inp_steady_0 = np.concatenate((np.log(moms_arrive), np.log(moms_ser), np.array([num_servers])))
-        inps.append(inp_steady_0)
-        ###############################
-        ########### output ############
+            ####### Input ################
 
-        output1 = n_Queue_single_station.get_steady_single_station()[0]
-        output2 = np.array(n_Queue_single_station.sojourn_times).mean().item()
+            inp_steady_0 = np.concatenate((np.log(moms_arrive), np.log(moms_ser), np.array([num_servers])))
+            inps.append(inp_steady_0)
+            ###############################
+            ########### output ############
 
-        mean_val = (np.arange(output1.shape[0])*output1).sum()
-        print(mean_val, output2)
+            output1 = n_Queue_single_station.get_steady_single_station()[0]
+            output2 = np.array(n_Queue_single_station.sojourn_times).mean().item()
 
-        outputs1.append(output1)
-        outputs2.append(output2)
+            mean_val = (np.arange(output1.shape[0])*output1).sum()
 
-    if sys.platform == 'linux':
-        path_steady_0 = '/scratch/eliransc/n_servers'
-    else:
-        path_steady_0 = r'C:\Users\Eshel\workspace\data\ggc_training_data'
+            outputs1.append(output1)
+            outputs2.append(output2)
 
-    file_name =  'rho_' + str(rho)[:5] + '_num_servers_' + str(num_servers) + '_sim_time_' + str(sim_time) + 'steady_' + str(
-        model_num) + '.pkl'
 
-    full_path_steady_0 = os.path.join(path_steady_0, file_name)
-    pkl.dump((inps, outputs1, outputs2), open(full_path_steady_0, 'wb'))
+
+        if sys.platform == 'linux':
+            path_steady_0 = '/scratch/eliransc/n_servers'
+        else:
+            path_steady_0 = r'C:\Users\Eshel\workspace\data\ggc_training_data'
+
+        file_name =  'rho_' + str(rho)[:5] + '_num_servers_' + str(num_servers) + '_sim_time_' + str(sim_time) + 'steady_' + str(
+            model_num) + '.pkl'
+
+        full_path_steady_0 = os.path.join(path_steady_0, file_name)
+        pkl.dump((inps, outputs1, outputs2), open(full_path_steady_0, 'wb'))
+
+    except:
+        print('cannot find ph dist')
 
