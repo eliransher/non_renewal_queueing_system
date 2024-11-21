@@ -221,8 +221,33 @@ for sample in range(5000):
 
     moms_ser = np.array(compute_first_n_moments(a, A, 10)).flatten()
 
+    mom_1_ser = moms_ser[0]
+    mom_2_ser = moms_ser[1]
+
+    var_ser = mom_2_ser - mom_1_ser ** 2
+    scv_ser = var_ser / mom_1_ser ** 2
+
+    if rho > 0.8:
+        rho_factor = 1.25
+    elif rho > 0.6:
+        rho_factor = 1.1
+    elif rho > 0.4:
+        rho_factor = 1.05
+    else:
+        rho_factor = 1.
+
+    if scv_ser > 10:
+        scv_ser_factor = 1.25
+    elif scv_ser > 4:
+        scv_ser_factor = 1.15
+    elif scv_ser > 2:
+        scv_ser_factor = 1.05
+    else:
+        scv_ser_factor = 1.
+
 
     sim_time = 60000000
+    sim_time = int(sim_time * rho_factor * scv_ser_factor)
     mu = 1.0
     num_stations = 1
 
@@ -235,7 +260,7 @@ for sample in range(5000):
 
     try:
 
-        for trails in tqdm(range(2)):
+        for trails in tqdm(range(1)):
 
             n_Queue_single_station = N_Queue_single_station(sim_time, num_stations, services_norm, arrivals[3],
                                                             num_servers)
@@ -272,7 +297,7 @@ for sample in range(5000):
 
 
         if sys.platform == 'linux':
-            path_steady_0 = '/scratch/eliransc/n_servers'
+            path_steady_0 = '/scratch/eliransc/n_servers_single'
         else:
             path_steady_0 = r'C:\Users\Eshel\workspace\data\ggc_training_data'
 
