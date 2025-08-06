@@ -1,6 +1,16 @@
 #!/bin/bash
-#SBATCH -t 0-03:58
-#SBATCH -A def-dkrass
-#SBATCH --mem 20000
+#SBATCH --job-name=sample_ph            # Job name
+#SBATCH --account=power-general-users
+#SBATCH --time=02:00:00
+#SBATCH --partition=power-general
+#SBATCH --ntasks=1                      # Number of tasks per array job
+#SBATCH --nodes=1                       # Number of nodes
+#SBATCH --cpus-per-task=1               # CPUs per task
+#SBATCH --mem-per-cpu=4G                # Memory per CPU
+#SBATCH --output=sample_ph%A_%a.out    # Output file: Job ID and array task ID
+#SBATCH --error=sample_ph%A_%a.err     # Error file: Job ID and array task ID
+
+
 source /scratch200/davidfine/queues/queues/bin/activate
-python /home/eliransc/projects/def-dkrass/eliransc/non_renewal_queueing_system/code/batch_data_steady_0.py
+python /a/home/cc/students/math/davidfine/non_renewal_queueing_system/code/PH_sample_new.py
+

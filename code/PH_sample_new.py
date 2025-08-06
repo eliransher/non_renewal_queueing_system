@@ -798,7 +798,7 @@ def main(args):
                     print('bad')
 
 
-        arrivals = SamplesFromPH(ml.matrix(s_arrival), A_arrival, 40000000)
+        arrivals = SamplesFromPH(ml.matrix(s_arrival), A_arrival, 4000)
         moms = np.array(compute_first_n_moments(s_arrival, A_arrival, 10)).flatten()
         tot_data = (s_arrival, A_arrival, moms, arrivals)
 
