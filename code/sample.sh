@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=sample_ph            # Job name
 #SBATCH --account=power-general-users
-#SBATCH --time=02:00:00
+#SBATCH --time=22:00:00
 #SBATCH --partition=power-general
 #SBATCH --ntasks=1                      # Number of tasks per array job
 #SBATCH --nodes=1                       # Number of nodes
