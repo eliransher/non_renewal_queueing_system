@@ -3,6 +3,8 @@ import sys
 sys.path.append(r'C:\Users\Eshel\workspace\butools2\Python')
 sys.path.append('/home/d/dkrass/eliransc/Python')
 sys.path.append('/home/eliransc/projects/def-dkrass/eliransc/butools/Python')
+sys.path.append('/home/elirans/scratch/butools2/Python')
+sys.path.append('/scratch200/davidfine/butools2/Python')
 
 import os
 
@@ -760,7 +762,8 @@ def main(args):
     print('The current path is:')
     print(os.getcwd())
     if sys.platform == 'linux':
-        data_path = '/scratch/eliransc/ph_samples'
+        data_path = '/home/elirans/scratch/ph_sample'
+        data_path = '/scratch200/davidfine/ph_samples'
     else:
         data_path = r'C:\Users\Eshel\workspace\data\PH_samples'
 
@@ -773,8 +776,8 @@ def main(args):
     probabilities = [0.2, 0.4, 0.4]
     flag = True
 
-    min_ph_size = 160
-    max_ph_size = 170
+    min_ph_size = 40
+    max_ph_size = 220
 
     for example in range(500):
         scv_range =  np.random.randint(1, 21)
