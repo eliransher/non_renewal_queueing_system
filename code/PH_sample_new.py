@@ -763,7 +763,7 @@ def main(args):
     print(os.getcwd())
     if sys.platform == 'linux':
         data_path = '/home/elirans/scratch/ph_sample'
-        data_path = '/scratch200/davidfine/ph_samples'
+        data_path = '/scratch200/davidfine/ph_samples1'
     else:
         data_path = r'C:\Users\Eshel\workspace\data\PH_samples'
 
@@ -798,7 +798,7 @@ def main(args):
                     print('bad')
 
 
-        arrivals = SamplesFromPH(ml.matrix(s_arrival), A_arrival, 4000)
+        arrivals = SamplesFromPH(ml.matrix(s_arrival), A_arrival, 40000000)
         moms = np.array(compute_first_n_moments(s_arrival, A_arrival, 10)).flatten()
         tot_data = (s_arrival, A_arrival, moms, arrivals)
 
