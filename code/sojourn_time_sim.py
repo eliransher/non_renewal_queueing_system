@@ -256,26 +256,26 @@ def get_ph_by_scv_val(lb, ub):
 
 
     scv_flag = True
-    while scv_flag:
 
-        if sys.platform == 'linux':
-            path = '/scratch200/davidfine/ph_samples1'
-        else:
-            path = r'C:\Users\Eshel\workspace\data\ph_examples'
 
-        files = os.listdir(path)
+    if sys.platform == 'linux':
+        path = '/scratch200/davidfine/ph_samples1'
+    else:
+        path = r'C:\Users\Eshel\workspace\data\ph_examples'
 
-        ind_file = np.random.randint(len(files))
+    files = os.listdir(path)
 
-        data_all = pkl.load(open(os.path.join(path, files[ind_file]), 'rb'))
+    ind_file = np.random.randint(len(files))
 
-        ind_file1 = np.random.randint(len(data_all))
+    path = os.path.join(path, files[ind_file])
 
-        data = data_all[ind_file1]
+    files = os.listdir(path)
 
-        if data[2][1] - 1 > lb:
-            if data[2][1] - 1 < ub:
-                scv_flag = False
+    ind_file = np.random.randint(len(files))
+
+    data_all = pkl.load(open(os.path.join(path, files[ind_file]), 'rb'))
+
+
 
     return data
 
