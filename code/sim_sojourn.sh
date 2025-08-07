@@ -12,4 +12,4 @@
 
 
 source /scratch200/davidfine/queues/queues/bin/activate
-python /a/home/cc/students/math/davidfine/non_renewal_queueing_system/code/PH_sample_new.py
+python /a/home/cc/students/math/davidfine/non_renewal_queueing_system/code/sojourn_time_sim.py
