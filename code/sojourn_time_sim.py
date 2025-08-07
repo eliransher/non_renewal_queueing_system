@@ -275,9 +275,15 @@ def get_ph_by_scv_val(lb, ub):
 
     data_all = pkl.load(open(os.path.join(path, files[ind_file]), 'rb'))
 
+    ind_file1 = np.random.randint(len(data_all))
 
+    # data = data_all[ind_file1]
+    #
+    # if data[2][1] - 1 > lb:
+    #     if data[2][1] - 1 < ub:
+    #         scv_flag = False
 
-    return data
+    return data_all
 
 def get_ph():
     if sys.platform == 'linux':
