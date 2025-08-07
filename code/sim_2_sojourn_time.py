@@ -13,7 +13,7 @@ from tqdm import tqdm
 from scipy.special import factorial
 from scipy.linalg import expm, sinm, cosm
 
-is_print = False
+is_print = True
 
 
 def ser_moment_n(s, A, mom):
@@ -57,7 +57,6 @@ class Customer:
         self.type = type_cust
 
 
-is_print = False
 
 
 class N_Queue_single_station:
@@ -67,7 +66,7 @@ class N_Queue_single_station:
         self.env = simpy.Environment()  # initializing simpy enviroment
         # Defining a resource with capacity 1
         self.end_time = sim_time  # The time simulation terminate
-        self.id_current = 1  # keeping track of cusotmers id
+        self.id_current = 0  # keeping track of cusotmers id
         # an event can one of three: (1. arrival, 2. entering service 3. service completion)
         self.num_stations = num_stations
 
@@ -131,10 +130,15 @@ class N_Queue_single_station:
 
             yield req
 
+            if is_print:
+                print('Enterted service customer {} at {} in station {}'.format(customer.id, self.env.now, station))
+
             ind_ser = np.random.randint(self.services.shape[0])
             yield  self.env.timeout(self.services[ind_ser])
 
             sojourn_time = self.env.now -  customer.arrival_time
+            if is_print:
+                print('complete service customer {} at {} in station {}'.format(customer.id, self.env.now, station))
             self.sojourn_times_per_station[station].append(sojourn_time)
 
             if station < self.num_stations - 1:
@@ -206,7 +210,7 @@ def get_ph():
 
 for sample in range(5000):
 
-
+    num_stations = 2
     begin = time.time()
 
     arrivals = get_ph()
@@ -216,9 +220,9 @@ for sample in range(5000):
         arrive_moms.append(factorial(mom) / 1 ** mom)
 
     moms_arrive = arrivals[2]
-
-
-    services = get_ph()
+    services = {}
+    for station in range(num_stations):
+        services[station] = get_ph()
 
 
     rate = rho
@@ -256,7 +260,7 @@ for sample in range(5000):
         scv_ser_factor = 1.
 
 
-    sim_time = 6000000
+    sim_time = 600000
     sim_time = int(sim_time * rho_factor * scv_ser_factor)
     mu = 1.0
     num_stations = 2
@@ -288,11 +292,11 @@ for sample in range(5000):
             station = 0
             print('station 0')
             for mom in range(1,6):
-                (np.array(n_Queue_single_station.sojourn_times_per_station[0])**mom).mean()
+                print((np.array(n_Queue_single_station.sojourn_times_per_station[0])**mom).mean())
 
             print('station 1')
             for mom in range(1, 6):
-                (np.array(n_Queue_single_station.sojourn_times_per_station[1]) ** mom).mean()
+                print((np.array(n_Queue_single_station.sojourn_times_per_station[1]) ** mom).mean())
 
 
 
