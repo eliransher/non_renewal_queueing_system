@@ -6,7 +6,7 @@
 #SBATCH --ntasks=1                      # Number of tasks per array job
 #SBATCH --nodes=1                       # Number of nodes
 #SBATCH --cpus-per-task=1               # CPUs per task
-#SBATCH --mem-per-cpu=15G                # Memory per CPU
+#SBATCH --mem-per-cpu=20G                # Memory per CPU
 #SBATCH --output=sample_ph%A_%a.out    # Output file: Job ID and array task ID
 #SBATCH --error=sample_ph%A_%a.err     # Error file: Job ID and array task ID
 
