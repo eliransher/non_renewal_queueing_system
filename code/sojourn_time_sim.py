@@ -318,7 +318,7 @@ def get_ph_1():
     return data
 
 
-dump = False
+dump = True
 
 scv_1 = True
 
