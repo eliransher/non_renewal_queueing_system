@@ -2,7 +2,7 @@
 
 #PBS -N sim_pdb
 #PBS -l select=6:ncpus=36:mpiprocs=36
-#PBS -l walltime=2:30:00
+# #PBS -l walltime=2:30:00
 #PBS -q WD
 #PBS -m abe
 #PBS -M eliransh@ariel.ac.il
