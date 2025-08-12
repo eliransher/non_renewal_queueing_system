@@ -7,6 +7,7 @@ sys.path.append('/home/elirans/scratch/butools2/Python')
 sys.path.append('/scratch200/davidfine/butools2/Python')
 
 import os
+from mpi4py import MPI
 
 import pandas as pd
 import argparse
@@ -832,5 +833,24 @@ def parse_arguments(argv):
 
 if __name__ == "__main__":
 
-    args = parse_arguments(sys.argv[1:])
-    main(args)
+    comm = MPI.COMM_WORLD
+    size = comm.Get_size()
+    rank = comm.Get_rank()
+
+    print(f'Starting #{rank}/{size}')
+    ii = 0
+    while True:
+        import gc
+
+        gc.collect()
+        try:
+            print(f'Process {ii} #{rank}/{size}')
+            args = parse_arguments(sys.argv[1:])
+            main(args)
+            ii += 1
+        except Exception as e:
+            print(f'Error in process {rank}/{size}: {e}')
+
+    print(f'done {sys.argv[0]} #{rank}/{size}')
+
+

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+#PBS -N sim_pdb
+#PBS -l select=1:ncpus=72:mpiprocs=72
+#PBS -q RGB
+#PBS -m abe
+#PBS -M eliransh@ariel.ac.il
+
+module load gcc openmpi hdf5/serial python/3
+source /home/elirans/project/mom_match/bin/activate
+mpirun python3 /home/elirans/project/non_renewal_queueing_system/code/ph_sample_multi.py
+
