@@ -357,7 +357,7 @@ for sample in range(5000):
 
 
 
-        sim_time = 60000000
+        sim_time = 70000000
         mu = 1.0
         lamda = rate
         model_num = np.random.randint(1, 1000000)
@@ -383,7 +383,7 @@ for sample in range(5000):
             n_Queue_single_station.run()
             print('ending sim')
             input_ = np.concatenate((moms_arrive, moms_ser[0]), axis=0)
-            output = n_Queue_single_station.get_steady_single_station()
+            # output = n_Queue_single_station.get_steady_single_station()
 
             end = time.time()
 
