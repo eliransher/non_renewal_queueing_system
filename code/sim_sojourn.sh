@@ -2,7 +2,7 @@
 #SBATCH --job-name=sample_ph            # Job name
 #SBATCH --account=power-general-users
 #SBATCH --time=38:00:00
-#SBATCH --partition=power-general-pool --qos=public
+#SBATCH --partition=power-general
 #SBATCH --ntasks=1                      # Number of tasks per array job
 #SBATCH --nodes=1                       # Number of nodes
 #SBATCH --cpus-per-task=1               # CPUs per task
