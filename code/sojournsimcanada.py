@@ -234,7 +234,7 @@ def get_ph_larve_scv():
     while (scv < 3.5) | (scv > 12):
 
         if sys.platform == 'linux':
-            path = '/scratch200/davidfine/ph_samples1'
+            path = '/scratch/eliransc/ph_samples'
         else:
             path = r'C:\Users\user\workspace\data\ph_random\ph_mean_1'
 
@@ -259,7 +259,7 @@ def get_ph_by_scv_val(lb, ub):
 
 
     if sys.platform == 'linux':
-        path = '/scratch200/davidfine/ph_samples1'
+        path = '/scratch/eliransc/ph_samples'
     else:
         path = r'C:\Users\Eshel\workspace\data\ph_examples'
 
