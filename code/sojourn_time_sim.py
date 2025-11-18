@@ -358,6 +358,7 @@ for sample in range(5000):
 
 
         sim_time = 70000000
+        sim_time = 7000
         mu = 1.0
         lamda = rate
         model_num = np.random.randint(1, 1000000)
@@ -370,6 +371,9 @@ for sample in range(5000):
 
         path_sojourn_0 = '/scratch200/davidfine/sojourn_data/sojourn_0'
         path_sojourn_1 = '/scratch200/davidfine/sojourn_data/sojourn_1'
+
+        path_lst_0 = '/scratch200/davidfine/sojourn_data/lst_0'
+        path_lst_1 = '/scratch200/davidfine/sojourn_data/lst_1'
 
 
         sojourn_times_by_0 = []
@@ -430,11 +434,25 @@ for sample in range(5000):
                 station0.append((np.array(n_Queue_single_station.sojourn_times_per_station[0]) ** mom).mean())
             sojourn_times_by_0.append(station0)
 
+            x_vals = np.linspace(0, 20, 200)
+            points = np.array(n_Queue_single_station.sojourn_times_per_station[0])
+            lst_emp_0 = []
+            for s in x_vals:
+                lst_emp_0.append((np.exp(-s * points)).mean())
+
+
+
             print('station 1')
             station1 = []
             for mom in range(1, 21):
                 station1.append((np.array(n_Queue_single_station.sojourn_times_per_station[1]) ** mom).mean())
             sojourn_times_by_1.append(station1)
+
+            x_vals = np.linspace(0, 20, 200)
+            points = np.array(n_Queue_single_station.sojourn_times_per_station[1])
+            lst_emp_1 = []
+            for s in x_vals:
+                lst_emp_1.append((np.exp(-s * points)).mean())
 
             print(station0, station1)
 
@@ -443,6 +461,9 @@ for sample in range(5000):
             if dump:
 
                 pkl.dump((inp_depart_0, out_depart_0), open(full_path_depart_0, 'wb'))
+                full_path_sojourn_0 = os.path.join(path_lst_0,  file_name)
+                pkl.dump(( np.array(station0) , lst_emp_0), open( full_path_sojourn_0, 'wb'))
+
 
 
             inp_depart_1 = np.concatenate((np.log(np.array(depart_0_moms)), np.array(corrs_0), np.log(np.array(moms_ser[1]))))
@@ -515,8 +536,11 @@ for sample in range(5000):
 
             file_name = 'steady_1_trial_num_' + str(ind) +  'correlation_' + str(correlation0)+ '_' + str(rate)[:5] + 'sim_time_' + str(sim_time) + '_model_num_' + str(model_num)+ '.pkl'
             full_path_sojourn_1 = os.path.join(path_sojourn_1, file_name)
+            full_path_lst_1 = os.path.join(path_lst_1, file_name)
+
             if dump:
                 pkl.dump((inp_sojourn_1, out_steady_1), open(full_path_sojourn_1, 'wb'))
+                pkl.dump(( np.array(station1) , lst_emp_1), open(full_path_lst_1, 'wb'))
 
 
         # print('Sojourn times by station 0:')
