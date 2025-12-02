@@ -358,7 +358,6 @@ for sample in range(5000):
 
 
         sim_time = 70000000
-        sim_time = 7000
         mu = 1.0
         lamda = rate
         model_num = np.random.randint(1, 1000000)
