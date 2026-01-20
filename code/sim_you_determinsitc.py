@@ -162,7 +162,6 @@ class N_Queue_single_station:
             # self.update_new_row(customer, 'Arrival', station)
 
             yield req
-
             # Updating the a new cusotmer entered service
             # self.update_new_row(customer, 'Enter service', station)
             # print('customer {} enter service at station {} at {}'.format(customer.id, station, self.env.now))

@@ -365,14 +365,14 @@ for sample in range(5000):
 
         path_eshel = r'C:\Users\Eshel\workspace\data\check_accuracy'
 
-        path_depart_0 = '/scratch200/davidfine/sojourn_data/depart_0'
-        path_depart_1 = '/scratch200/davidfine/sojourn_data/depart_1'
+        path_depart_0 = '/scratch200/davidfine/sojourn_data/depart_0_a'
+        path_depart_1 = '/scratch200/davidfine/sojourn_data/depart_1_a'
 
-        path_sojourn_0 = '/scratch200/davidfine/sojourn_data/sojourn_0'
-        path_sojourn_1 = '/scratch200/davidfine/sojourn_data/sojourn_1'
+        path_sojourn_0 = '/scratch200/davidfine/sojourn_data/sojourn_0_a'
+        path_sojourn_1 = '/scratch200/davidfine/sojourn_data/sojourn_1_a'
 
-        path_lst_0 = '/scratch200/davidfine/sojourn_data/lst_0'
-        path_lst_1 = '/scratch200/davidfine/sojourn_data/lst_1'
+        path_lst_0 = '/scratch200/davidfine/sojourn_data/lst_0_a'
+        path_lst_1 = '/scratch200/davidfine/sojourn_data/lst_1_a'
 
 
         sojourn_times_by_0 = []
