@@ -2,6 +2,8 @@ import sys
 import numpy as np
 import os
 from tqdm import tqdm
+sys.path.append('/home/eliransc/projects/def-dkrass/eliransc/butools/Python')
+
 sys.path.append(r'C:\Users\Eshel\workspace\butools2\Python')
 from butools.ph import *
 from butools.map import *
@@ -21,7 +23,6 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 import os, sys
 
-sys.path.append('/home/eliransc/projects/def-dkrass/eliransc/butools/Python')
 sys.path.append(r'C:\Users\Eshel\workspace\butools2\Python')
 sys.path.append(r'C:\Users\Eshel\workspace\one.deep.moment')
 sys.path.append('/home/eliransc/projects/def-dkrass/eliransc/one.deep.moment')
