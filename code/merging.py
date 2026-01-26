@@ -20,8 +20,12 @@ import random
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import os, sys
+
+sys.path.append('/home/eliransc/projects/def-dkrass/eliransc/butools/Python')
 sys.path.append(r'C:\Users\Eshel\workspace\butools2\Python')
 sys.path.append(r'C:\Users\Eshel\workspace\one.deep.moment')
+sys.path.append('/home/eliransc/projects/def-dkrass/eliransc/one.deep.moment')
+
 from utils_sample_ph import *
 from utils import *
 import butools
