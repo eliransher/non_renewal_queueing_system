@@ -1393,7 +1393,7 @@ for ind in range(5000):
     try:
         now = time.time()
         inp, res_merged, shape = create_single_data_point()
-        file_name = 'marging_'+str(ind) + '_sizemerged_' + str(shape) + '.pkl'
+        file_name = 'marging_'+str(ind) + '_sizemerged_' + str(shape)+'_seed_'+str(np.random.randint(1,10000)) + '.pkl'
         full_path = os.path.join(data_path, file_name)
         end = time.time()
         print('Took {} seconds'. format(end -now))
