@@ -1311,7 +1311,7 @@ def give_strong_neg_cor(degree):
     return D0, D1
 
 
-def create_single_data_point(low_max_size=15, large_max_size=45):
+def create_single_data_point(low_max_size=15, large_max_size=75):
     option = np.random.randint(1, 6)
     # print('A', option)
 
