@@ -1202,8 +1202,10 @@ def generate_renewal_MAP(max_degree):
         D0, D1 = ph_to_map_renewal(a, T)
         moms2 = map_nth_moment(D0, D1, 2)
         print(moms2)
-
-        return D0.copy(), D1.copy()
+        if moms2 < 10:
+            return generate_renewal_MAP(max_degree)
+        else:
+            return D0.copy(), D1.copy()
 
     # except:
         # return print('numerical error') #generate_renewal_MAP(max_degree)
