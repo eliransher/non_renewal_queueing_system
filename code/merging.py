@@ -1178,10 +1178,9 @@ def random_map_negative(
 
 
 def generate_renewal_MAP(max_degree):
-    try:
+    if True:
         degree = np.random.randint(10, max_degree)
-        option = 1 # np.random.randint(1, 4)
-        print(option)
+        option =  np.random.randint(1, 4)
         if option == 1:
 
             n = np.random.randint(7, max(11, degree))
@@ -1202,13 +1201,15 @@ def generate_renewal_MAP(max_degree):
 
         D0, D1 = ph_to_map_renewal(a, T)
         moms2 = map_nth_moment(D0, D1, 2)
+        print(moms2)
         if moms2 < 10:
             generate_renewal_MAP(max_degree)
         else:
+            print(D0, D1)
             return D0, D1
 
-    except:
-        return print('numerical error') #generate_renewal_MAP(max_degree)
+    # except:
+        # return print('numerical error') #generate_renewal_MAP(max_degree)
 
 
 def create_mom_cor_vector(D0, D1):
@@ -1320,7 +1321,7 @@ def create_single_data_point(low_max_size=15, large_max_size=80):
     option = np.random.randint(1, 6)
     # print('A', option)
     if np.random.rand() < 0.7:
-        option == 1
+        option = 1
     if option == 1:
         D0a, D1a = generate_renewal_MAP(low_max_size)
     elif option == 2:
@@ -1351,7 +1352,7 @@ def create_single_data_point(low_max_size=15, large_max_size=80):
     # print('B', option,)
     option = np.random.randint(1, 6)
     if np.random.rand() < 0.7:
-        option == 1
+        option = 1
     if option == 1:
         D0b, D1b = generate_renewal_MAP(large_max_size)
     elif option == 2:
