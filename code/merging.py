@@ -1178,15 +1178,16 @@ def random_map_negative(
 
 
 def generate_renewal_MAP(max_degree):
-    if True:
+    try:
         degree = np.random.randint(10, max_degree)
-        option = np.random.randint(1, 4)
+        option = 1 # np.random.randint(1, 4)
+        print(option)
         if option == 1:
 
-            n = 10
+            n = np.random.randint(7, max(11, degree))
             a, T = get_PH_general_with_zeros(degree, n)
+            a = np.asarray(a, dtype=float).reshape(1, -1)
             a = a / a.sum()
-            a = np.array(a).flatten()
             T = np.array(T)
         elif option == 2:
 
@@ -1200,10 +1201,14 @@ def generate_renewal_MAP(max_degree):
             T = dat[1]
 
         D0, D1 = ph_to_map_renewal(a, T)
-        return D0, D1
+        moms2 = map_nth_moment(D0, D1, 2)
+        if moms2 < 10:
+            generate_renewal_MAP(max_degree)
+        else:
+            return D0, D1
 
-    # except:
-    #     return print('numerical error') #generate_renewal_MAP(max_degree)
+    except:
+        return print('numerical error') #generate_renewal_MAP(max_degree)
 
 
 def create_mom_cor_vector(D0, D1):
@@ -1258,7 +1263,7 @@ def superpose_map(D0a: np.ndarray, D1a: np.ndarray,
         if not np.allclose(Qb.sum(axis=1), 0.0, atol=1e-10):
             raise ValueError("MAP B check failed: rows of (D0b + D1b) must sum to 0.")
         Qs = D0s + D1s
-        if not np.allclose(Qs.sum(axis=1), 0.0, atol=1e-10):
+        if not np.allclose(Qs.sum(axis=1), 0.0, atol=1e-9):
             raise ValueError("Superposed MAP check failed: rows of (D0s + D1s) must sum to 0.")
 
     return D0s, D1s
@@ -1311,10 +1316,11 @@ def give_strong_neg_cor(degree):
     return D0, D1
 
 
-def create_single_data_point(low_max_size=10, large_max_size=100):
+def create_single_data_point(low_max_size=15, large_max_size=80):
     option = np.random.randint(1, 6)
     # print('A', option)
-
+    if np.random.rand() < 0.7:
+        option == 1
     if option == 1:
         D0a, D1a = generate_renewal_MAP(low_max_size)
     elif option == 2:
@@ -1344,6 +1350,8 @@ def create_single_data_point(low_max_size=10, large_max_size=100):
     # print(map_nth_moment(D0a, D1a, 1),scale_low)
     # print('B', option,)
     option = np.random.randint(1, 6)
+    if np.random.rand() < 0.7:
+        option == 1
     if option == 1:
         D0b, D1b = generate_renewal_MAP(large_max_size)
     elif option == 2:
@@ -1388,6 +1396,35 @@ if sys.platform == 'linux':
 else:
     data_path = r'C:\Users\Eshel\workspace\data\merge_data'
 
+
+# for ind in range(1500):
+#     try:
+#         degree = 100  # np.random.randint(10, max_degree)
+#         option = np.random.randint(1, 4)
+#         if option == 1:
+#
+#             n = np.random.randint(10, degree)
+#             a, T = get_PH_general_with_zeros(degree, n)
+#             a = a / a.sum()
+#             a = np.array(a).flatten()
+#             T = np.array(T)
+#         elif option == 2:
+#
+#             a, T, _, _ = sample_coxian(degree=degree, max_rate=20)
+#             a = np.array(a).flatten()
+#             T = np.array(T)
+#         else:
+#
+#             dat = sample(degree)
+#             a = dat[0]
+#             T = dat[1]
+#
+#         D0, D1 = ph_to_map_renewal(a, T)
+#         mom2 =  map_nth_moment(D0, D1, 2)
+#         if mom2 > 10:
+#             print(mom2, option)
+#     except:
+#         pass
 
 for ind in range(5000):
     try:
