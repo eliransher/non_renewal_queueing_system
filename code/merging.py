@@ -1425,7 +1425,7 @@ else:
 #         pass
 
 for ind in range(5000):
-    if True:
+    try:
         now = time.time()
         inp, res_merged, shape = create_single_data_point()
         file_name = 'marging_'+str(ind) + '_sizemerged_' + str(shape)+'_seed_'+str(np.random.randint(1,10000)) + '.pkl'
@@ -1434,5 +1434,5 @@ for ind in range(5000):
         print('Took {} seconds'. format(end -now))
         print(inp[0], inp[135], res_merged[0])
         pkl.dump(( inp, res_merged), open(full_path, 'wb'))
-    # except:
-    #     print('bad run')
+    except:
+        print('bad run')
