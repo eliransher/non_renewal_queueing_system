@@ -1211,15 +1211,15 @@ def generate_renewal_MAP(max_degree):
         # return print('numerical error') #generate_renewal_MAP(max_degree)
 
 
-def create_mom_cor_vector(D0, D1):
+def create_mom_cor_vector(D0, D1, lags = 6, power_1 = 6, power_2 = 6):
     mom_cors = []
 
     for mom in range(1, 11):
         mom_cors.append(map_nth_moment(D0, D1, mom))
 
-    for k in range(1, 6):
-        for i in range(1, 6):
-            for j in range(1, 6):
+    for k in range(1, lags):
+        for i in range(1, power_1):
+            for j in range(1, power_2):
                 mom_cors.append(map_power_corr(D0, D1, k=k, i=i, j=j))
     return np.array(mom_cors)
 
@@ -1320,7 +1320,9 @@ def create_single_data_point(low_max_size=15, large_max_size=80):
     option = np.random.randint(1, 6)
     # print('A', option)
     if np.random.rand() < 0.7:
-        option = 1
+        option = 3
+    elif np.random.rand() < 0.5:
+        option = 2
     if option == 1:
         D0a, D1a = generate_renewal_MAP(low_max_size)
     elif option == 2:
@@ -1351,7 +1353,9 @@ def create_single_data_point(low_max_size=15, large_max_size=80):
     # print('B', option,)
     option = np.random.randint(1, 6)
     if np.random.rand() < 0.7:
-        option = 1
+        option = 3
+    elif np.random.rand() < 0.5:
+        option = 2
     if option == 1:
         D0b, D1b = generate_renewal_MAP(large_max_size)
     elif option == 2:
@@ -1426,15 +1430,19 @@ else:
 #     except:
 #         pass
 
+
+
+
+
 for ind in range(5000):
     try:
         now = time.time()
         inp, res_merged, shape = create_single_data_point()
-        file_name = 'marging_'+str(ind) + '_sizemerged_' + str(shape)+'_seed_'+str(np.random.randint(1,10000)) + '.pkl'
+        file_name = 'large_rhos_marging_'+str(ind) + '_sizemerged_' + str(shape)+'_seed_'+str(np.random.randint(1,10000)) + '.pkl'
         full_path = os.path.join(data_path, file_name)
         end = time.time()
         print('Took {} seconds'. format(end -now))
-        print(inp[0], inp[135], res_merged[0])
+        print(inp[10], inp[145], res_merged[0])
         pkl.dump(( inp, res_merged), open(full_path, 'wb'))
     except:
         print('bad run')
