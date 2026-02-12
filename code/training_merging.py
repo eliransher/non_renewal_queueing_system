@@ -507,9 +507,9 @@ def main():
 
             df_scv, df_rhos = scv_partion(df_res)
             if sys.platform == 'linux':
-                dump_path = 'eliransc/scratch/MAP/results/scv_rho_df_res'+ settings+'.pkl'
-                csv_file_scv = 'eliransc/scratch/MAP/results/scv_df_res'+ settings+'.pkl'
-                csv_file_rho = 'eliransc/scratch/MAP/results/rho_df_res'+ settings+'.pkl'
+                dump_path = '/scratch/eliransc/MAP/results/scv_rho_df_res'+ settings+'.pkl'
+                csv_file_scv = '/scratch/eliransc/MAP/results/scv_df_res'+ settings+'.pkl'
+                csv_file_rho = '/scratch/eliransc/MAP/results/rho_df_res'+ settings+'.pkl'
 
             else:
                 dump_path = r'C:\Users\Eshel\workspace\MAP\scv_rho_df_res'+ settings + '.pkl'
