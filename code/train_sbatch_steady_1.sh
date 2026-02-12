@@ -2,6 +2,5 @@
 #SBATCH -t 0-23:58
 #SBATCH -A def-dkrass
 #SBATCH --mem 20000
-#SBATCH --gpus-per-node=1
 source /home/eliransc/projects/def-dkrass/eliransc/mom_match/bin/activate
 python /home/eliransc/projects/def-dkrass/eliransc/non_renewal_queueing_system/code/training_merging.py
