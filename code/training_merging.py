@@ -247,7 +247,7 @@ class MyDatasetMomsPreloaded(Dataset):
         Y_list = []
 
         # ---- Load and preprocess all samples once ----
-        for path in tqdm(data_paths):
+        for path in data_paths:
             with open(path, 'rb') as f:
                 x, y = pkl.load(f)
 
