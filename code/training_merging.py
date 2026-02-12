@@ -19,8 +19,7 @@ from scipy.linalg import expm, sinm, cosm
 from numpy.linalg import matrix_power
 from scipy.special import factorial
 import torch
-import torchvision
-from torchvision import transforms, datasets
+
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
@@ -489,7 +488,7 @@ def main():
         for X, y in loader:
             i += 1
 
-            if i % 10 == 1:
+            if i % 10 == 12:
                 all_errs = []
                 for X1, y1 in loader_valid:
                     X1 = X1.float()
@@ -508,9 +507,9 @@ def main():
 
             df_scv, df_rhos = scv_partion(df_res)
             if sys.platform == 'linux':
-                dump_path = 'eliransc/scratch/MAP/scv_rho_df_res'+ settings+'.pkl'
-                csv_file_scv = 'eliransc/scratch/MAP/scv_df_res'+ settings+'.pkl'
-                csv_file_rho = 'eliransc/scratch/MAP/rho_df_res'+ settings+'.pkl'
+                dump_path = 'eliransc/scratch/MAP/results/scv_rho_df_res'+ settings+'.pkl'
+                csv_file_scv = 'eliransc/scratch/MAP/results/scv_df_res'+ settings+'.pkl'
+                csv_file_rho = 'eliransc/scratch/MAP/results/rho_df_res'+ settings+'.pkl'
 
             else:
                 dump_path = r'C:\Users\Eshel\workspace\MAP\scv_rho_df_res'+ settings + '.pkl'
