@@ -488,7 +488,7 @@ def main():
         for X, y in loader:
             i += 1
 
-            if i % 10 == 12:
+            if i % 10 == 1:
                 all_errs = []
                 for X1, y1 in loader_valid:
                     X1 = X1.float()
