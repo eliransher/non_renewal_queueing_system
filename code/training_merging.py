@@ -121,7 +121,7 @@ def scv_partion(df):
     return summary_scvs_full, summary_rhos_full
 
 
-def check_test(loader_valid, net_moms):
+def check_test(loader_valid, net_moms, init_ind, num_arrival_moms):
     all_errs = []
     for X1, y1 in loader_valid:
         X1 = X1.float()
@@ -131,10 +131,10 @@ def check_test(loader_valid, net_moms):
         X1 = X1[:, 0, :]
         y1 = y1[:, 0, :]
         SCV_1 = (torch.exp(X1[:, 1]) - torch.exp(X1[:, 0]) ** 2) / torch.exp(X1[:, 0]) ** 2
-        SCV_2 = (torch.exp(X1[:, 14]) - torch.exp(X1[:, 13]) ** 2) / torch.exp(X1[:, 13]) ** 2
+        SCV_2 = (torch.exp(X1[:, init_ind+1]) - torch.exp(X1[:, init_ind]) ** 2) / torch.exp(X1[:, init_ind]) ** 2
         mom1_ratio = torch.exp(X1[:, 0])
-        rho_1 = X1[:, 5]
-        rho_2 = X1[:, 18]
+        rho_1 = X1[:, num_arrival_moms]
+        rho_2 = X1[:, init_ind+ 2*num_arrival_moms]
 
         preds = net_moms(X1)
         curr_errs = 100 * torch.abs((torch.exp(preds[:, :]) - torch.exp(y1[:, :])) / torch.exp(y1[:, :])).mean(axis=0)
@@ -162,7 +162,7 @@ def check_test(loader_valid, net_moms):
 
 
 
-def valid(dataset_val, model):
+def valid(loader_valid, model):
     loss = 0
 
     for X, y in loader_valid:
@@ -173,19 +173,9 @@ def valid(dataset_val, model):
         X = X[:, 0, :]
         y = y[:, 0, :]
         loss += depart_loss(model(X), y)
-    return loss / len(dataset_val)
+    return loss / len(loader_valid)
 
 
-def valid_rel_err(dataset_val, model):
-    for X, y in loader_valid:
-        X = X.float()
-        y = y.float()
-        X = X.to(device)
-        y = y.to(device)
-        X = X[:, 0, :]
-        y = y[:, 0, :]
-        loss += depart_loss(model(X), y)
-    return loss / len(dataset_val)
 
 
 def check_loss_increasing(loss_list, n_last_steps=10, failure_rate=0.45):
@@ -207,37 +197,11 @@ def check_loss_increasing(loss_list, n_last_steps=10, failure_rate=0.45):
         return False
 
 
-def compute_sum_error_large_corrs(valid_test_x, valid_test_y, model, num_ser_moms):
-    with torch.no_grad():
-        X_valid = valid_test_x.float()
-        y_valid = valid_test_y.float()
-
-        X_valid = X_valid.to(device)
-        y_valid = y_valid.to(device)
-
-        targes = y_valid
-
-        utils = ((1 / torch.exp(X_valid[:, 0])) * torch.exp(X_valid[:, -num_ser_moms])).reshape(-1, 1)
-        normalizing_const = utils
-        predictions = model(X_valid)
-        predictions = m(predictions)
-        predictions = predictions * normalizing_const
-
-        error = (torch.pow(torch.abs(predictions - targes[:, 1:]), 1)).sum(axis=1)
-
-        return error.mean().item()
 
 
 
 
 
-def depart_loss_correlation(preds, target):
-    weights_corr = torch.flip(torch.arange(1, num_moms_corrs + 1), dims=(0,))
-    weights_corr = weights_corr.to(device)
-    corr_loss_ = weights_corr * torch.abs((preds[:, :] - target[:, :]))
-    corr_loss = corr_loss_[corr_loss_ < 100000].mean()
-
-    return corr_loss
 
 
 def depart_loss(preds, target, num_moms_depart=5):
@@ -331,7 +295,7 @@ class my_Dataset_corrs(Dataset):
         x = torch.from_numpy(x)
 
         # y1 = y[:, :self.num_moms_y]
-        y2 = y[:, self.df.loc[(self.df['lag'] <= self.max_lag_y) & (df['mom_1'] <= self.max_power_1_y) & (
+        y2 = y[:, self.df.loc[(self.df['lag'] <= self.max_lag_y) & (self.df['mom_1'] <= self.max_power_1_y) & (
                     self.df['mom_2'] <= self.max_power_2_y), :].index + 10]
         # y = np.concatenate((y1,y2), axis = 1)
         y = torch.log(torch.from_numpy(y2))
@@ -349,10 +313,10 @@ def main():
         path_valid = r'C:\Users\Eshel\workspace\data\merge_data\merge_valid'
         path = r'C:\\Users\\Eshel\\workspace\\data\\merge_data\\merge_1'
 
-    num_arrival_moms = 5
-    max_lag = 2
-    max_power_1 = 2
-    max_power_2 = 2
+    num_arrival_moms = np.random.randint(2,7)
+    max_lag = np.random.randint(1,4)
+    max_power_1 = np.random.randint(1,4)
+    max_power_2 = np.random.randint(1,4)
 
     df = pd.DataFrame([])
 
@@ -367,6 +331,8 @@ def main():
 
     files = os.listdir(path)
 
+    init_ind = max_lag * max_power_1* max_power_2
+
     data_paths = [os.path.join(path, name) for name in files]
 
     dataset = my_Dataset_moms(data_paths, df, max_lag, max_power_1, max_power_2, num_arrival_moms)
@@ -377,9 +343,10 @@ def main():
     dataset_valid = my_Dataset_moms(data_paths_valid, df, max_lag, max_power_1, max_power_2, num_arrival_moms)
 
     dataset_corrs = my_Dataset_corrs(data_paths, df, max_lag, max_power_1, max_power_2, num_arrival_moms)
+    batch_size = np.random.choice([64, 128, 256])
 
-    loader = DataLoader(dataset, batch_size=128, shuffle=True)
-    loader_valid = DataLoader(dataset_valid, batch_size=128, shuffle=True)
+    loader = DataLoader(dataset, batch_size=int(batch_size), shuffle=True)
+    loader_valid = DataLoader(dataset_valid, batch_size=int(batch_size), shuffle=True)
 
     import torch
     import torch.nn as nn
@@ -450,7 +417,6 @@ def main():
 
 
 
-    num_arrival_moms = 5
 
     import time
 
@@ -479,7 +445,7 @@ def main():
     i = 0
 
     settings = (
-        f"model_num_{model_num}_weight_decay_{weight_decay}_curr_lr_{curr_lr}_num_moms_corrs_{num_moms_corrs}_"
+        f"model_num_{model_num}_batch_size_{batch_size}_curr_lr_{curr_lr}_num_moms_corrs_{num_moms_corrs}_"
         f"nn_archi_{nn_archi}_max_lag_{max_lag}_max_power_1_{max_power_1}_max_power_2_{max_power_2}")
 
     print(settings)
@@ -488,7 +454,7 @@ def main():
         for X, y in loader:
             i += 1
 
-            if i % 10 == 1:
+            if i % 10 == 11:
                 all_errs = []
                 for X1, y1 in loader_valid:
                     X1 = X1.float()
@@ -503,22 +469,7 @@ def main():
                     all_errs.append(curr_errs.reshape(1, -1))
                 print(torch.vstack(all_errs).mean(axis=0))
 
-            df_res = check_test(loader_valid, net)
 
-            df_scv, df_rhos = scv_partion(df_res)
-            if sys.platform == 'linux':
-                dump_path = '/scratch/eliransc/MAP/results/scv_rho_df_res'+ settings+'.pkl'
-                csv_file_scv = '/scratch/eliransc/MAP/results/scv_df_res'+ settings+'.pkl'
-                csv_file_rho = '/scratch/eliransc/MAP/results/rho_df_res'+ settings+'.pkl'
-
-            else:
-                dump_path = r'C:\Users\Eshel\workspace\MAP\scv_rho_df_res'+ settings + '.pkl'
-                csv_file_rho = r'C:\Users\Eshel\workspace\MAP\rho_df_res' + settings+ '.csv'
-                csv_file_scv = r'C:\Users\Eshel\workspace\MAP\scv_df_res' + settings+   '.csv'
-
-            df_scv.to_csv(csv_file_scv, index=False)
-            df_rhos.to_csv(csv_file_rho, index=False)
-            pkl.dump((df_scv, df_rhos), open(dump_path, 'wb'))
 
             # data_moms = Dataset_moms(features, labels, df, max_lag, max_power_1, max_power_2, num_arrival_moms, num_ser_moms)
             # X, y = data_moms.getitem()
@@ -547,6 +498,23 @@ def main():
 
         loss_list.append(loss.item())
         valid_list.append(valid(loader_valid, net).item())
+
+        df_res = check_test(loader_valid, net, init_ind, num_arrival_moms)
+
+        df_scv, df_rhos = scv_partion(df_res)
+        if sys.platform == 'linux':
+            dump_path = '/scratch/eliransc/MAP/results/scv_rho_df_res' + settings + '.pkl'
+            csv_file_scv = '/scratch/eliransc/MAP/results/scv_df_res' + settings + '.csv'
+            csv_file_rho = '/scratch/eliransc/MAP/results/rho_df_res' + settings + '.csv'
+
+        else:
+            dump_path = r'C:\Users\Eshel\workspace\MAP\scv_rho_df_res' + settings + '.pkl'
+            csv_file_rho = r'C:\Users\Eshel\workspace\MAP\rho_df_res' + settings + '.csv'
+            csv_file_scv = r'C:\Users\Eshel\workspace\MAP\scv_df_res' + settings + '.csv'
+
+        df_scv.to_csv(csv_file_scv, index=False)
+        df_rhos.to_csv(csv_file_rho, index=False)
+        pkl.dump((df_res, df_res['err2'].mean()), open(dump_path, 'wb'))
 
         if len(loss_list) > 3:
             if check_loss_increasing(valid_list):
