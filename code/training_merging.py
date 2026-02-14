@@ -599,7 +599,7 @@ def main():
 
         if sys.platform == 'linux':
 
-            model_path = 'eliransc/scratch/MAP/models/moment_prediction'
+            model_path = '/scratch/eliransc/MAP/models/moment_prediction'
         else:
             model_path = r'C:\Users\Eshel\workspace\MAP\models\moment_prediction'
 
