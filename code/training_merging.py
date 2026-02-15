@@ -383,7 +383,7 @@ def main():
     num_arrival_moms = np.random.randint(2,7)
     max_lag = np.random.randint(1,4)
     max_power_1 = np.random.randint(1,4)
-    max_power_2 = np.random.randint(1,4)
+    max_power_2 = max_power_1.copy()
 
     df = pd.DataFrame([])
 
@@ -410,7 +410,7 @@ def main():
     dataset_valid = MyDatasetMomsPreloaded(data_paths_valid, df, max_lag, max_power_1, max_power_2, num_arrival_moms)
 
     # dataset_corrs = my_Dataset_corrs(data_paths, df, max_lag, max_power_1, max_power_2, num_arrival_moms)
-    batch_size = np.random.choice([64, 128, 256])
+    batch_size = np.random.choice([64, 128])
 
     loader = DataLoader(dataset, batch_size=int(batch_size), shuffle=True)
     loader_valid = DataLoader(dataset_valid, batch_size=int(batch_size), shuffle=True)
@@ -418,7 +418,7 @@ def main():
     import torch
     import torch.nn as nn
 
-    if np.random.rand() < 0.5:
+    if np.random.rand() < 0.1:
         nn_archi = 1
     else:
         nn_archi = 2
@@ -474,7 +474,6 @@ def main():
     weight_decay = 5
     curr_lr = 0.001
     EPOCHS = 240
-    num_moms_corrs = 5
 
     now = datetime.now()
     lr_second = 0.99
@@ -494,7 +493,6 @@ def main():
 
     weight_decay = 5
     curr_lr = np.random.choice([.001, .0001])
-    num_moms_corrs = 5
     now = datetime.now()
     lr_second = 0.99
     lr_first = 0.75
@@ -512,7 +510,7 @@ def main():
     i = 0
 
     settings = (
-        f"model_num_{model_num}_batch_size_{batch_size}_curr_lr_{curr_lr}_num_moms_corrs_{num_moms_corrs}_"
+        f"model_num_{model_num}_batch_size_{batch_size}_curr_lr_{curr_lr}_num_moms_corrs_{num_arrival_moms}_"
         f"nn_archi_{nn_archi}_max_lag_{max_lag}_max_power_1_{max_power_1}_max_power_2_{max_power_2}")
 
     print(settings)
@@ -521,7 +519,7 @@ def main():
         for X, y in loader:
             i += 1
 
-            if i % 10 == 11:
+            if i % 1000 == 0:
                 all_errs = []
                 for X1, y1 in loader_valid:
                     X1 = X1.float()
@@ -570,9 +568,9 @@ def main():
 
         df_scv, df_rhos = scv_partion(df_res)
         if sys.platform == 'linux':
-            dump_path = '/scratch/eliransc/MAP/results/scv_rho_df_res' + settings + '.pkl'
-            csv_file_scv = '/scratch/eliransc/MAP/results/scv_df_res' + settings + '.csv'
-            csv_file_rho = '/scratch/eliransc/MAP/results/rho_df_res' + settings + '.csv'
+            dump_path = '/scratch/eliransc/MAP/results_2/scv_rho_df_res' + settings + '.pkl'
+            csv_file_scv = '/scratch/eliransc/MAP/results_2/scv_df_res' + settings + '.csv'
+            csv_file_rho = '/scratch/eliransc/MAP/results_2/rho_df_res' + settings + '.csv'
 
         else:
             dump_path = r'C:\Users\Eshel\workspace\MAP\scv_rho_df_res' + settings + '.pkl'
@@ -594,18 +592,18 @@ def main():
                 # print(curr_lr)
 
         print("Epoch: {}, Training: {:.5f}, Validation : {:.5f},  , Time: {:.3f}".format(epoch, loss.item(),
-                                                                                         valid_list[-1],
-                                                                                         time.time() - t_0))
+                                                                                         valid_list[-1], time.time() - t_0))
 
-        if sys.platform == 'linux':
+        if epoch > 80:
+            if sys.platform == 'linux':
 
-            model_path = '/scratch/eliransc/MAP/models/moment_prediction'
-        else:
-            model_path = r'C:\Users\Eshel\workspace\MAP\models\moment_prediction'
+                model_path = '/scratch/eliransc/MAP/models/moment_prediction_2'
+            else:
+                model_path = r'C:\Users\Eshel\workspace\MAP\models\moment_prediction'
 
-        file_name_model = settings  +  '.pkl'
+            file_name_model = settings  +  '.pkl'
 
-        torch.save(net.state_dict(), os.path.join(model_path, file_name_model))
+            torch.save(net.state_dict(), os.path.join(model_path, file_name_model))
 
 
 if __name__ == '__main__':
