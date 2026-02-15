@@ -380,7 +380,7 @@ def main():
         path_valid = r'C:\Users\Eshel\workspace\data\merge_data\merge_valid'
         path = r'C:\\Users\\Eshel\\workspace\\data\\merge_data\\merge_1'
 
-    num_arrival_moms = np.random.randint(2,7)
+    num_arrival_moms = np.random.randint(2,10)
     max_lag = np.random.randint(1,4)
     max_power_1 = np.random.randint(1,4)
     max_power_2 = max_power_1
