@@ -383,7 +383,7 @@ def main():
     num_arrival_moms = np.random.randint(2,7)
     max_lag = np.random.randint(1,4)
     max_power_1 = np.random.randint(1,4)
-    max_power_2 = max_power_1.copy()
+    max_power_2 = max_power_1
 
     df = pd.DataFrame([])
 
