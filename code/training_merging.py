@@ -381,8 +381,8 @@ def main():
         path = r'C:\\Users\\Eshel\\workspace\\data\\merge_data\\merge_1'
 
     num_arrival_moms = np.random.randint(2,10)
-    max_lag = np.random.randint(1,5)
-    max_power_1 = np.random.randint(1,5)
+    max_lag = np.random.randint(1,6)
+    max_power_1 = np.random.randint(1,6)
     max_power_2 = max_power_1
 
     df = pd.DataFrame([])
