@@ -60,7 +60,7 @@ def scv_partion(df):
     df["rho2_bin"] = df["rho2"].apply(bin_rho)
     df["mom1ratio_bin"] = df["mom1ratio"].apply(bin_mom1ratio)
 
-    err_cols = ["err2", "err3", "err4", "err5", "err6", "err7", "err8"]
+    err_cols = ["err1", "err2", "err3", "err4", "err5", "err6", "err7", "err8"]
 
     # ----------------------------
     # 1) Split by combined (rho1, rho2, mom1ratio)
