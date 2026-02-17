@@ -60,7 +60,7 @@ def scv_partion(df):
     df["rho2_bin"] = df["rho2"].apply(bin_rho)
     df["mom1ratio_bin"] = df["mom1ratio"].apply(bin_mom1ratio)
 
-    err_cols = ["err2", "err3", "err4", "err5"]
+    err_cols = ["err2", "err3", "err4", "err5", "err6", "err7", "err8"]
 
     # ----------------------------
     # 1) Split by combined (rho1, rho2, mom1ratio)
@@ -137,8 +137,8 @@ def check_test_corrs(loader_valid, net_moms, init_ind, num_arrival_moms):
         rho_2 = X1[:, init_ind+ 2*num_arrival_moms]
 
         preds = net_moms(X1)
-        curr_errs = 100 * torch.abs((torch.exp(preds[:, :]) - torch.exp(y1[:, :])) / torch.exp(y1[:, :])).mean(axis=0)
-        curr_torch =  torch.abs(torch.exp(preds[:, :]) - torch.exp(y1[:, :]))
+        # curr_errs = 100 * torch.abs((torch.exp(preds[:, :]) - torch.exp(y1[:, :])) / torch.exp(y1[:, :])).mean(axis=0)
+        curr_torch =  torch.abs(preds[:, :] - y1[:, :])
 
         curr_torch = torch.concatenate((curr_torch, SCV_1.reshape(-1, 1)), axis=1)
         curr_torch = torch.concatenate((curr_torch, SCV_2.reshape(-1, 1)), axis=1)
@@ -299,7 +299,7 @@ class my_Dataset_corrs(Dataset):
         y2 = y[:, self.df.loc[(self.df['lag'] <= self.max_lag_y) & (self.df['mom_1'] <= self.max_power_1_y) & (
                     self.df['mom_2'] <= self.max_power_2_y), :].index + 10]
         # y = np.concatenate((y1,y2), axis = 1)
-        y = torch.log(torch.from_numpy(y2))
+        y = torch.from_numpy(y2)
 
         return x, y
 
@@ -327,7 +327,7 @@ class MyDatasetCorrsPreloaded(Dataset):
         X_list = []
         Y_list = []
 
-        for path in data_paths:
+        for path in tqdm(data_paths):
             with open(path, 'rb') as f:
                 x, y = pkl.load(f)
 
@@ -343,7 +343,7 @@ class MyDatasetCorrsPreloaded(Dataset):
             y2 = y[:, self.idx_y + 10]
 
             X_list.append(torch.from_numpy(x_proc.astype(np.float32)))
-            Y_list.append(torch.log(torch.from_numpy(y2.astype(np.float32))))
+            Y_list.append(torch.from_numpy(y2.astype(np.float32)))
 
         # concat along sample dimension
         self.X = torch.cat(X_list, dim=0)  # shape: (N, D_x)
@@ -355,71 +355,7 @@ class MyDatasetCorrsPreloaded(Dataset):
     def __getitem__(self, idx):
         return self.X[idx], self.Y[idx]
 
-
-
-def depart_loss_correlation(preds, target):
-
-    weights_corr = torch.flip(torch.arange(1,target.shape[1]+1), dims=(0,))
-    weights_corr = weights_corr.to(device)
-    corr_loss_  =  weights_corr*torch.abs((preds[:,:]-target[:,:]))
-    corr_loss = corr_loss_[corr_loss_<100000].mean()
-
-    return corr_loss
-
-def main():
-
-    if sys.platform == 'linux':
-        path = '/scratch/eliransc/MAP/training/merge_1'
-
-        path_valid = '/scratch/eliransc/MAP/valid/merge_valid'
-    else:
-
-        path_valid = r'C:\Users\Eshel\workspace\data\merge_data\merge_valid'
-        path = r'C:\\Users\\Eshel\\workspace\\data\\merge_data\\merge_1'
-
-    num_arrival_moms = np.random.randint(2,7)
-    max_lag = np.random.randint(1,4)
-    max_power_1 = np.random.randint(1,4)
-    max_power_2 = np.random.randint(1,4)
-
-    df = pd.DataFrame([])
-
-    for corr_leg in range(1, 6):
-        for mom_1 in range(1, 6):
-            for mom_2 in range(1, 6):
-                curr_ind = df.shape[0]
-                df.loc[curr_ind, 'lag'] = corr_leg
-                df.loc[curr_ind, 'mom_1'] = mom_1
-                df.loc[curr_ind, 'mom_2'] = mom_2
-                df.loc[curr_ind, 'index'] = curr_ind + 10
-
-    files = os.listdir(path)
-
-    init_ind = max_lag * max_power_1* max_power_2
-
-    data_paths = [os.path.join(path, name) for name in files]
-
-
-
-    files_valid = os.listdir(path_valid)
-    data_paths_valid = [os.path.join(path_valid, name) for name in files_valid]
-    dataset = my_Dataset_corrs(data_paths_valid, df, max_lag, max_power_1, max_power_2, num_arrival_moms)
-
-    dataset_valid = MyDatasetCorrsPreloaded(data_paths_valid, df, max_lag, max_power_1, max_power_2, num_arrival_moms)
-
-    batch_size = np.random.choice([64, 128, 256])
-
-    loader = DataLoader(dataset, batch_size=int(batch_size), shuffle=True)
-    loader_valid = DataLoader(dataset_valid, batch_size=int(batch_size), shuffle=True)
-
-    import torch
-    import torch.nn as nn
-
-    if np.random.rand() < 0.5:
-        nn_archi = 1
-    else:
-        nn_archi = 2
-
+def get_nn_model(input_size, output_size, nn_archi):
     if nn_archi == 1:
 
         class Net(nn.Module):
@@ -429,14 +365,18 @@ def main():
 
                 self.fc1 = nn.Linear(input_size, 50)
                 self.fc2 = nn.Linear(50, 70)
-                self.fc3 = nn.Linear(70, 50)
-                self.fc4 = nn.Linear(50, output_size)
+                self.fc3 = nn.Linear(70, 70)
+                self.fc4 = nn.Linear(70, 50)
+                self.fc5 = nn.Linear(50, 50)
+                self.fc6 = nn.Linear(50, output_size)
 
             def forward(self, x):
                 x = F.relu(self.fc1(x))
                 x = F.relu(self.fc2(x))
                 x = F.relu(self.fc3(x))
-                x = self.fc4(x)
+                x = F.relu(self.fc4(x))
+                x = F.relu(self.fc5(x))
+                x = self.fc6(x)
                 return x
     else:
 
@@ -459,6 +399,83 @@ def main():
                 x = self.fc5(x)
                 return x
 
+    return Net(input_size, output_size)
+
+
+def depart_loss_correlation(preds, target):
+
+    weights_corr = torch.flip(torch.arange(1,target.shape[1]+1), dims=(0,))
+    weights_corr = weights_corr.to(device)
+    corr_loss_  =  weights_corr*torch.abs((preds[:,:]-target[:,:]))
+    corr_loss = corr_loss_[corr_loss_<100000].mean()
+
+    return corr_loss
+
+def main():
+
+    if sys.platform == 'linux':
+        path = '/scratch/eliransc/MAP/training/merge_1'
+
+        path_valid = '/scratch/eliransc/MAP/valid/merge_valid'
+    else:
+
+        path_valid = r'C:\Users\Eshel\workspace\data\merge_data\merge_valid'
+        path = r'C:\\Users\\Eshel\\workspace\\data\\merge_data\\merge_1'
+
+    num_arrival_moms = 5  # np.random.randint(2,10)
+    max_lag = 2  # np.random.randint(1,6)
+    max_power_1 = 2  # np.random.randint(1,6)
+    max_power_2 = 2  # max_power_1
+
+
+    df = pd.DataFrame([])
+
+    for corr_leg in range(1, 6):
+        for mom_1 in range(1, 6):
+            for mom_2 in range(1, 6):
+                curr_ind = df.shape[0]
+                df.loc[curr_ind, 'lag'] = corr_leg
+                df.loc[curr_ind, 'mom_1'] = mom_1
+                df.loc[curr_ind, 'mom_2'] = mom_2
+                df.loc[curr_ind, 'index'] = curr_ind + 10
+
+        files = os.listdir(path)
+
+    # init_ind = max_lag * max_power_1* max_power_2
+
+    data_paths = [os.path.join(path, name) for name in files]
+
+    batch_size = np.random.choice([64, 128])
+
+    files_valid = os.listdir(path_valid)
+
+    data_paths_valid = [os.path.join(path_valid, name) for name in files_valid]
+
+    dataset = MyDatasetCorrsPreloaded(data_paths, df, max_lag, max_power_1, max_power_2, num_arrival_moms)
+    merged_pathes = pkl.load(open(r'C:\Users\Eshel\workspace\MAP\valid_list.pkl', 'rb'))
+    dataset_valid = MyDatasetCorrsPreloaded(merged_pathes, df, max_lag, max_power_1, max_power_2, num_arrival_moms)
+
+
+
+    # dataset_corrs = my_Dataset_corrs(data_paths, df, max_lag, max_power_1, max_power_2, num_arrival_moms)
+
+
+    loader = DataLoader(dataset, batch_size=int(batch_size), shuffle=True)
+    loader_valid = DataLoader(dataset_valid, batch_size=int(batch_size), shuffle=True)
+
+    import torch
+    import torch.nn as nn
+
+    if np.random.rand() < 0.1:
+        nn_archi = 1
+    else:
+        nn_archi = 2
+
+    ####################################################
+
+    ####################################################
+
+
     first_data = next(iter(loader))
     features, labels = first_data
 
@@ -470,8 +487,7 @@ def main():
 
     weight_decay = 5
     curr_lr = 0.001
-    EPOCHS = 240
-    num_moms_corrs = 5
+    EPOCHS = 120
 
     now = datetime.now()
     lr_second = 0.99
@@ -479,117 +495,118 @@ def main():
     current_time = now.strftime("%H_%M_%S") + '_' + str(np.random.randint(1, 1000000, 1)[0])
     print('curr time: ', current_time)
 
+    for indd in range(25):
+        import time
+
+        nn_archi = np.random.choice([1, 2])
+
+        net = get_nn_model(input_size, output_size, nn_archi).to(device)
 
 
 
-    import time
-
-    net = Net(input_size, output_size).to(device)
-
-    optimizer = optim.Adam(net.parameters(), lr=curr_lr,
-                           weight_decay=(1 / 10 ** weight_decay))  # paramters is everything adjustable in model
-
-    weight_decay = 5
-    curr_lr = np.random.choice([.001, .0001])
-    num_moms_corrs = 5
-    now = datetime.now()
-    lr_second = 0.99
-    lr_first = 0.75
-    current_time = now.strftime("%H_%M_%S") + '_' + str(np.random.randint(1, 1000000, 1)[0])
-    print('curr time: ', current_time)
+        weight_decay = 5
+        curr_lr = np.random.choice([.001, .0001])
+        # num_moms_corrs = 5
+        now = datetime.now()
+        lr_second = 0.99
+        lr_first = 0.75
+        current_time = now.strftime("%H_%M_%S") + '_' + str(np.random.randint(1, 1000000, 1)[0])
+        print('curr time: ', current_time)
 
 
-    model_num = np.random.randint(0, 1000000)
+        model_num = np.random.randint(0, 1000000)
 
-    optimizer = optim.Adam(net.parameters(), lr=curr_lr,
-                           weight_decay=(1 / 10 ** weight_decay))  # paramters is everything adjustable in model
+        optimizer = optim.Adam(net.parameters(), lr=curr_lr,
+                               weight_decay=(1 / 10 ** weight_decay))  # paramters is everything adjustable in model
 
-    loss_list = []
-    valid_list = []
-    i = 0
+        loss_list = []
+        valid_list = []
+        i = 0
 
-    settings = (
-        f"model_num_{model_num}_batch_size_{batch_size}_curr_lr_{curr_lr}_num_moms_corrs_{num_moms_corrs}_"
-        f"nn_archi_{nn_archi}_max_lag_{max_lag}_max_power_1_{max_power_1}_max_power_2_{max_power_2}")
+        settings = (
+            f"model_num_{model_num}_batch_size_{batch_size}_curr_lr_{curr_lr}_num_moms_corrs_{num_arrival_moms}_"
+            f"nn_archi_{nn_archi}_max_lag_{max_lag}_max_power_1_{max_power_1}_max_power_2_{max_power_2}")
 
-    print(settings)
-    for epoch in range(EPOCHS):
-        t_0 = time.time()
-        for X, y in loader_valid:
-            i += 1
+        print(settings)
+        for epoch in range(EPOCHS):
+            t_0 = time.time()
+            for X, y in loader:
+                i += 1
 
 
 
 
-            # data_moms = Dataset_moms(features, labels, df, max_lag, max_power_1, max_power_2, num_arrival_moms, num_ser_moms)
-            # X, y = data_moms.getitem()
-            X = X.float()
-            y = y.float()
+                # data_moms = Dataset_moms(features, labels, df, max_lag, max_power_1, max_power_2, num_arrival_moms, num_ser_moms)
+                # X, y = data_moms.getitem()
+                X = X.float()
+                y = y.float()
 
-            X = X.to(device)
-            y = y.to(device)
+                X = X.to(device)
+                y = y.to(device)
 
-            # X = X[:, 0, :]
-            # y = y[:, 0, :]
+                # X = X[:, 0, :]
+                # y = y[:, 0, :]
 
-            if torch.sum(torch.isinf(X)).item() == 0:
-                tt = time.time()
-                net.zero_grad()
-                output = net(X)
-                loss = depart_loss_correlation(output, y)  # 1 of two major ways to calculate loss
-                loss.backward()
-                optimizer.step()
-                net.zero_grad()
+                if torch.sum(torch.isinf(X)).item() == 0:
+                    tt = time.time()
+                    net.zero_grad()
+                    output = net(X)
+                    loss = depart_loss_correlation(output, y)  # 1 of two major ways to calculate loss
+                    loss.backward()
+                    optimizer.step()
+                    net.zero_grad()
 
-                # print(loss)
-                if torch.isnan(loss).item():
-                    break
+                    # print(loss)
+                    if torch.isnan(loss).item():
+                        break
+                else:
+                    pass
+
+            loss_list.append(loss.item())
+            valid_list.append(valid(loader_valid, net).item())
+
+            init_ind = max_lag * max_power_1 * max_power_2
+
+            df_res = check_test_corrs(loader_valid, net, init_ind, num_arrival_moms)
+
+            df_scv, df_rhos = scv_partion(df_res)
+            if sys.platform == 'linux':
+                dump_path = '/scratch/eliransc/MAP/results_corrs/scv_rho_df_res' + settings + '.pkl'
+                csv_file_scv = '/scratch/eliransc/MAP/results_corrs/scv_df_res' + settings + '.csv'
+                csv_file_rho = '/scratch/eliransc/MAP/results_corrs/rho_df_res' + settings + '.csv'
+
             else:
-                pass
+                dump_path = r'C:\Users\Eshel\workspace\MAP\results_corrs\scv_rho_df_res' + settings + '.pkl'
+                csv_file_rho = r'C:\Users\Eshel\workspace\MAP\results_corrs\rho_df_res' + settings + '.csv'
+                csv_file_scv = r'C:\Users\Eshel\workspace\MAP\results_corrs\scv_df_res' + settings + '.csv'
 
-        loss_list.append(loss.item())
-        valid_list.append(valid(loader_valid, net).item())
+            df_scv.to_csv(csv_file_scv, index=False)
+            df_rhos.to_csv(csv_file_rho, index=False)
+            pkl.dump((df_res, df_res['err1'].mean()), open(dump_path, 'wb'))
 
-        df_res = check_test_corrs(loader_valid, net, init_ind, num_arrival_moms)
+            if len(loss_list) > 3:
+                if check_loss_increasing(valid_list):
+                    curr_lr = curr_lr * lr_first
+                    optimizer = optim.Adam(net.parameters(), lr=curr_lr, weight_decay=(1 / 10 ** weight_decay))
+                    # print(curr_lr)
+                else:
+                    curr_lr = curr_lr * lr_second
+                    optimizer = optim.Adam(net.parameters(), lr=curr_lr, weight_decay=(1 / 10 ** weight_decay))
+                    # print(curr_lr)
 
-        df_scv, df_rhos = scv_partion(df_res)
-        if sys.platform == 'linux':
-            dump_path = '/scratch/eliransc/MAP/results_corrs/scv_rho_df_res' + settings + '.pkl'
-            csv_file_scv = '/scratch/eliransc/MAP/results_corrs/scv_df_res' + settings + '.csv'
-            csv_file_rho = '/scratch/eliransc/MAP/results_corrs/rho_df_res' + settings + '.csv'
+            print("Epoch: {}, Training: {:.5f}, Validation : {:.5f},  , Time: {:.3f}".format(epoch, loss.item(),
+                                                                                             valid_list[-1],
+                                                                                             time.time() - t_0))
 
-        else:
-            dump_path = r'C:\Users\Eshel\workspace\MAP\scv_rho_df_res' + settings + '.pkl'
-            csv_file_rho = r'C:\Users\Eshel\workspace\MAP\rho_df_res' + settings + '.csv'
-            csv_file_scv = r'C:\Users\Eshel\workspace\MAP\scv_df_res' + settings + '.csv'
+            if sys.platform == 'linux':
 
-        df_scv.to_csv(csv_file_scv, index=False)
-        df_rhos.to_csv(csv_file_rho, index=False)
-        pkl.dump((df_res, df_res['err1'].mean()), open(dump_path, 'wb'))
-
-        if len(loss_list) > 3:
-            if check_loss_increasing(valid_list):
-                curr_lr = curr_lr * lr_first
-                optimizer = optim.Adam(net.parameters(), lr=curr_lr, weight_decay=(1 / 10 ** weight_decay))
-                # print(curr_lr)
+                model_path = 'eliransc/scratch/MAP/models/corr_prediction'
             else:
-                curr_lr = curr_lr * lr_second
-                optimizer = optim.Adam(net.parameters(), lr=curr_lr, weight_decay=(1 / 10 ** weight_decay))
-                # print(curr_lr)
+                model_path = r'C:\Users\Eshel\workspace\MAP\models\corr_predicition'
 
-        print("Epoch: {}, Training: {:.5f}, Validation : {:.5f},  , Time: {:.3f}".format(epoch, loss.item(),
-                                                                                         valid_list[-1],
-                                                                                         time.time() - t_0))
+            file_name_model = settings  +  '.pkl'
 
-        if sys.platform == 'linux':
-
-            model_path = 'eliransc/scratch/MAP/models/corr_prediction'
-        else:
-            model_path = r'C:\Users\Eshel\workspace\MAP\models\corr_predicition'
-
-        file_name_model = settings  +  '.pkl'
-
-        torch.save(net.state_dict(), os.path.join(model_path, file_name_model))
+            torch.save(net.state_dict(), os.path.join(model_path, file_name_model))
 
 
 if __name__ == '__main__':

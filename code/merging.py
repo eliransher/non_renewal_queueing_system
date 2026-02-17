@@ -1434,15 +1434,15 @@ else:
 
 
 
-for ind in range(5000):
-    try:
-        now = time.time()
-        inp, res_merged, shape = create_single_data_point()
-        file_name = 'large_rhos_marging_'+str(ind) + '_sizemerged_' + str(shape)+'_seed_'+str(np.random.randint(1,10000)) + '.pkl'
-        full_path = os.path.join(data_path, file_name)
-        end = time.time()
-        print('Took {} seconds'. format(end -now))
-        print(inp[10], inp[145], res_merged[0])
-        pkl.dump(( inp, res_merged), open(full_path, 'wb'))
-    except:
-        print('bad run')
+# for ind in range(5000):
+#     try:
+#         now = time.time()
+#         inp, res_merged, shape = create_single_data_point()
+#         file_name = 'large_rhos_marging_'+str(ind) + '_sizemerged_' + str(shape)+'_seed_'+str(np.random.randint(1,10000)) + '.pkl'
+#         full_path = os.path.join(data_path, file_name)
+#         end = time.time()
+#         print('Took {} seconds'. format(end -now))
+#         print(inp[10], inp[145], res_merged[0])
+#         pkl.dump(( inp, res_merged), open(full_path, 'wb'))
+#     except:
+#         print('bad run')
