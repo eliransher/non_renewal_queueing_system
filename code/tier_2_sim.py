@@ -3,7 +3,9 @@ import simpy
 import numpy as np
 import torch
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.nn as nn
 import sys
 import pandas as pd
 import os
@@ -1324,7 +1326,292 @@ def choose_scv_larger_3_rho_smaller_0(maps):
     return 0
 
 
+def merge_two_random_stream():
+    hyp_orig = {}
+    hyp_trace = {}
 
+    maps = generate_many_MAPs(
+        num_maps=1500,
+        scv_min=0.1, scv_max=8.0,
+        rho_min=-0.2, rho_max=0.2,
+        n=4,
+        max_tries=1500000
+    )
+
+    # Generate PHs
+    phs = generate_many_PHs(
+        num_ph=100,
+        scv_min=0.4, scv_max=8.0
+    )
+
+    ind_ph = np.random.randint(0, 100)
+    alpha, T = phs[ind_ph]['alpha'], phs[ind_ph]['T']
+    T = T * phs[ind_ph]['mean']
+    rho = np.random.uniform(0.65, 0.85)
+    T = T / rho
+    res_ph = compute_first_n_moments(alpha, T, 10)
+
+    moms_ser = np.log(np.array(res_ph).flatten())
+
+    a = np.random.uniform(1, 5)
+    if np.random.rand() < 0.5:
+        ind_map1 = choose_scv_lower_3(maps)  # np.random.randint(0, 500)
+        ind_map2 = choose_scv_larger_3(maps)  # np.random.randint(0, 500)
+    else:
+        ind_map2 = choose_scv_lower_3(maps)  # np.random.randint(0, 500)
+        ind_map1 = choose_scv_larger_3(maps)
+
+    DO_merged, D1_merged = superpose_map((1 / (a - 1)) * maps[ind_map1]['D0'].copy(),
+                                         (1 / (a - 1)) * maps[ind_map1]['D1'].copy(),
+                                         maps[ind_map2]['D0'].copy(), maps[ind_map2]['D1'].copy())
+    mom1 = create_mom_cor_vector(DO_merged, D1_merged)[0]
+    DO_merged, D1_merged = DO_merged * mom1, D1_merged * mom1
+    res_map = create_mom_cor_vector(DO_merged, D1_merged)
+    res_map[:10] = np.log(res_map[:10])
+    final_inp = np.concatenate((res_map, moms_ser))
+    res_steady = map_ph_1_steady_state_with_marginal(DO_merged, D1_merged, alpha, T, N_max=200)
+    pN = res_steady["pN_0_to_Nmax"]
+
+    map_trace, map_vector = pkl.load(open(r'C:\Users\Eshel\workspace\MAP\map_for_queueing.pkl', 'rb'))
+    mom_cors = {}
+    choen_inds = []
+    # for ind in range(2):
+    #     if np.random.rand() < 0.25:
+    #         ind_c = 44 #np.random.choice(np.arange(len(map_vector.keys())))
+    #     else:
+    #         ind_c = 44 # np.random.randint(20, len(map_vector.keys()))  ##np.random.choice(list(map_trace.keys()))
+    #     choen_inds.append(ind_c)
+    #     hyp_trace[ind] = map_trace[ind_c]
+    #     mom_cors[ind] = map_vector[ind_c]
+
+    x_vals = np.linspace(0, 5, 70)
+    hyp_trace[0] = SamplesFromMAP(ml.matrix(maps[ind_map1]['D0'].copy()), ml.matrix(maps[ind_map1]['D1'].copy()),
+                                  1000000)
+    hyp_trace[1] = SamplesFromMAP(ml.matrix(maps[ind_map2]['D0'].copy()), ml.matrix(maps[ind_map2]['D1'].copy()),
+                                  1000000)
+
+    map_vector[0] = create_mom_cor_vector(maps[ind_map1]['D0'].copy(), maps[ind_map1]['D1'].copy())
+    map_vector[1] = create_mom_cor_vector(maps[ind_map2]['D0'].copy(), maps[ind_map2]['D1'].copy())
+
+    mom_cors[0] = map_vector[0].copy()
+    mom_cors[1] = map_vector[1].copy()
+
+    mom_1_a = map_vector[0][0]
+    mom_2_a = map_vector[0][1]
+    SCV_1 = (mom_2_a - mom_1_a ** 2) / mom_1_a ** 2
+    mom_1_b = map_vector[1][0]
+    mom_2_b = map_vector[1][1]
+    SCV_2 = (mom_2_b - mom_1_b ** 2) / mom_1_b ** 2
+    rho_a = map_vector[0][10]
+    rho_b = map_vector[1][10]
+    print(SCV_1, SCV_2, rho_a, rho_b)
+
+    # for ind in range(3):
+    #     y_vals = compute_pdf_within_range(x_vals, hyp_orig[ind][0], hyp_orig[ind][1])
+    #     plt.figure()
+    #     plt.plot(x_vals, y_vals)
+    #     plt.show()
+
+    chosen_pathes = []
+    # path = r'C:\Users\Eshel\workspace\data\ph_examples'
+    # folds = os.listdir(path)
+
+    # choose_fold = '1' #np.random.choice(folds)
+    #
+    # curr_path = os.path.join(path, choose_fold)
+    # files = os.listdir(curr_path)
+    # choose_file = np.random.choice(files)
+    # final_path = os.path.join(curr_path, choose_file)
+    # print(final_path)
+    # dat = pkl.load(open(final_path, 'rb'))
+    hyp_trace[2] = SamplesFromPH(ml.matrix(alpha), ml.matrix(T), 1000000)
+    hyp_orig[2] = (alpha, T)
+
+    res_ph = np.array(compute_first_n_moments(alpha, T, 10)).flatten()
+    # print(final_path)
+    # chosen_pathes.append(final_path)
+    SCV_ser = (res_ph[1] - res_ph[0] ** 2) / res_ph[0] ** 2  ##dat[2][1]-1
+
+    num_streams = 2
+    arrivals = {}
+    for stream in range(num_streams):
+        arrivals[stream] = hyp_trace[stream]
+
+    services = hyp_trace[2]
+
+    # a = np.random.uniform(1,5)
+    arrivals[0] = hyp_trace[0] * a
+    arrivals[1] = hyp_trace[1] * (a / (a - 1))
+
+    mom1_arrival = 1 / (1 / (arrivals[0]).mean() + 1 / (arrivals[1]).mean())
+    lam = 1 / mom1_arrival
+
+    # rho =  0.75 #np.random.uniform(0.4, 0.9)
+    meanser = rho / lam
+    lam * meanser, rho
+
+    # services_norms = services * meanser
+    # services_norms.mean()
+    #
+    # ser_moms_normalized = []
+    #
+    # for mom in range(1, 6):
+    #     ser_moms_normalized.append((services_norms ** mom).mean())
+
+    #
+    # sim_time = 1144855
+    # queue_example1 = Queue_n_streams(arrivals, services_norms, num_streams, sim_time)
+    # queue_example1.run()
+    #
+    # L_dist = queue_example1.num_cust_durations / queue_example1.num_cust_durations.sum()
+
+    L_dist = pN / pN.sum()
+    import torch
+    ser_torch = torch.tensor(moms_ser[:5], dtype=torch.float32)  # torch.tensor(np.array(ser_moms_normalized), dtype=torch.float32)
+    ser_torch = ser_torch.to(device)
+    ser_torch = ser_torch.reshape(1, -1)
+    # ser_torch = torch.log(ser_torch)
+
+    # step 2
+    scale = a - 1
+    resa = mom_cors[0].copy()
+    resb = mom_cors[1].copy()
+    print(resb[0], resa[0])
+    for mom in range(1, 11):
+        resa[mom - 1] = resa[mom - 1] * (scale ** mom)
+
+    # step 2 cont'
+    max_lag = 2
+    max_power_1 = 2
+    max_power_2 = 2
+    num_arrive_moms = 5
+    df = pd.DataFrame([])
+
+    for corr_leg in range(1, 6):
+        for mom_1 in range(1, 6):
+            for mom_2 in range(1, 6):
+                curr_ind = df.shape[0]
+                df.loc[curr_ind, 'lag'] = corr_leg
+                df.loc[curr_ind, 'mom_1'] = mom_1
+                df.loc[curr_ind, 'mom_2'] = mom_2
+                df.loc[curr_ind, 'index'] = curr_ind + 10
+
+    inp1_moms = resa[:num_arrive_moms]
+    inp2_moms = resb[:num_arrive_moms]
+
+    inp1_corrs = resa[
+        df.loc[(df['lag'] <= max_lag) & (df['mom_1'] <= max_power_1) & (df['mom_2'] <= max_power_2), :].index + 10]
+    inp2_corrs = resb[
+        df.loc[(df['lag'] <= max_lag) & (df['mom_1'] <= max_power_1) & (df['mom_2'] <= max_power_2), :].index + 10]
+
+    tot_inp = np.concatenate((np.log(inp1_moms), inp1_corrs, np.log(inp2_moms), inp2_corrs))
+    tot_inp = torch.tensor(tot_inp, dtype=torch.float32)
+
+    # step 3
+    import torch.nn.functional as F
+    import torch
+    import torch.nn as nn
+
+    class Net_moms(nn.Module):
+
+        def __init__(self, input_size, output_size):
+            super().__init__()
+
+            self.fc1 = nn.Linear(input_size, 50)
+            self.fc2 = nn.Linear(50, 70)
+            self.fc3 = nn.Linear(70, 50)
+            self.fc4 = nn.Linear(50, output_size)
+
+        def forward(self, x):
+            x = F.relu(self.fc1(x))
+            x = F.relu(self.fc2(x))
+            x = F.relu(self.fc3(x))
+            x = self.fc4(x)
+            return x
+
+    class Net_moms(nn.Module):
+
+        def __init__(self, input_size, output_size):
+            super().__init__()
+
+            self.fc1 = nn.Linear(input_size, 50)
+            self.fc2 = nn.Linear(50, 70)
+            self.fc3 = nn.Linear(70, 50)
+            self.fc4 = nn.Linear(50, 50)
+            self.fc5 = nn.Linear(50, output_size)
+
+        def forward(self, x):
+            x = F.relu(self.fc1(x))
+            x = F.relu(self.fc2(x))
+            x = F.relu(self.fc3(x))
+            x = F.relu(self.fc4(x))
+            x = self.fc5(x)
+            return x
+
+    class Net_corrs(nn.Module):
+
+        def __init__(self, input_size, output_size):
+            super().__init__()
+
+            self.fc1 = nn.Linear(input_size, 50)
+            self.fc2 = nn.Linear(50, 70)
+            self.fc3 = nn.Linear(70, 50)
+            self.fc4 = nn.Linear(50, output_size)
+
+        def forward(self, x):
+            x = F.relu(self.fc1(x))
+            x = F.relu(self.fc2(x))
+            x = F.relu(self.fc3(x))
+            x = self.fc4(x)
+            return x
+
+    input_size_moms, output_size_moms = 26, 4
+
+    net_moms = Net_moms(input_size_moms, output_size_moms).to(device)
+
+    input_size_corrs, output_size_corrs = 26, 8
+
+    # net_corrs = Net_corrs(input_size_corrs, output_size_corrs).to(device)
+
+    model_path = r'C:\Users\Eshel\workspace\MAP\models\moment_prediction'  # r'C:\Users\Eshel\workspace\MAP\models'
+    file_name_model_corrs = 'merge_corrs_1.pkl'
+    file_name_model_moms = 'model_num_97370_batch_size_64_curr_lr_0.001_num_moms_corrs_5_nn_archi_1_max_lag_2_max_power_1_2_max_power_2_2.pkl'  # 'merge_moments_1.pkl' #
+    model_path_mom = r'C:\Users\Eshel\workspace\MAP\models'
+    # file_name_model_moms = 'merge_moments_1.pkl'
+
+    net_moms.load_state_dict(torch.load(os.path.join(model_path, file_name_model_moms)))
+    net_moms.to(device)
+    # net_moms.load_state_dict(torch.load(os.path.join(model_path, file_name_model_moms)))
+    # net_corrs.load_state_dict(torch.load(os.path.join(model_path, file_name_model_corrs)))
+
+    input_size_corrs, output_size_corrs = 26, 8
+    nn_archi = 1
+    net_corrs = get_nn_model(input_size_corrs, output_size_corrs,
+                             nn_archi)  # Net_corrs(input_size_corrs, output_size_corrs) ##
+    model_path_corrs = r'C:\Users\Eshel\workspace\MAP\models\corr_predicition'
+    file_name_model_corrs = 'model_num_672478_batch_size_128_curr_lr_0.001_num_moms_corrs_5_nn_archi_1_max_lag_2_max_power_1_2_max_power_2_2.pkl'
+
+    net_corrs.load_state_dict(torch.load(os.path.join(model_path_corrs, file_name_model_corrs)))
+    net_corrs = net_corrs.to(device)
+    ## Get pred moms:
+
+    moms_pred = net_moms(tot_inp.reshape(1, -1).to(device))
+    corrs_pred = net_corrs(tot_inp.reshape(1, -1).to(device))
+
+    moms_scaled = 1 / (1 / torch.exp(tot_inp[0]) + 1 / torch.exp(tot_inp[13]))
+
+    moms = [1]
+
+    for mom in range(1, 5):
+        moms.append(torch.exp(moms_pred[0, mom - 1]) / (moms_scaled ** (mom + 1)))
+
+    moms_torch = torch.tensor(moms).to(device)
+    print('###########################')
+    print(100 * torch.abs(torch.tensor(np.exp(res_map[:5])).to(device) - moms_torch) / moms_torch)
+    print(torch.abs(torch.tensor(res_map[10:12]).to(device) - corrs_pred.flatten()[:2]))
+    print('###########################')
+
+    return moms_pred, corrs_pred, rho, SCV_1, SCV_2, SCV_ser, rho_a, rho_b
 
 if __name__ == '__main__':
 
@@ -1332,303 +1619,17 @@ if __name__ == '__main__':
     for ind in range(2000):
         if True:
 
-            hyp_orig = {}
-            hyp_trace = {}
+            moms_pred, corrs_pred, rho, SCV_1, SCV_2, SCV_ser, rho_a, rho_b = merge_two_random_stream()
+
+            print('stopping')
 
 
 
-            maps = generate_many_MAPs(
-            num_maps=1500,
-            scv_min=0.1, scv_max=8.0,
-            rho_min=-0.2, rho_max=0.2,
-            n=4,
-            max_tries=1500000
-        )
-
-            # Generate PHs
-            phs = generate_many_PHs(
-                num_ph=100,
-                scv_min=0.4, scv_max=8.0
-            )
-
-            ind_ph = np.random.randint(0,100)
-            alpha, T = phs[ind_ph]['alpha'], phs[ind_ph]['T']
-            T = T * phs[ind_ph]['mean']
-            rho = np.random.uniform(0.65, 0.85)
-            T = T / rho
-            res_ph = compute_first_n_moments(alpha, T, 10)
-
-            moms_ser = np.log(np.array(res_ph).flatten())
-
-            a = np.random.uniform(1, 5)
-            if np.random.rand() <0.5:
-                ind_map1 = choose_scv_lower_3(maps) # np.random.randint(0, 500)
-                ind_map2 = choose_scv_larger_3(maps) # np.random.randint(0, 500)
-            else:
-                ind_map2 = choose_scv_lower_3(maps)  # np.random.randint(0, 500)
-                ind_map1 = choose_scv_larger_3(maps)
-
-            DO_merged, D1_merged = superpose_map( (1/(a-1)) * maps[ind_map1]['D0'].copy(), (1/(a-1)) * maps[ind_map1]['D1'].copy(),
-                                                  maps[ind_map2]['D0'].copy(),  maps[ind_map2]['D1'].copy())
-            mom1 = create_mom_cor_vector(DO_merged, D1_merged)[0]
-            DO_merged, D1_merged = DO_merged * mom1, D1_merged * mom1
-            res_map = create_mom_cor_vector(DO_merged, D1_merged)
-            res_map[:10] = np.log(res_map[:10])
-            final_inp = np.concatenate((res_map, moms_ser))
-            res_steady = map_ph_1_steady_state_with_marginal(DO_merged, D1_merged, alpha, T, N_max=200)
-            pN = res_steady["pN_0_to_Nmax"]
 
 
-
-            map_trace, map_vector = pkl.load( open(r'C:\Users\Eshel\workspace\MAP\map_for_queueing.pkl', 'rb'))
-            mom_cors = {}
-            choen_inds = []
-            # for ind in range(2):
-            #     if np.random.rand() < 0.25:
-            #         ind_c = 44 #np.random.choice(np.arange(len(map_vector.keys())))
-            #     else:
-            #         ind_c = 44 # np.random.randint(20, len(map_vector.keys()))  ##np.random.choice(list(map_trace.keys()))
-            #     choen_inds.append(ind_c)
-            #     hyp_trace[ind] = map_trace[ind_c]
-            #     mom_cors[ind] = map_vector[ind_c]
-
-            x_vals = np.linspace(0, 5, 70)
-            hyp_trace[0] = SamplesFromMAP(ml.matrix(maps[ind_map1]['D0'].copy()), ml.matrix(maps[ind_map1]['D1'].copy()), 1000000)
-            hyp_trace[1] = SamplesFromMAP(ml.matrix(maps[ind_map2]['D0'].copy()), ml.matrix(maps[ind_map2]['D1'].copy()), 1000000)
-
-            map_vector[0] = create_mom_cor_vector(maps[ind_map1]['D0'].copy(), maps[ind_map1]['D1'].copy())
-            map_vector[1] = create_mom_cor_vector(maps[ind_map2]['D0'].copy(), maps[ind_map2]['D1'].copy())
-
-            mom_cors[0] = map_vector[0].copy()
-            mom_cors[1] = map_vector[1].copy()
-
-
-
-            mom_1_a = map_vector[0][0]
-            mom_2_a = map_vector[0][1]
-            SCV_1 = (mom_2_a - mom_1_a ** 2) / mom_1_a ** 2
-            mom_1_b = map_vector[1][0]
-            mom_2_b = map_vector[1][1]
-            SCV_2 = (mom_2_b - mom_1_b ** 2) / mom_1_b ** 2
-            rho_a = map_vector[0][10]
-            rho_b = map_vector[1][10]
-            print(SCV_1, SCV_2, rho_a, rho_b)
-
-            # for ind in range(3):
-            #     y_vals = compute_pdf_within_range(x_vals, hyp_orig[ind][0], hyp_orig[ind][1])
-            #     plt.figure()
-            #     plt.plot(x_vals, y_vals)
-            #     plt.show()
-
-            chosen_pathes = []
-            # path = r'C:\Users\Eshel\workspace\data\ph_examples'
-            # folds = os.listdir(path)
-
-            # choose_fold = '1' #np.random.choice(folds)
+            # moms_agg = torch.log(moms_torch)
             #
-            # curr_path = os.path.join(path, choose_fold)
-            # files = os.listdir(curr_path)
-            # choose_file = np.random.choice(files)
-            # final_path = os.path.join(curr_path, choose_file)
-            # print(final_path)
-            # dat = pkl.load(open(final_path, 'rb'))
-            hyp_trace[2] = SamplesFromPH(ml.matrix(alpha), ml.matrix(T), 1000000)
-            hyp_orig[2] = (alpha, T)
-
-            res_ph = np.array(compute_first_n_moments(alpha, T, 10)).flatten()
-            # print(final_path)
-            # chosen_pathes.append(final_path)
-            SCV_ser = (res_ph[1] - res_ph[0]**2)/res_ph[0]**2  ##dat[2][1]-1
-
-
-
-
-            num_streams = 2
-            arrivals = {}
-            for stream in range(num_streams):
-                arrivals[stream] = hyp_trace[stream]
-
-            services = hyp_trace[2]
-
-            # a = np.random.uniform(1,5)
-            arrivals[0] = hyp_trace[0] * a
-            arrivals[1] = hyp_trace[1] * (a / (a - 1))
-
-            mom1_arrival = 1 / (1 / (arrivals[0]).mean() + 1 / (arrivals[1]).mean())
-            lam = 1 / mom1_arrival
-
-            # rho =  0.75 #np.random.uniform(0.4, 0.9)
-            meanser = rho / lam
-            lam * meanser, rho
-
-            # services_norms = services * meanser
-            # services_norms.mean()
-            #
-            # ser_moms_normalized = []
-            #
-            # for mom in range(1, 6):
-            #     ser_moms_normalized.append((services_norms ** mom).mean())
-
-
-            #
-            # sim_time = 1144855
-            # queue_example1 = Queue_n_streams(arrivals, services_norms, num_streams, sim_time)
-            # queue_example1.run()
-            #
-            # L_dist = queue_example1.num_cust_durations / queue_example1.num_cust_durations.sum()
-
-            L_dist = pN / pN.sum()
-
-            ser_torch = torch.tensor(moms_ser[:5], dtype=torch.float32) #torch.tensor(np.array(ser_moms_normalized), dtype=torch.float32)
-            ser_torch = ser_torch.to(device)
-            ser_torch = ser_torch.reshape(1, -1)
-            # ser_torch = torch.log(ser_torch)
-
-
-            # step 2
-            scale  = a-1
-            resa = mom_cors[0].copy()
-            resb = mom_cors[1].copy()
-            print(resb[0], resa[0])
-            for mom in range(1, 11):
-                resa[mom - 1] = resa[mom - 1] * (scale ** mom)
-
-            # step 2 cont'
-            max_lag = 2
-            max_power_1 = 2
-            max_power_2 = 2
-            num_arrive_moms = 5
-            df = pd.DataFrame([])
-
-            for corr_leg in range(1, 6):
-                for mom_1 in range(1, 6):
-                    for mom_2 in range(1, 6):
-                        curr_ind = df.shape[0]
-                        df.loc[curr_ind, 'lag'] = corr_leg
-                        df.loc[curr_ind, 'mom_1'] = mom_1
-                        df.loc[curr_ind, 'mom_2'] = mom_2
-                        df.loc[curr_ind, 'index'] = curr_ind + 10
-
-            inp1_moms = resa[:num_arrive_moms]
-            inp2_moms = resb[:num_arrive_moms]
-
-            inp1_corrs = resa[
-                df.loc[(df['lag'] <= max_lag) & (df['mom_1'] <= max_power_1) & (df['mom_2'] <= max_power_2), :].index + 10]
-            inp2_corrs = resb[
-                df.loc[(df['lag'] <= max_lag) & (df['mom_1'] <= max_power_1) & (df['mom_2'] <= max_power_2), :].index + 10]
-
-            tot_inp = np.concatenate((np.log(inp1_moms), inp1_corrs, np.log(inp2_moms), inp2_corrs))
-            tot_inp = torch.tensor(tot_inp, dtype=torch.float32)
-
-            # step 3
-            import torch.nn.functional as F
-            import torch
-            import torch.nn as nn
-
-
-            class Net_moms(nn.Module):
-
-                def __init__(self, input_size, output_size):
-                    super().__init__()
-
-                    self.fc1 = nn.Linear(input_size, 50)
-                    self.fc2 = nn.Linear(50, 70)
-                    self.fc3 = nn.Linear(70, 50)
-                    self.fc4 = nn.Linear(50, output_size)
-
-                def forward(self, x):
-                    x = F.relu(self.fc1(x))
-                    x = F.relu(self.fc2(x))
-                    x = F.relu(self.fc3(x))
-                    x = self.fc4(x)
-                    return x
-
-
-            class Net_moms(nn.Module):
-
-                def __init__(self, input_size, output_size):
-                    super().__init__()
-
-                    self.fc1 = nn.Linear(input_size, 50)
-                    self.fc2 = nn.Linear(50, 70)
-                    self.fc3 = nn.Linear(70, 50)
-                    self.fc4 = nn.Linear(50, 50)
-                    self.fc5 = nn.Linear(50, output_size)
-
-                def forward(self, x):
-                    x = F.relu(self.fc1(x))
-                    x = F.relu(self.fc2(x))
-                    x = F.relu(self.fc3(x))
-                    x = F.relu(self.fc4(x))
-                    x = self.fc5(x)
-                    return x
-
-
-            class Net_corrs(nn.Module):
-
-                def __init__(self, input_size, output_size):
-                    super().__init__()
-
-                    self.fc1 = nn.Linear(input_size, 50)
-                    self.fc2 = nn.Linear(50, 70)
-                    self.fc3 = nn.Linear(70, 50)
-                    self.fc4 = nn.Linear(50, output_size)
-
-                def forward(self, x):
-                    x = F.relu(self.fc1(x))
-                    x = F.relu(self.fc2(x))
-                    x = F.relu(self.fc3(x))
-                    x = self.fc4(x)
-                    return x
-
-            input_size_moms, output_size_moms = 26, 4
-
-            net_moms = Net_moms(input_size_moms, output_size_moms).to(device)
-
-            input_size_corrs, output_size_corrs = 26, 8
-
-            # net_corrs = Net_corrs(input_size_corrs, output_size_corrs).to(device)
-
-            model_path = r'C:\Users\Eshel\workspace\MAP\models\moment_prediction' #r'C:\Users\Eshel\workspace\MAP\models'
-            file_name_model_corrs = 'merge_corrs_1.pkl'
-            file_name_model_moms = 'model_num_97370_batch_size_64_curr_lr_0.001_num_moms_corrs_5_nn_archi_1_max_lag_2_max_power_1_2_max_power_2_2.pkl' #'merge_moments_1.pkl' #
-            model_path_mom = r'C:\Users\Eshel\workspace\MAP\models'
-            # file_name_model_moms = 'merge_moments_1.pkl'
-
-
-            net_moms.load_state_dict(torch.load(os.path.join(model_path, file_name_model_moms)))
-            net_moms.to(device)
-            # net_moms.load_state_dict(torch.load(os.path.join(model_path, file_name_model_moms)))
-            # net_corrs.load_state_dict(torch.load(os.path.join(model_path, file_name_model_corrs)))
-
-            input_size_corrs, output_size_corrs = 26, 8
-            nn_archi = 1
-            net_corrs = get_nn_model(input_size_corrs, output_size_corrs, nn_archi) #Net_corrs(input_size_corrs, output_size_corrs) ##
-            model_path_corrs = r'C:\Users\Eshel\workspace\MAP\models\corr_predicition'
-            file_name_model_corrs = 'model_num_672478_batch_size_128_curr_lr_0.001_num_moms_corrs_5_nn_archi_1_max_lag_2_max_power_1_2_max_power_2_2.pkl'
-
-            net_corrs.load_state_dict(torch.load(os.path.join(model_path_corrs, file_name_model_corrs)))
-            net_corrs = net_corrs.to(device)
-            ## Get pred moms:
-
-            moms_pred = net_moms(tot_inp.reshape(1, -1).to(device))
-            corrs_pred = net_corrs(tot_inp.reshape(1, -1).to(device))
-
-            moms_scaled = 1 / (1 / torch.exp(tot_inp[0]) + 1 / torch.exp(tot_inp[13]))
-
-            moms = [1]
-
-            for mom in range(1, 5):
-                moms.append(torch.exp(moms_pred[0, mom - 1]) / (moms_scaled ** (mom + 1)))
-
-            moms_torch = torch.tensor(moms).to(device)
-            print('###########################')
-            print(100*torch.abs(torch.tensor(np.exp(res_map[:5])).to(device) - moms_torch)/moms_torch)
-            print(torch.abs(torch.tensor(res_map[10:12]).to(device) - corrs_pred.flatten()[:2]) )
-            print('###########################')
-            moms_agg = torch.log(moms_torch)
-
-            inp_g_gi_1 = torch.concatenate((moms_agg, corrs_pred.flatten())).reshape(1, -1)
+            # inp_g_gi_1 = torch.concatenate((moms_agg, corrs_pred.flatten())).reshape(1, -1)
 
             # services_norms2 = services_norms * meanser
             # services_norms.mean()
@@ -1639,135 +1640,135 @@ if __name__ == '__main__':
             #     ser_moms_normalized.append((services_norms2 ** mom).mean())
 
 
-            class Net_steady_1(nn.Module):
-
-                def __init__(self, input_size, output_size):
-                    super().__init__()
-
-                    self.fc1 = nn.Linear(input_size, 50)
-                    self.fc2 = nn.Linear(50, 70)
-                    self.fc3 = nn.Linear(70, 200)
-                    self.fc4 = nn.Linear(200, 350)
-                    self.fc5 = nn.Linear(350, 600)
-                    self.fc6 = nn.Linear(600, output_size)
-
-                def forward(self, x):
-                    x = F.relu(self.fc1(x))
-                    x = F.relu(self.fc2(x))
-                    x = F.relu(self.fc3(x))
-                    x = F.relu(self.fc4(x))
-                    x = F.relu(self.fc5(x))
-                    x = self.fc6(x)
-                    return x
-
-
-
-
-
-            input_size_steady_1 = 18
-            output_size_steady_1 = 200
-
-            file_name_model = 'for_tier_1.pkl'
-            model_path = r'C:\Users\Eshel\workspace\data\models\steady_1'
-
-
-            model_path_steady_1 = r'C:\Users\Eshel\workspace\Tandem_queueing_ML\models\steady_1'
-            model_path_steady_1 = r'C:\Users\Eshel\workspace\data\models\steady_1'
-
-            models_steady_1 = os.listdir(model_path_steady_1)
-
-            full_path_steady_1 = os.path.join(model_path_steady_1, file_name_model) #models_steady_1[0]
-
-
-            net_steady_1 = Net_steady_1(input_size_steady_1, output_size_steady_1).to(device)
-            net_steady_1.load_state_dict(torch.load(full_path_steady_1))
-
-            input_steady_1 = torch.concatenate((inp_g_gi_1, ser_torch), axis=1)
-
-            m = nn.Softmax(dim=1)
-            # input_steady_1 = inp_g_gi_1
-
-            probs_steady_1 = net_steady_1(input_steady_1)
-            normalizing_const = torch.exp(input_steady_1[0, -5])
-            probs_steady_1 = m(probs_steady_1)
-            probs_steady_1 = probs_steady_1 * normalizing_const
-
-            probs_steady_1 = probs_steady_1.to('cpu')
-            probs_steady_1 = torch.concatenate((torch.tensor([[1 - normalizing_const]]), probs_steady_1[0:1, :]), axis=1)
-
-            with torch.no_grad():
-                label = probs_steady_1.cpu().numpy().flatten()
-
-            import numpy as np
-            import matplotlib.pyplot as plt
-
-            # x values
-            x = np.arange(26)  # 0,1,...,20
-
-            # take first 21 values
-            y1 = label[:26]
-            y2 = L_dist[:26]
-
-            bar_width = 0.4
-
-            # plt.figure()
-            # plt.bar(x - bar_width / 2, y1, width=bar_width, label='Simulation')
-            # plt.bar(x + bar_width / 2, y2, width=bar_width, label='NN')
+            # class Net_steady_1(nn.Module):
             #
-            # plt.xlabel('x')
-            # plt.ylabel('Value')
-            # plt.xticks(x)
-            # plt.legend()
-            # plt.tight_layout()
-            # plt.show()
-            SAE = np.abs(label[:100] - L_dist[:100]).sum()
-            # print(SAE)
-            # print(SCV_1, SCV_2, SCV_ser, rho_a, rho_b, rho)
-            a1 = np.cumsum(arrivals[0])
-            a2 = np.cumsum(arrivals[1])
+            #     def __init__(self, input_size, output_size):
+            #         super().__init__()
+            #
+            #         self.fc1 = nn.Linear(input_size, 50)
+            #         self.fc2 = nn.Linear(50, 70)
+            #         self.fc3 = nn.Linear(70, 200)
+            #         self.fc4 = nn.Linear(200, 350)
+            #         self.fc5 = nn.Linear(350, 600)
+            #         self.fc6 = nn.Linear(600, output_size)
+            #
+            #     def forward(self, x):
+            #         x = F.relu(self.fc1(x))
+            #         x = F.relu(self.fc2(x))
+            #         x = F.relu(self.fc3(x))
+            #         x = F.relu(self.fc4(x))
+            #         x = F.relu(self.fc5(x))
+            #         x = self.fc6(x)
+            #         return x
 
-            # service = services_norms
 
-            ES = float(services.mean())
-            VarS = float(services.var(ddof=1))
 
-            # IDC grid and estimation
-            t_grid = np.linspace(0.5, 80.0, 90)
-            n_windows = 3000
 
-            rng_idc = np.random.default_rng(123)
-            lam1_hat, idc1 = estimate_idc_curve(a1, t_grid, n_windows, rng_idc)
-            lam2_hat, idc2 = estimate_idc_curve(a2, t_grid, n_windows, rng_idc)
 
-            lam_hat, idc_sup = idc_superpose(lam1_hat, idc1, lam2_hat, idc2)
+            # input_size_steady_1 = 18
+            # output_size_steady_1 = 200
+            #
+            # file_name_model = 'for_tier_1.pkl'
+            # model_path = r'C:\Users\Eshel\workspace\data\models\steady_1'
+            #
+            #
+            # model_path_steady_1 = r'C:\Users\Eshel\workspace\Tandem_queueing_ML\models\steady_1'
+            # model_path_steady_1 = r'C:\Users\Eshel\workspace\data\models\steady_1'
+            #
+            # models_steady_1 = os.listdir(model_path_steady_1)
+            #
+            # full_path_steady_1 = os.path.join(model_path_steady_1, file_name_model) #models_steady_1[0]
+            #
+            #
+            # net_steady_1 = Net_steady_1(input_size_steady_1, output_size_steady_1).to(device)
+            # net_steady_1.load_state_dict(torch.load(full_path_steady_1))
+            #
+            # input_steady_1 = torch.concatenate((inp_g_gi_1, ser_torch), axis=1)
+            #
+            # m = nn.Softmax(dim=1)
+            # # input_steady_1 = inp_g_gi_1
+            #
+            # probs_steady_1 = net_steady_1(input_steady_1)
+            # normalizing_const = torch.exp(input_steady_1[0, -5])
+            # probs_steady_1 = m(probs_steady_1)
+            # probs_steady_1 = probs_steady_1 * normalizing_const
+            #
+            # probs_steady_1 = probs_steady_1.to('cpu')
+            # probs_steady_1 = torch.concatenate((torch.tensor([[1 - normalizing_const]]), probs_steady_1[0:1, :]), axis=1)
 
-            # Convert IDC_sup(t) to Var(N(t)) using Var(N(t)) = IDC(t) * E[N(t)] = IDC(t) * lam * t
-            varN_sup = idc_sup * (lam_hat * t_grid)
-
-            # Estimate long-run count variance rate vN from slope of Var(N(t)) vs t
-            vN_hat = estimate_vN_from_var_slope(t_grid, varN_sup, frac_tail=0.4)
-
-            # RBM mean waiting time / mean number in system
-            rho, vN, vX, EW, EL = rbm_mean_wait(lam_hat, ES, VarS, vN_hat)
-
-            EL_nn = (np.arange(L_dist.shape[0]) * L_dist).sum()
-            EL_sim = (np.arange(label.shape[0]) * label).sum()
-
-            error_whitt1 = 100 * abs(EL - EL_sim) / EL_sim
-            error_whitt2 = 100 * abs(EL + rho - (np.arange(L_dist.shape[0]) * L_dist).sum()) / (
-                    np.arange(L_dist.shape[0]) * L_dist).sum()
-
-            errorwhitt = min(error_whitt1, error_whitt2)
-
-            error_nn = 100 * abs(EL_nn - EL_sim) / EL_sim
-            print('error_nn {}, errorwhitt {}, SAE {}, rho {}, SCV_1 {} ,SCV_2 {} ,SCV_ser {} , '.format(error_nn, errorwhitt, SAE, rho,SCV_1 ,SCV_2, SCV_ser))
-
-            if SAE < 0.06:
-                dump_path = r'C:\Users\Eshel\workspace\MAP\results_queues\tier_1_non_renewal'
-                pkl.dump((choen_inds, label, L_dist, rho,a, error_nn, errorwhitt,  SCV_1, SCV_2,
-                          SCV_ser, rho_a, rho_b, rho, SAE),
-                         open(os.path.join(dump_path, 'result_{}.pkl'.format(np.random.randint(1,10000))), 'wb'))
-
+            # with torch.no_grad():
+            #     label = probs_steady_1.cpu().numpy().flatten()
+            #
+            # import numpy as np
+            # import matplotlib.pyplot as plt
+            #
+            # # x values
+            # x = np.arange(26)  # 0,1,...,20
+            #
+            # # take first 21 values
+            # y1 = label[:26]
+            # y2 = L_dist[:26]
+            #
+            # bar_width = 0.4
+            #
+            # # plt.figure()
+            # # plt.bar(x - bar_width / 2, y1, width=bar_width, label='Simulation')
+            # # plt.bar(x + bar_width / 2, y2, width=bar_width, label='NN')
+            # #
+            # # plt.xlabel('x')
+            # # plt.ylabel('Value')
+            # # plt.xticks(x)
+            # # plt.legend()
+            # # plt.tight_layout()
+            # # plt.show()
+            # SAE = np.abs(label[:100] - L_dist[:100]).sum()
+            # # print(SAE)
+            # # print(SCV_1, SCV_2, SCV_ser, rho_a, rho_b, rho)
+            # a1 = np.cumsum(arrivals[0])
+            # a2 = np.cumsum(arrivals[1])
+            #
+            # # service = services_norms
+            #
+            # ES = float(services.mean())
+            # VarS = float(services.var(ddof=1))
+            #
+            # # IDC grid and estimation
+            # t_grid = np.linspace(0.5, 80.0, 90)
+            # n_windows = 3000
+            #
+            # rng_idc = np.random.default_rng(123)
+            # lam1_hat, idc1 = estimate_idc_curve(a1, t_grid, n_windows, rng_idc)
+            # lam2_hat, idc2 = estimate_idc_curve(a2, t_grid, n_windows, rng_idc)
+            #
+            # lam_hat, idc_sup = idc_superpose(lam1_hat, idc1, lam2_hat, idc2)
+            #
+            # # Convert IDC_sup(t) to Var(N(t)) using Var(N(t)) = IDC(t) * E[N(t)] = IDC(t) * lam * t
+            # varN_sup = idc_sup * (lam_hat * t_grid)
+            #
+            # # Estimate long-run count variance rate vN from slope of Var(N(t)) vs t
+            # vN_hat = estimate_vN_from_var_slope(t_grid, varN_sup, frac_tail=0.4)
+            #
+            # # RBM mean waiting time / mean number in system
+            # rho, vN, vX, EW, EL = rbm_mean_wait(lam_hat, ES, VarS, vN_hat)
+            #
+            # EL_nn = (np.arange(L_dist.shape[0]) * L_dist).sum()
+            # EL_sim = (np.arange(label.shape[0]) * label).sum()
+            #
+            # error_whitt1 = 100 * abs(EL - EL_sim) / EL_sim
+            # error_whitt2 = 100 * abs(EL + rho - (np.arange(L_dist.shape[0]) * L_dist).sum()) / (
+            #         np.arange(L_dist.shape[0]) * L_dist).sum()
+            #
+            # errorwhitt = min(error_whitt1, error_whitt2)
+            #
+            # error_nn = 100 * abs(EL_nn - EL_sim) / EL_sim
+            # print('error_nn {}, errorwhitt {}, SAE {}, rho {}, SCV_1 {} ,SCV_2 {} ,SCV_ser {} , '.format(error_nn, errorwhitt, SAE, rho,SCV_1 ,SCV_2, SCV_ser))
+            #
+            # if SAE < 0.06:
+            #     dump_path = r'C:\Users\Eshel\workspace\MAP\results_queues\tier_1_non_renewal'
+            #     pkl.dump((choen_inds, label, L_dist, rho,a, error_nn, errorwhitt,  SCV_1, SCV_2,
+            #               SCV_ser, rho_a, rho_b, rho, SAE),
+            #              open(os.path.join(dump_path, 'result_{}.pkl'.format(np.random.randint(1,10000))), 'wb'))
+            #
 
         # except:
         #     print('bad iteration',choen_inds, rho)

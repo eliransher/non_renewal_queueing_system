@@ -2,6 +2,9 @@
 import simpy
 import numpy as np
 import torch
+
+# from sim_large_scv_large_util_long_sim import SCV_GI2
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 import sys
@@ -239,7 +242,7 @@ if __name__ == '__main__':
     folds = os.listdir(path)
 
 
-    for ind in range(20):
+    for ind in range(2000):
         if True:
 
             hyp_orig = {}
@@ -279,20 +282,25 @@ if __name__ == '__main__':
             chosen_pathes = []
             path = r'C:\Users\Eshel\workspace\data\ph_examples'
             folds = os.listdir(path)
+            SCV_dict = {}
             for ind in range(3):
                 choose_fold = np.random.choice(folds)
                 curr_path = os.path.join(path, choose_fold)
                 files = os.listdir(curr_path)
                 choose_file = np.random.choice(files)
                 final_path = os.path.join(curr_path, choose_file)
-                print(final_path)
                 dat = pkl.load(open(final_path, 'rb'))
                 hyp_trace[ind] = dat[-1]
                 hyp_orig[ind] = (dat[0], dat[1])
+                SCV_dict[ind] = dat[2][1]-1
                 # print(final_path)
                 chosen_pathes.append(final_path)
 
+            SCV_1 = SCV_dict[0]
+            SCV_2 = SCV_dict[1]
+            SCV_ser = SCV_dict[2]
             x_vals = np.linspace(0, 5, 70)
+            rho_a, rho_b = 0,0
 
             # for ind in range(3):
             #     y_vals = compute_pdf_within_range(x_vals, hyp_orig[ind][0], hyp_orig[ind][1])
@@ -335,8 +343,8 @@ if __name__ == '__main__':
 
             # arrival_A_1 = arrival_A_1 / a
             arrival_A_2 = arrival_A_2 / (a / (a - 1))
-
-            sim_time = 14855555
+            print('Start sim')
+            sim_time = 3485555
             queue_example1 = Queue_n_streams(arrivals, services_norms, num_streams, sim_time)
             queue_example1.run()
 
@@ -533,6 +541,7 @@ if __name__ == '__main__':
 
             bar_width = 0.4
 
+
             # plt.figure()
             # plt.bar(x - bar_width / 2, y1, width=bar_width, label='Simulation')
             # plt.bar(x + bar_width / 2, y2, width=bar_width, label='NN')
@@ -544,7 +553,10 @@ if __name__ == '__main__':
             # plt.tight_layout()
             # plt.show()
             SAE = np.abs(label[:100] - L_dist[:100]).sum()
-            if SAE < 0.03:
+            print(SAE)
+            print(SCV_1, SCV_2, SCV_ser, rho_a, rho_b, rho)
+
+            if SAE < 0.05:
                 a1 = np.cumsum(arrivals[0])
                 a2 = np.cumsum(arrivals[1])
 
@@ -588,7 +600,7 @@ if __name__ == '__main__':
                 print(error_nn, errorwhitt,SAE, rho)
 
                 dump_path = r'C:\Users\Eshel\workspace\MAP\results_queues\tier_1_renewal'
-                pkl.dump((chosen_pathes, label, L_dist, rho,a, error_nn, errorwhitt), open(os.path.join(dump_path, 'result_{}.pkl'.format(ind)), 'wb'))
+                pkl.dump((chosen_pathes, label, L_dist, rho,a, error_nn, errorwhitt, SCV_1, SCV_2, SCV_ser, rho_a, rho_b, rho), open(os.path.join(dump_path, 'result_{}.pkl'.format(np.random.randint(1,100000))), 'wb'))
 
 
         # except:

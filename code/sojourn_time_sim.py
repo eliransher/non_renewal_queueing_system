@@ -366,8 +366,8 @@ for sample in range(5000):
         path_sojourn_0 = '/scratch200/davidfine/sojourn_data/sojourn_0_a'
         path_sojourn_1 = '/scratch200/davidfine/sojourn_data/sojourn_1_a'
 
-        path_lst_0 = '/scratch200/davidfine/sojourn_data/lst_0_a'
-        path_lst_1 = '/scratch200/davidfine/sojourn_data/lst_1_a'
+        # path_lst_0 = '/scratch200/davidfine/sojourn_data/lst_0_a'
+        # path_lst_1 = '/scratch200/davidfine/sojourn_data/lst_1_a'
 
 
         sojourn_times_by_0 = []
@@ -428,11 +428,11 @@ for sample in range(5000):
                 station0.append((np.array(n_Queue_single_station.sojourn_times_per_station[0]) ** mom).mean())
             sojourn_times_by_0.append(station0)
 
-            x_vals = np.linspace(0, 20, 200)
-            points = np.array(n_Queue_single_station.sojourn_times_per_station[0])
-            lst_emp_0 = []
-            for s in x_vals:
-                lst_emp_0.append((np.exp(-s * points)).mean())
+            # x_vals = np.linspace(0, 20, 200)
+            # points = np.array(n_Queue_single_station.sojourn_times_per_station[0])
+            # lst_emp_0 = []
+            # for s in x_vals:
+            #     lst_emp_0.append((np.exp(-s * points)).mean())
 
 
 
@@ -442,11 +442,11 @@ for sample in range(5000):
                 station1.append((np.array(n_Queue_single_station.sojourn_times_per_station[1]) ** mom).mean())
             sojourn_times_by_1.append(station1)
 
-            x_vals = np.linspace(0, 20, 200)
-            points = np.array(n_Queue_single_station.sojourn_times_per_station[1])
-            lst_emp_1 = []
-            for s in x_vals:
-                lst_emp_1.append((np.exp(-s * points)).mean())
+            # x_vals = np.linspace(0, 20, 200)
+            # points = np.array(n_Queue_single_station.sojourn_times_per_station[1])
+            # lst_emp_1 = []
+            # for s in x_vals:
+            #     lst_emp_1.append((np.exp(-s * points)).mean())
 
             print(station0, station1)
 

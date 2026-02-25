@@ -26,6 +26,9 @@ import torch.optim as optim
 import matplotlib.pyplot as plt
 import math
 from torch.utils.data import Dataset, DataLoader
+
+# from merge_n_streams_into_1 import num_arrival_streams
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device
 
@@ -406,7 +409,7 @@ def depart_loss_correlation(preds, target):
 
     weights_corr = torch.flip(torch.arange(1,target.shape[1]+1), dims=(0,))
     weights_corr = weights_corr.to(device)
-    corr_loss_  =  weights_corr*torch.abs((preds[:,:]-target[:,:]))
+    corr_loss_  =  torch.abs((preds[:,:]-target[:,:])) #*weights_corr*
     corr_loss = corr_loss_[corr_loss_<100000].mean()
 
     return corr_loss
@@ -565,7 +568,7 @@ def main():
             loss_list.append(loss.item())
             valid_list.append(valid(loader_valid, net).item())
 
-            init_ind = max_lag * max_power_1 * max_power_2
+            init_ind = num_arrival_moms+  max_lag * max_power_1 * max_power_2
 
             df_res = check_test_corrs(loader_valid, net, init_ind, num_arrival_moms)
 
