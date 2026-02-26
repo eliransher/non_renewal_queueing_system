@@ -1360,7 +1360,7 @@ if __name__ == '__main__':
 
             moms_ser = np.log(np.array(res_ph).flatten())
 
-            a = np.random.uniform(1, 5)
+            a = np.random.uniform(1, 2)
             if np.random.rand() <0.5:
                 ind_map1 = choose_scv_lower_3(maps) # np.random.randint(0, 500)
                 ind_map2 = choose_scv_larger_3(maps) # np.random.randint(0, 500)
@@ -1544,24 +1544,24 @@ if __name__ == '__main__':
                     return x
 
 
-            class Net_moms(nn.Module):
-
-                def __init__(self, input_size, output_size):
-                    super().__init__()
-
-                    self.fc1 = nn.Linear(input_size, 50)
-                    self.fc2 = nn.Linear(50, 70)
-                    self.fc3 = nn.Linear(70, 50)
-                    self.fc4 = nn.Linear(50, 50)
-                    self.fc5 = nn.Linear(50, output_size)
-
-                def forward(self, x):
-                    x = F.relu(self.fc1(x))
-                    x = F.relu(self.fc2(x))
-                    x = F.relu(self.fc3(x))
-                    x = F.relu(self.fc4(x))
-                    x = self.fc5(x)
-                    return x
+            # class Net_moms(nn.Module):
+            #
+            #     def __init__(self, input_size, output_size):
+            #         super().__init__()
+            #
+            #         self.fc1 = nn.Linear(input_size, 50)
+            #         self.fc2 = nn.Linear(50, 70)
+            #         self.fc3 = nn.Linear(70, 50)
+            #         self.fc4 = nn.Linear(50, 50)
+            #         self.fc5 = nn.Linear(50, output_size)
+            #
+            #     def forward(self, x):
+            #         x = F.relu(self.fc1(x))
+            #         x = F.relu(self.fc2(x))
+            #         x = F.relu(self.fc3(x))
+            #         x = F.relu(self.fc4(x))
+            #         x = self.fc5(x)
+            #         return x
 
 
             class Net_corrs(nn.Module):
@@ -1594,6 +1594,10 @@ if __name__ == '__main__':
             file_name_model_moms = 'model_num_97370_batch_size_64_curr_lr_0.001_num_moms_corrs_5_nn_archi_1_max_lag_2_max_power_1_2_max_power_2_2.pkl' #'merge_moments_1.pkl' #
             model_path_mom = r'C:\Users\Eshel\workspace\MAP\models'
             # file_name_model_moms = 'merge_moments_1.pkl'
+
+            file_name_model_moms = 'merge_moments_1_small.pkl'
+            model_path = r'C:\Users\Eshel\workspace\MAP\models'
+
 
 
             net_moms.load_state_dict(torch.load(os.path.join(model_path, file_name_model_moms)))
